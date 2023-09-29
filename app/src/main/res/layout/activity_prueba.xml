@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".registro"
+    android:orientation="vertical"
+    android:background="#00FFFB"
+    style="@style/Theme.AppCompat.NoActionBar">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="REGISTRARSE"
+        android:layout_gravity="center"
+        android:textColor="@color/black"
+        android:textSize="40sp"
+        android:layout_marginTop="40dp"
+        >
+    </TextView>
+
+    <EditText
+        android:id="@+id/ed_user"
+        android:drawableStart="@drawable/baseline_person_24"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="30dp"
+        android:layout_marginTop="30dp"
+        android:paddingStart="5sp"
+        android:background="@drawable/bordeform"
+        android:hint=" Nombre de usuario"
+        android:minHeight="48dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
+        android:textSize="25sp"
+        android:inputType="text" >
+    </EditText>
+    <EditText
+        android:id="@+id/ed_email"
+        android:drawableStart="@drawable/baseline_email_24"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="30dp"
+        android:layout_marginTop="30dp"
+        android:paddingStart="5sp"
+        android:background="@drawable/bordeform"
+        android:hint=" Email"
+        android:minHeight="48dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
+        android:textSize="25sp"
+        android:inputType="textEmailAddress">
+    </EditText>
+    <Button
+        android:id="@+id/btn_registrar_prueba"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp"
+        android:layout_gravity="center"
+        android:text="Registrarse"
+        android:textColor="#f00000"
+        android:background="@color/black">
+    </Button>
+</LinearLayout>

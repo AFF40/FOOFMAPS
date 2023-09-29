@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".usuario"
+    android:orientation="vertical"
+    android:background="#00FFFB"
+    style="@style/Theme.AppCompat.NoActionBar">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bienvenido"
+        android:layout_marginTop="60sp"
+        android:textSize="40sp"
+        android:textColor="@color/black"
+        android:layout_gravity="center"
+        >
+    </TextView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="username"
+            android:textColor="@color/black"
+            android:textSize="25sp"
+            android:layout_marginTop="50dp"
+            android:layout_marginHorizontal="30dp"
+            >
+        </TextView>
+
+        <TextView
+            android:id="@+id/textVusername"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="*"
+            android:textColor="@color/black"
+            android:textSize="25sp"
+            android:layout_marginTop="50dp"
+            android:layout_marginHorizontal="30dp"
+            >
+        </TextView>
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="email"
+            android:textColor="@color/black"
+            android:textSize="25sp"
+            android:layout_marginTop="50dp"
+            android:layout_marginHorizontal="30dp"
+            >
+        </TextView>
+
+        <TextView
+            android:id="@+id/textVemail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="*"
+            android:textColor="@color/black"
+            android:textSize="25sp"
+            android:layout_marginTop="50dp"
+            android:layout_marginHorizontal="30dp"
+            >
+        </TextView>
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="pass1"
+            android:textColor="@color/black"
+            android:textSize="25sp"
+            android:layout_marginTop="50dp"
+            android:layout_marginHorizontal="30dp"
+            >
+        </TextView>
+
+        <TextView
+            android:id="@+id/textVpass1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="*"
+            android:textColor="@color/black"
+            android:textSize="25sp"
+            android:layout_marginTop="50dp"
+            android:layout_marginHorizontal="30dp"
+            >
+        </TextView>
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="pass2"
+            android:textColor="@color/black"
+            android:textSize="25sp"
+            android:layout_marginTop="50dp"
+            android:layout_marginHorizontal="30dp"
+            >
+        </TextView>
+
+        <TextView
+            android:id="@+id/textVpass2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="*"
+            android:textColor="@color/black"
+            android:textSize="25sp"
+            android:layout_marginTop="50dp"
+            android:layout_marginHorizontal="30dp"
+            >
+        </TextView>
+
+
+
+    </LinearLayout>
+
+
+    <FrameLayout
+        android:id="@+id/frame_container"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+
+        >
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/navigation_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:menu="@menu/bottom_navigation_menu"
+            android:layout_gravity="bottom"
+            android:background="#f00000"
+            android:paddingTop="3sp"
+            >
+        </com.google.android.material.bottomnavigation.BottomNavigationView>
+    </FrameLayout>
+
+
+
+</LinearLayout>
