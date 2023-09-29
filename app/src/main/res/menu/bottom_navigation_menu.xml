@@ -12,6 +12,7 @@
     android:id="@+id/navigation_search"
     android:icon="@drawable/searchicon"
     android:title="@string/segundo"
+
     />
 
 <item
