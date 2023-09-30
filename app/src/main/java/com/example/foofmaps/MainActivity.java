@@ -34,38 +34,34 @@ public class MainActivity extends AppCompatActivity {
             MainActivity.this.startActivity(intent_registro);
         });
 
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final String username = ed_username.getText().toString();
-                final String pass1 = ed_password.getText().toString();
+        btnLogin.setOnClickListener(v -> {
+            final String username = ed_username.getText().toString();
+            final String pass1 = ed_password.getText().toString();
 
-                // Realizar la solicitud al servidor
-                LoginRequest loginRequest = new LoginRequest(username, pass1,
-                        response -> {
-                            try {
-                                JSONObject jsonResponse = new JSONObject(response);
-                                int exito = jsonResponse.getInt("exito");
-                                String mensaje_exito = jsonResponse.getString("msg");
-                                String mensaje = jsonResponse.getString("msg");
-                                Log.e("info",jsonResponse.toString());
-                                if (exito == 1) {
-                                    // Registro exitoso, manejar el resultado aquí
-                                    Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT).show();
-                                    Intent intent_login_exitoso = new Intent(MainActivity.this, usuario.class);
-                                    MainActivity.this.startActivity(intent_login_exitoso);
-                                } else {
-                                    // Error en el registro, mostrar un mensaje al usuario
-                                    Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT).show();
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+            // Realizar la solicitud al servidor
+            LoginRequest loginRequest = new LoginRequest(username, pass1,
+                    response -> {
+                        try {
+                            JSONObject jsonResponse = new JSONObject(response);
+                            int exito = jsonResponse.getInt("exito");
+                            String mensaje_exito = jsonResponse.getString("msg");
+                            String mensaje = jsonResponse.getString("msg");
+                            Log.e("info",jsonResponse.toString());
+                            if (exito == 1) {
+                                // Registro exitoso, manejar el resultado aquí
+                                Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT).show();
+                                Intent intent_login_exitoso = new Intent(MainActivity.this, MapsActivity.class);
+                                MainActivity.this.startActivity(intent_login_exitoso);
+                            } else {
+                                // Error en el registro, mostrar un mensaje al usuario
+                                Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT).show();
                             }
-                        });
-                RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
-                queue.add(loginRequest);
-            }
-
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    });
+            RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
+            queue.add(loginRequest);
 
 
         });

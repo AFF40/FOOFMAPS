@@ -3,4 +3,5 @@
     <string name="primero">primero</string>
     <string name="segundo">segundo</string>
     <string name="tercero">tercero</string>
+    <string name="title_activity_maps">MapsActivity</string>
 </resources>
