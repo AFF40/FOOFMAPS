@@ -1,14 +1,21 @@
 package com.example.foofmaps;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import android.util.Log;
+
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.foofmaps.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -22,6 +29,10 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -74,15 +85,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 centerCameraOnce = false;
             }
         }
-
-        // Agregar un marcador en Cochabamba (esto es opcional)
-        LatLng cochabamba = new LatLng(-17.373663, -66.142863);
-        mMap.addMarker(new MarkerOptions().position(cochabamba).title("Marcador en Cochabamba"));
-
         // Cargar el estilo del mapa desde un archivo JSON (map_style_no_labels)
         int styleResId = R.raw.map_style_no_labels;
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, styleResId));
-    }
+
+        // Llamar a la función para obtener marcadores desde la base de datos
+        fetchLocationsFromDatabase();
+
+        }
 
     private void obtainMyLocation() {
         // Crear una solicitud de ubicación
@@ -115,13 +125,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Solicitar actualizaciones de ubicación
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
@@ -140,4 +143,37 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Asegurarse de detener las actualizaciones de ubicación al salir de la actividad
         stopLocationUpdates();
     }
+    private void fetchLocationsFromDatabase() {
+        String url = "http://192.168.1.3/web2/controlador/controlador_Rest.php"; // Reemplaza esto con la URL de tu archivo PHP
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, response -> {
+            try {
+                JSONArray jsonArray = new JSONArray(response);
+                Log.d("JSON Response", jsonArray.toString());
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    String nomRest = jsonObject.getString("nom_rest");
+                    JSONObject ubicacion = jsonObject.getJSONObject("ubicacion");
+                    double latitud = ubicacion.getDouble("latitud");
+                    double longitud = ubicacion.getDouble("longitud");
+
+                    // Agregar marcador en el mapa
+                    LatLng location = new LatLng(latitud, longitud);
+                    mMap.addMarker(new MarkerOptions().position(location).title(nomRest));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.e("JSON Error", "Error al procesar los datos JSON: " + e.getMessage());
+            }
+        }, error -> {
+            Log.e("Volley Error", "Error al obtener datos desde el servidor: " + error.getMessage());
+        });
+
+        requestQueue.add(stringRequest);
+    }
+
+
 }
