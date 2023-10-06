@@ -1,0 +1,36 @@
+<!-- res/layout/activity_menu_rest.xml -->
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".MenuRest">
+
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/bannertop"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:title="Restaurante Detalles" />
+
+    <!-- Mostrar los datos -->
+    <TextView
+        android:id="@+id/textViewRestauranteId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ID del Restaurante: " />
+
+
+
+    <TextView
+        android:id="@+id/textViewCelular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Número de Teléfono: " />
+
+</LinearLayout>

@@ -1,0 +1,7 @@
+<resources>
+    <!-- Estilo personalizado para los botones -->
+    <style name="CustomButtonStyle">
+        <item name="android:background">@color/black</item>
+        <item name="android:textColor">#FFFFFF</item> <!-- Color del texto en blanco -->
+    </style>
+</resources>

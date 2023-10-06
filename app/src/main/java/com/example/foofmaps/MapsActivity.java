@@ -1,15 +1,16 @@
 package com.example.foofmaps;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import android.util.Log;
-
+import android.view.View;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -26,8 +27,10 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
@@ -37,33 +40,31 @@ import org.json.JSONObject;
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+
     private GoogleMap mMap;
+
     private FusedLocationProviderClient fusedLocationClient;
-    private boolean centerCameraOnce = true; // Flag para centrar la cámara solo una vez
-    private LocationCallback locationCallback; // Callback para recibir actualizaciones de ubicación
+    private boolean centerCameraOnce = true;
+    private LocationCallback locationCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        // Inicializar el cliente de ubicación fusionada
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        // Verificar y solicitar permiso de ubicación si es necesario
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     LOCATION_PERMISSION_REQUEST_CODE);
         } else {
-            // Si se tiene permiso, obtener el mapa
             obtainMap();
         }
     }
 
     private void obtainMap() {
-        // Obtener el Fragmento del mapa
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -73,65 +74,54 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Verificar nuevamente si se tiene permiso de ubicación
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
-            // Configurar la capa "Mi ubicación" y habilitarla en el mapa
             mMap.setMyLocationEnabled(true);
 
             if (centerCameraOnce) {
-                // Centrar la cámara en la ubicación actual solo una vez al ingresar
                 obtainMyLocation();
                 centerCameraOnce = false;
             }
         }
-        // Cargar el estilo del mapa desde un archivo JSON (map_style_no_labels)
+
         int styleResId = R.raw.map_style_no_labels;
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, styleResId));
 
-        // Llamar a la función para obtener marcadores desde la base de datos
         fetchLocationsFromDatabase();
-
-        }
+    }
 
     private void obtainMyLocation() {
-        // Crear una solicitud de ubicación
         LocationRequest locationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(5000); // Intervalo de actualización de ubicación en milisegundos
+                .setInterval(5000);
 
-        // Configurar el callback para recibir actualizaciones de ubicación
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 if (locationResult != null) {
                     Location lastLocation = locationResult.getLastLocation();
                     if (lastLocation != null) {
-                        // Obtener la latitud y longitud de la ubicación actual
                         double latitude = lastLocation.getLatitude();
                         double longitude = lastLocation.getLongitude();
 
-                        // Centrar la cámara en la ubicación actual
                         LatLng myLocation = new LatLng(latitude, longitude);
                         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(myLocation, 17);
                         mMap.animateCamera(cameraUpdate);
 
-                        // Detener las actualizaciones de ubicación después de la primera vez
                         stopLocationUpdates();
                     }
                 }
             }
         };
 
-        // Solicitar actualizaciones de ubicación
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
     }
 
     private void stopLocationUpdates() {
-        // Detener las actualizaciones de ubicación si no se desea seguir ajustando la cámara
         if (locationCallback != null) {
             fusedLocationClient.removeLocationUpdates(locationCallback);
         }
@@ -140,9 +130,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Asegurarse de detener las actualizaciones de ubicación al salir de la actividad
         stopLocationUpdates();
     }
+
     private void fetchLocationsFromDatabase() {
         String url = "http://192.168.1.3/web2/controlador/controlador_Rest.php"; // Reemplaza esto con la URL de tu archivo PHP
 
@@ -155,14 +145,69 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    int restaurante_id = jsonObject.getInt("restaurante_id"); // Reemplaza con el ID del restaurante del marcador
+                    int celular = jsonObject.getInt("celular"); // Reemplaza con el ID del restaurante del marcador
                     String nomRest = jsonObject.getString("nom_rest");
                     JSONObject ubicacion = jsonObject.getJSONObject("ubicacion");
                     double latitud = ubicacion.getDouble("latitud");
                     double longitud = ubicacion.getDouble("longitud");
+                    int estadoRestaurante = jsonObject.getInt("estado"); // Asumiendo que el estado se llama "estado" en tu JSON
+
+                    // Determinar el color del marcador según el estado del restaurante
+                    float hue = (estadoRestaurante == 0) ? BitmapDescriptorFactory.HUE_RED : BitmapDescriptorFactory.HUE_GREEN;
 
                     // Agregar marcador en el mapa
                     LatLng location = new LatLng(latitud, longitud);
-                    mMap.addMarker(new MarkerOptions().position(location).title(nomRest));
+                    MarkerOptions markerOptions = new MarkerOptions()
+                            .position(location)
+                            .title(nomRest)
+                            .icon(BitmapDescriptorFactory.defaultMarker(hue)); // Configurar el color del marcador
+                    Marker marker = mMap.addMarker(markerOptions);
+
+                    // Crear un objeto Restaurante con los datos del restaurante
+                    Restaurante restaurante = new Restaurante(restaurante_id, celular, nomRest);
+
+                    // Establecer el restaurante como etiqueta del marcador
+                    marker.setTag(restaurante);
+
+                    // Configurar el InfoWindow para que no sea clickeable
+                    mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                        @Override
+                        public void onInfoWindowClick(Marker marker) {
+                            // Obtener el restaurante desde la etiqueta del marcador
+                            Restaurante restaurante = (Restaurante) marker.getTag();
+                            if (restaurante != null) {
+                                // Aquí puedes manejar lo que sucede cuando se hace clic en el InfoWindow,
+                                Intent intent = new Intent(MapsActivity.this, MenuRest.class);
+                                intent.putExtra("restaurant_id", restaurante.getRestauranteId());
+                                intent.putExtra("restaurant_name", restaurante.getNomRest());
+                                intent.putExtra("restaurant_phone", restaurante.getCelular());
+                                startActivity(intent);
+                            }
+                        }
+                    });
+
+                    // Configurar la vista personalizada para la ventana de información del marcador
+                    mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+                        @Override
+                        public View getInfoWindow(Marker marker) {
+                            return null; // Usar la vista predeterminada en blanco
+                        }
+
+                        @Override
+                        public View getInfoContents(Marker marker) {
+                            // Crear una vista personalizada para la ventana de información
+                            View infoView = getLayoutInflater().inflate(R.layout.custom_info_window, null);
+
+                            // Obtener referencias a los elementos de la vista personalizada
+                            TextView markerTitle = infoView.findViewById(R.id.marker_title);
+
+                            // Configurar el contenido de la vista personalizada
+                            markerTitle.setText(marker.getTitle());
+
+                            return infoView;
+                        }
+                    });
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -174,6 +219,5 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         requestQueue.add(stringRequest);
     }
-
 
 }

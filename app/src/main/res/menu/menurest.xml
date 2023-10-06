@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menu_entradas"
+        android:title="Entradas"
+        android:icon="@drawable/ic_entradas"/>
+    <item android:id="@+id/menu_platos"
+        android:title="Platos"
+        android:icon="@drawable/ic_platos"/>
+    <item android:id="@+id/menu_bebidas"
+        android:title="Bebidas"
+        android:icon="@drawable/ic_bebidas"/>
+</menu>

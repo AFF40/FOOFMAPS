@@ -7,7 +7,8 @@
     tools:context=".MainActivity"
     android:orientation="vertical"
     android:background="#00FFFB"
-    style="@style/Theme.AppCompat.NoActionBar">
+    style="@style/Theme.AppCompat.NoActionBar"
+    >
 
     <ImageView
         android:id="@+id/logo"
@@ -70,11 +71,13 @@
 
     <Button
         android:id="@+id/btn_inicio"
-        android:layout_width="110dp"
-        android:layout_height="50dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:background="@color/black"
+        style="@style/CustomButtonStyle"
+        android:textColor="@android:color/holo_red_light"
         android:text="Ingresar"
-        android:textColor="#f00000"
+
         android:layout_gravity="center"
         >
     </Button>
