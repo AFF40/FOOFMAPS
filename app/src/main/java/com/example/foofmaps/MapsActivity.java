@@ -134,7 +134,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void fetchLocationsFromDatabase() {
-        String url = "http://192.168.1.3/web2/controlador/controlador_Rest.php"; // Reemplaza esto con la URL de tu archivo PHP
+        String url = "http://192.168.100.179/web2/controlador/controlador_Rest.php"; // Reemplaza esto con la URL de tu archivo PHP
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 

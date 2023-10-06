@@ -11,7 +11,7 @@ import java.util.Map;
 public class LoginRequest extends StringRequest {
 
     //conexion con el archivo php
-    private static final String Login_Request_URL="http://192.168.1.3/web2/controlador/controladorLogin.php";
+    private static final String Login_Request_URL="http://192.168.100.179/web2/controlador/controladorLogin.php";
     private final Map<String,String>params;
     public LoginRequest(String username, String pass1,  Response.Listener<String> listener){
         super(Method.POST, Login_Request_URL,listener,null);
