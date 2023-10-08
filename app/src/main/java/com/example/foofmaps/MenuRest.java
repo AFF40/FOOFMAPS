@@ -1,14 +1,15 @@
 package com.example.foofmaps;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log; // Importar la clase Log
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
+import com.squareup.picasso.Picasso;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MenuRest extends AppCompatActivity {
 
@@ -23,15 +24,19 @@ public class MenuRest extends AppCompatActivity {
         String nom_rest = intent.getStringExtra("restaurant_name");
         int celular = intent.getIntExtra("restaurant_phone", 0);
 
-        // Obtener referencias a los TextView y al botón en el diseño
+        // Agregar mensajes de depuración
+        Log.d("ID_DEBUG", "restaurante_id: " + restaurante_id);
+
+        // Obtener referencias a los elementos en el diseño
         TextView textViewRestauranteId = findViewById(R.id.textViewRestauranteId);
-        Toolbar bannertop = findViewById(R.id.bannertop);
+        TextView bannertop = findViewById(R.id.bannertop);
         TextView textViewCelular = findViewById(R.id.textViewCelular);
         ImageButton whatsappButton = findViewById(R.id.btnWhatsApp);
+        ImageView imageViewRestaurante = findViewById(R.id.imageViewRestaurante);
 
         // Establecer los valores en los TextView
-        textViewRestauranteId.setText("ID del Restaurant: " + restaurante_id);
-        bannertop.setTitle(nom_rest);
+        textViewRestauranteId.setText("ID del Restaurante: " + restaurante_id);
+        bannertop.setText(nom_rest);
         textViewCelular.setText("Número de Teléfono: " + celular);
 
         // Configurar el botón para abrir WhatsApp con el número de teléfono
@@ -41,6 +46,16 @@ public class MenuRest extends AppCompatActivity {
                 openWhatsApp(celular);
             }
         });
+
+        // Construir la URL para obtener la imagen
+        String imageUrl = "http://192.168.1.3/modelo/icono_rest.php?id=" + restaurante_id;
+        // Reemplaza URL_DE_TU_PHP_SCRIPT
+
+        // Agregar mensaje de depuración para verificar la URL
+        Log.d("URL_DEBUG", "imageUrl: " + imageUrl);
+
+        // Cargar la imagen desde tu servidor utilizando Picasso
+        Picasso.get().load(imageUrl).into(imageViewRestaurante);
     }
 
     // Método para abrir WhatsApp con el número de teléfono
