@@ -1,6 +1,8 @@
 package com.example.foofmaps;
+
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +15,7 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 public class MainActivity extends AppCompatActivity {
 
     EditText ed_username, ed_password;
@@ -23,6 +26,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Obtener el valor de sesión de SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
+
+        // Si el usuario ha iniciado sesión previamente, redirigir a MapsActivity
+        if (isLoggedIn) {
+            Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+            startActivity(intent);
+            finish(); // Finaliza la actividad actual para que no se pueda volver atrás desde aquí
+        }
 
         ed_username = findViewById(R.id.tv_usuario);
         ed_password = findViewById(R.id.tv_pass1);
@@ -50,8 +64,15 @@ public class MainActivity extends AppCompatActivity {
                             if (exito == 1) {
                                 // Registro exitoso, manejar el resultado aquí
                                 Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT).show();
+
+                                // Guardar el valor de sesión en SharedPreferences
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putBoolean("isLoggedIn", true);
+                                editor.apply();
+
                                 Intent intent_login_exitoso = new Intent(MainActivity.this, MapsActivity.class);
                                 MainActivity.this.startActivity(intent_login_exitoso);
+                                finish(); // Finaliza la actividad actual
                             } else {
                                 // Error en el registro, mostrar un mensaje al usuario
                                 Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT).show();
@@ -62,8 +83,6 @@ public class MainActivity extends AppCompatActivity {
                     });
             RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
             queue.add(loginRequest);
-
-
         });
     }
 }
