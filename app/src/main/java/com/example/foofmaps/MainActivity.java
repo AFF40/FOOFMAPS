@@ -5,14 +5,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
+import com.example.foofmaps.dueño.vista_dueno;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,16 +27,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Obtener el valor de sesión de SharedPreferences
+        // Obtener el valor de sesión y el rol de SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
-
-        // Si el usuario ha iniciado sesión previamente, redirigir a MapsActivity
-        if (isLoggedIn) {
-            Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-            startActivity(intent);
-            finish(); // Finaliza la actividad actual para que no se pueda volver atrás desde aquí
-        }
+        int userRole = sharedPreferences.getInt("userRole", -1); // Obtiene el rol del usuario desde SharedPreferences
 
         ed_username = findViewById(R.id.tv_usuario);
         ed_password = findViewById(R.id.tv_pass1);
@@ -58,21 +52,33 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             JSONObject jsonResponse = new JSONObject(response);
                             int exito = jsonResponse.getInt("exito");
-                            String mensaje_exito = jsonResponse.getString("msg");
                             String mensaje = jsonResponse.getString("msg");
-                            Log.e("info",jsonResponse.toString());
+                            Log.e("info", jsonResponse.toString());
                             if (exito == 1) {
                                 // Registro exitoso, manejar el resultado aquí
                                 Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT).show();
 
-                                // Guardar el valor de sesión en SharedPreferences
+                                // Obtener el rol del usuario
+                                int rol = jsonResponse.getInt("rol");
+
+                                // Guardar el rol del usuario en SharedPreferences
                                 SharedPreferences.Editor editor = sharedPreferences.edit();
                                 editor.putBoolean("isLoggedIn", true);
+                                editor.putInt("userRole", rol); // Guarda el rol del usuario
                                 editor.apply();
 
-                                Intent intent_login_exitoso = new Intent(MainActivity.this, MapsActivity.class);
-                                MainActivity.this.startActivity(intent_login_exitoso);
-                                finish(); // Finaliza la actividad actual
+                                // Redirigir según el rol
+                                if (rol == 1) {
+                                    // Usuario con rol 1, redirige a MapsActivity
+                                    Intent intent_login_exitoso = new Intent(MainActivity.this, MapsActivity.class);
+                                    MainActivity.this.startActivity(intent_login_exitoso);
+                                    finish(); // Finaliza la actividad actual para que no se pueda volver atrás desde aquí
+                                } else if (rol == 2) {
+                                    // Usuario con rol 2, redirige a vista_dueno (reemplaza "vista_dueno" con el nombre de tu actividad o fragmento)
+                                    Intent intent_login_dueño = new Intent(MainActivity.this, vista_dueno.class);
+                                    MainActivity.this.startActivity(intent_login_dueño);
+                                    finish(); // Finaliza la actividad actual
+                                }
                             } else {
                                 // Error en el registro, mostrar un mensaje al usuario
                                 Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT).show();
@@ -84,5 +90,20 @@ public class MainActivity extends AppCompatActivity {
             RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
             queue.add(loginRequest);
         });
+
+        // Verificar si el usuario ha iniciado sesión previamente
+        if (isLoggedIn) {
+            if (userRole == 1) {
+                // Usuario con rol 1, redirige a MapsActivity
+                Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                startActivity(intent);
+                finish(); // Finaliza la actividad actual para que no se pueda volver atrás desde aquí
+            } else if (userRole == 2) {
+                // Usuario con rol 2, redirige a vista_dueno (reemplaza "vista_dueno" con el nombre de tu actividad o fragmento)
+                Intent intent = new Intent(MainActivity.this, vista_dueno.class);
+                startActivity(intent);
+                finish(); // Finaliza la actividad actual
+            }
+        }
     }
 }

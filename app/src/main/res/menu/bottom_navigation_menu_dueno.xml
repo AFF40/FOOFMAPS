@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+
+        android:id="@+id/maps"
+        android:icon="@drawable/iconomaps"
+        android:title="@string/fmaps" />
+
+    <item
+        android:id="@+id/search"
+        android:icon="@drawable/searchicon"
+        android:title="@string/buscar"
+
+        />
+
+    <item
+        android:id="@+id/ajustes"
+        android:icon="@drawable/campanaicon"
+        android:title="@string/ajustes" />
+
+</menu>

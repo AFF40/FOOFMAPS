@@ -19,6 +19,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="tiramisu">
         <activity
+            android:name=".dueño.vista_dueno"
+            android:exported="false" />
+        <activity
             android:name=".MenuRest"
             android:exported="false"
             android:label="MenuRestActivity" />
@@ -47,7 +50,6 @@
         <activity
             android:name=".registro"
             android:exported="false" />
-
         <activity
             android:name=".MainActivity"
             android:exported="true">
