@@ -76,11 +76,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     startActivity(intent);
                     return true;
                 case R.id.search:
-                    Fragment fragmentSearch = new SearchFragment(); // Reemplaza con el nombre correcto de tu fragmento
+                    Fragment fragmentSearch = new SearchFragment();
                     loadFragment(fragmentSearch);
                     return true;
                 case R.id.ajustes:
-                    Fragment fragmentSettings = new SettingsFragment(); // Reemplaza con el nombre correcto de tu fragmento
+                    Fragment fragmentSettings = new SettingsFragment();
                     loadFragment(fragmentSettings);
                     return true;
             }
@@ -197,7 +197,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
     private void fetchLocationsFromDatabase() {
-        String url = "http://192.168.1.3/web2/controlador/controlador_Rest.php"; // Reemplaza esto con la URL de tu archivo PHP
+        String url = "http://192.168.1.3/web2/controlador/controlador_Rest.php";
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, response -> {
             try {
@@ -205,13 +205,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Log.d("JSON Response", jsonArray.toString());
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    int restaurante_id = jsonObject.getInt("restaurante_id"); // Reemplaza con el ID del restaurante del marcador
-                    int celular = jsonObject.getInt("celular"); // Reemplaza con el ID del restaurante del marcador
+                    int restaurante_id = jsonObject.getInt("restaurante_id"); // ID del restaurante del marcador
+                    int celular = jsonObject.getInt("celular"); //  ID del restaurante del marcador
                     String nomRest = jsonObject.getString("nom_rest");
                     JSONObject ubicacion = jsonObject.getJSONObject("ubicacion");
                     double latitud = ubicacion.getDouble("latitud");
                     double longitud = ubicacion.getDouble("longitud");
-                    int estadoRestaurante = jsonObject.getInt("estado"); // Asumiendo que el estado se llama "estado" en tu JSON
+                    int estadoRestaurante = jsonObject.getInt("estado"); // Asumiendo que el estado se llama "estado" en el JSON
                     // Determinar el color del marcador según el estado del restaurante
                     float hue = (estadoRestaurante == 0) ? BitmapDescriptorFactory.HUE_RED : BitmapDescriptorFactory.HUE_GREEN;
                     // Agregar marcador en el mapa
@@ -232,7 +232,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             // Obtener el restaurante desde la etiqueta del marcador
                             Restaurante restaurante = (Restaurante) marker.getTag();
                             if (restaurante != null) {
-                                // Aquí puedes manejar lo que sucede cuando se hace clic en el InfoWindow,
+                                //  se hace clic en el InfoWindow,
                                 Intent intent = new Intent(MapsActivity.this, MenuRest.class);
                                 intent.putExtra("restaurant_id", restaurante.getRestauranteId());
                                 intent.putExtra("restaurant_name", restaurante.getNomRest());

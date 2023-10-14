@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                                     MainActivity.this.startActivity(intent_login_exitoso);
                                     finish(); // Finaliza la actividad actual para que no se pueda volver atrás desde aquí
                                 } else if (rol == 2) {
-                                    // Usuario con rol 2, redirige a vista_dueno (reemplaza "vista_dueno" con el nombre de tu actividad o fragmento)
+                                    // Usuario con rol 2, redirige a vista_dueno
                                     Intent intent_login_dueño = new Intent(MainActivity.this, vista_dueno.class);
                                     MainActivity.this.startActivity(intent_login_dueño);
                                     finish(); // Finaliza la actividad actual
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish(); // Finaliza la actividad actual para que no se pueda volver atrás desde aquí
             } else if (userRole == 2) {
-                // Usuario con rol 2, redirige a vista_dueno (reemplaza "vista_dueno" con el nombre de tu actividad o fragmento)
+                // Usuario con rol 2, redirige a vista_dueno
                 Intent intent = new Intent(MainActivity.this, vista_dueno.class);
                 startActivity(intent);
                 finish(); // Finaliza la actividad actual

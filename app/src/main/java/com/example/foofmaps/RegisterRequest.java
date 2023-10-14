@@ -11,7 +11,7 @@ import java.util.Map;
 public class RegisterRequest extends StringRequest {
 
     //conexion con el archivo php
-    private static final String REGISTER_REQUEST_URL="http://192.168.88.14/web2/controlador/controladorPersona.php";
+    private static final String REGISTER_REQUEST_URL="http://192.168.70.109/web2/controlador/controladorPersona.php";
     private final Map<String,String>params;
     public RegisterRequest(String username, String email, String pass1, String pass2, Response.Listener<String> listener){
         super(Method.POST, REGISTER_REQUEST_URL,listener,null);

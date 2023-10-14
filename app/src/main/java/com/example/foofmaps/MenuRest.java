@@ -40,16 +40,10 @@ public class MenuRest extends AppCompatActivity {
         textViewCelular.setText("Número de Teléfono: " + celular);
 
         // Configurar el botón para abrir WhatsApp con el número de teléfono
-        whatsappButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openWhatsApp(celular);
-            }
-        });
+        whatsappButton.setOnClickListener(v -> openWhatsApp(celular));
 
         // Construir la URL para obtener la imagen
         String imageUrl = "http://192.168.1.3/modelo/icono_rest.php?id=" + restaurante_id;
-        // Reemplaza URL_DE_TU_PHP_SCRIPT
 
         // Agregar mensaje de depuración para verificar la URL
         Log.d("URL_DEBUG", "imageUrl: " + imageUrl);
