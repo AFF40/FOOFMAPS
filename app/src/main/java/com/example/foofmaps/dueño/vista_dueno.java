@@ -19,6 +19,13 @@ import com.example.foofmaps.MainActivity;
 import com.example.foofmaps.R;
 import com.example.foofmaps.SearchFragment;
 import com.example.foofmaps.SettingsFragment;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.squareup.picasso.Picasso;
 
@@ -115,10 +122,9 @@ public class vista_dueno extends AppCompatActivity {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, response -> {
             try {
                 JSONArray jsonArray = new JSONArray(response);
-                // Aquí puedes procesar los datos del restaurante desde jsonObject
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    int restaurante_id = jsonObject.getInt("restaurante_id"); // ID del restaurante del marcador
+                    int restaurante_id = jsonObject.getInt("restaurante_id");
                     int celular = jsonObject.getInt("celular");
                     String nomRest = jsonObject.getString("nom_rest");
                     JSONObject ubicacion = jsonObject.getJSONObject("ubicacion");
@@ -126,40 +132,74 @@ public class vista_dueno extends AppCompatActivity {
                     double longitud = ubicacion.getDouble("longitud");
                     int estadoRestaurante = jsonObject.getInt("estado");
 
-                    // Muestra los valores en el logcat
                     Log.d("Restaurante_celular", "Celular: " + celular);
                     Log.d("Restaurante", "Nombre: " + nomRest);
                     Log.d("Restaurante", "Latitud: " + latitud);
                     Log.d("Restaurante", "Longitud: " + longitud);
                     Log.d("Restaurante", "Estado: " + estadoRestaurante);
 
-                    // Busca la vista correspondiente en tu diseño por su ID.
-                    TextView textViewNomRest = findViewById(R.id.nom_rest); // Asegúrate de que el ID sea el correcto.
+                    TextView textViewNomRest = findViewById(R.id.nom_rest);
 
-                    switchEstado.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                        if (isChecked) {
-                            // Cuando el Switch está activado, manda la solicitud GET con "estado = 0"
-                            sendRequest(restaurante_id, 1);
-                            nomrest_tx.setText("abierto");
-                        } else {
-                            // Cuando el Switch está desactivado, puedes manejar esta situación si es necesario
-                            sendRequest(restaurante_id, 0);
-                            nomrest_tx.setText("cerrado");
-                            // Aquí puedes tomar medidas adicionales si lo necesitas.
+                    SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_dueño);
+
+                    mapFragment.getMapAsync(googleMap -> {
+                        LatLng restauranteLocation = new LatLng(latitud, longitud);
+
+                        // Agrega el marcador al mapa con el color inicial según el estado del restaurante
+                        float markerColor = (estadoRestaurante == 1) ? BitmapDescriptorFactory.HUE_GREEN : BitmapDescriptorFactory.HUE_RED;
+                        BitmapDescriptor markerIcon = BitmapDescriptorFactory.defaultMarker(markerColor);
+
+                        MarkerOptions markerOptions = new MarkerOptions()
+                                .position(restauranteLocation)
+                                .title("Restaurante")
+                                .icon(markerIcon);
+                        Marker restauranteMarker = googleMap.addMarker(markerOptions);
+
+                        if (estadoRestaurante==1){
+                            switchEstado.setChecked(true);
+                            restauranteMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                            TextView  textViewEstado = findViewById(R.id.estado_rest);
+                            textViewEstado.setText("abierto");
+                        }else {
+                            switchEstado.setChecked(false);
+                            restauranteMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                            TextView  textViewEstado = findViewById(R.id.estado_rest);
+                            textViewEstado.setText("cerrado");
                         }
+
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLng(restauranteLocation));
+                        float zoomLevel = 15;
+                        googleMap.animateCamera(CameraUpdateFactory.zoomTo(zoomLevel));
+
+                        // Configura el listener para el Switch
+                        switchEstado.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                            // Cambia el color del marcador y actualiza el estado del restaurante
+                            if (isChecked) {
+                                sendRequest(restaurante_id, 1);
+                                nomrest_tx.setText("abierto");
+                                restauranteMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                            } else {
+                                sendRequest(restaurante_id, 0);
+                                nomrest_tx.setText("cerrado");
+                                restauranteMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                            }
+                        });
                     });
 
-// Actualiza el contenido de la vista con el valor.
+                    // Actualiza el contenido de la vista con el valor.
                     textViewNomRest.setText(nomRest);
                 }
-                // Luego, puedes utilizar estos datos para mostrar información en el mapa o hacer lo que necesites.
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }, error -> {
+            // Maneja el error si la solicitud falla
         });
         requestQueue.add(stringRequest);
     }
+
+
+
     private void sendRequest(int restauranteId, int estado) {
         // Construye la URL con los parámetros
         String url = "http://192.168.1.3/web2/modelo/cambiar_estado.php?restaurante_id=" + restauranteId + "&estado=" + estado;
@@ -174,6 +214,7 @@ public class vista_dueno extends AppCompatActivity {
 
         requestQueue.add(stringRequest);
     }
+
 
 
 }
