@@ -1,4 +1,4 @@
-package com.example.foofmaps;
+package com.example.foofmaps;// MainActivity.java
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
@@ -9,12 +9,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.foofmaps.dueño.vista_dueno;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -74,10 +80,8 @@ public class MainActivity extends AppCompatActivity {
                                     MainActivity.this.startActivity(intent_login_exitoso);
                                     finish(); // Finaliza la actividad actual para que no se pueda volver atrás desde aquí
                                 } else if (rol == 2) {
-                                    // Usuario con rol 2, redirige a vista_dueno
-                                    Intent intent_login_dueño = new Intent(MainActivity.this, vista_dueno.class);
-                                    MainActivity.this.startActivity(intent_login_dueño);
-                                    finish(); // Finaliza la actividad actual
+                                    // Realizar la consulta para obtener id_rest desde la base de datos
+                                    obtenerIdRestDesdeBaseDeDatos(username);
                                 }
                             } else {
                                 // Error en el registro, mostrar un mensaje al usuario
@@ -93,17 +97,50 @@ public class MainActivity extends AppCompatActivity {
 
         // Verificar si el usuario ha iniciado sesión previamente
         if (isLoggedIn) {
+
             if (userRole == 1) {
                 // Usuario con rol 1, redirige a MapsActivity
                 Intent intent = new Intent(MainActivity.this, MapsActivity.class);
                 startActivity(intent);
                 finish(); // Finaliza la actividad actual para que no se pueda volver atrás desde aquí
             } else if (userRole == 2) {
-                // Usuario con rol 2, redirige a vista_dueno
-                Intent intent = new Intent(MainActivity.this, vista_dueno.class);
-                startActivity(intent);
-                finish(); // Finaliza la actividad actual
+                // Usuario con rol 2, se espera la respuesta de obtenerIdRestDesdeBaseDeDatos
+
             }
         }
+    }
+
+    // Modificamos la función para que obtenga el restaurante_id de forma asíncrona
+    private void obtenerIdRestDesdeBaseDeDatos(String username) {
+
+        String url = "http://192.168.1.3/web2/modelo/consultar_id_rest.php";
+
+        RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, response -> {
+            Log.d("Response", response);
+            try {
+                JSONObject jsonResponse = new JSONObject(response);
+                int restaurante_id = jsonResponse.getInt("restaurante_id");
+                // Se ha obtenido el restaurante_id, redirige a vista_dueno
+                Intent intent_login_dueño = new Intent(MainActivity.this, vista_dueno.class);
+                intent_login_dueño.putExtra("restaurante_id", restaurante_id);
+                MainActivity.this.startActivity(intent_login_dueño);
+                finish(); // Finaliza la actividad actual
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            // Manejar errores de la solicitud
+            error.printStackTrace();
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("username", username);
+                return params;
+            }
+        };
+
+        queue.add(stringRequest);
     }
 }

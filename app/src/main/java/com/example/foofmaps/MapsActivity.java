@@ -206,7 +206,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                     int restaurante_id = jsonObject.getInt("restaurante_id"); // ID del restaurante del marcador
-                    int celular = jsonObject.getInt("celular"); //  ID del restaurante del marcador
+                    int celular = jsonObject.getInt("celular");
                     String nomRest = jsonObject.getString("nom_rest");
                     JSONObject ubicacion = jsonObject.getJSONObject("ubicacion");
                     double latitud = ubicacion.getDouble("latitud");

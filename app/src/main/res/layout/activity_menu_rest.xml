@@ -1,5 +1,3 @@
-<!-- res/layout/activity_menu_rest.xml -->
-
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -11,7 +9,7 @@
 
     <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
-
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/black"
@@ -29,9 +27,7 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:scaleType="centerCrop"
-                android:layout_gravity="center_vertical"
-                />
-
+                android:layout_gravity="center_vertical" />
         </LinearLayout>
 
         <TextView
@@ -42,45 +38,26 @@
             android:paddingTop="10dp"
             android:layout_marginStart="30dp"
             android:textSize="21dp"
-            android:textColor="@color/white"
-            >
-
-        </TextView>
-        <!-- Agregar una vista personalizada con un ImageView a la izquierda -->
-
+            android:textColor="@color/white" />
 
         <!-- Agregar un botón de WhatsApp a la derecha -->
         <ImageButton
             android:id="@+id/btnWhatsApp"
             android:layout_width="40dp"
             android:layout_height="40dp"
-
             android:src="@drawable/ic_whatsapp"
             android:contentDescription="Botón de WhatsApp"
             android:layout_marginEnd="20dp"
             android:scaleType="fitXY"
             android:layout_gravity="end"
-
-            android:background="@android:color/transparent"/>
-
-
+            android:background="@android:color/transparent" />
     </androidx.appcompat.widget.Toolbar>
 
-
-
-    <!-- Mostrar los datos -->
-    <TextView
-        android:id="@+id/textViewRestauranteId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ID del Restaurante: " />
-
-    <TextView
-        android:id="@+id/textViewCelular"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Número de Teléfono: " />
-
-
-
+    <!-- Agrega el RecyclerView para la lista de platos -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewPlatos"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="10dp" />
 </LinearLayout>
