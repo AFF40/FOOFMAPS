@@ -6,7 +6,7 @@
 
     android:id="@+id/maps"
     android:icon="@drawable/iconomaps"
-    android:title="@string/fmaps" />
+    android:title="@string/map" />
 
 <item
     android:id="@+id/search"

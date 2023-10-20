@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<!-- agrega 2 items -->
+    <item
+        android:id="@+id/Comida"
+        android:icon="@drawable/icono_plato"
+        android:title="" />
+    <item
+        android:id="@+id/bebidas"
+        android:icon="@drawable/icono_bebida"
+        android:title="" />
+</menu>

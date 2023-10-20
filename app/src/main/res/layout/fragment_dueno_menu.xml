@@ -1,0 +1,31 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MenuRest"
+    android:background="@color/white">
+
+    <!-- agrega un nav bar en la parte superior del layout-->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/comidaybebida"
+        android:layout_width="match_parent"
+        android:layout_height="61dp"
+        android:layout_marginTop="0dp"
+        android:background="@drawable/bordeform"
+        android:paddingBottom="1sp"
+        app:itemIconTint="@color/black"
+        app:itemTextColor="@color/black"
+        app:menu="@menu/menu_doble_1" />
+
+    <!-- Agrega el RecyclerView para la lista de platos -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/viewPlatos"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="10dp"
+        android:background="@drawable/bordeform"/>
+</LinearLayout>

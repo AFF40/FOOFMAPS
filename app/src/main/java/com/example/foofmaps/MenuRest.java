@@ -69,19 +69,19 @@ public class MenuRest extends AppCompatActivity {
             List<Plato> platos = new ArrayList<>();
 
             try {
-                // Realizar una solicitud HTTP para obtener los datos JSON de la API
+                // Realizar una solicitud HTTP para obtener los datos JSON de la APIa
                 String apiUrl = "http://192.168.1.3/modelo/getPlatos.php?restaurante_id=" + idRestaurante;
                 Log.d("apiUrl", apiUrl);
                 String jsonResponse = HttpUtils.get(apiUrl);
 
-                Log.d("JSON_RESPONSE", jsonResponse);
+                Log.d("JSON_RESPONSEqq", jsonResponse);
 
                 // Procesar el JSON y obtener la lista de platos
                 platos = parsePlatosFromJSON(jsonResponse);
+                Log.d("PLATOS_COUNT", String.valueOf(platos.size()));
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             return platos;
         }
 
@@ -117,6 +117,8 @@ public class MenuRest extends AppCompatActivity {
                 String nombre = platoJson.getString("nom_plato");
                 String descripcion = platoJson.getString("descripcion");
                 float precio = (float) platoJson.getDouble("precio");
+                int disponible = platoJson.getInt("disponible");
+
 
                 // La imagen en formato Base64
                 String imagenBase64 = platoJson.getString("imagen");
@@ -124,8 +126,9 @@ public class MenuRest extends AppCompatActivity {
                 // Decodificar la imagen desde Base64 a bytes
                 byte[] imagen = decodeBase64(imagenBase64);
 
+
                 // Crear un objeto Plato con los datos
-                Plato plato = new Plato(nombre, descripcion, precio, imagen);
+                Plato plato = new Plato(nombre, descripcion, precio, imagen, disponible);
                 platos.add(plato);
                 Log.d("PLATO_DEBUG", "nombre: " + nombre);
                 Log.d("PLATO_DEBUG", "descripcion: " + descripcion);

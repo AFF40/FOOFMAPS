@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
@@ -24,6 +25,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -68,9 +70,15 @@ public class vista_dueno extends AppCompatActivity {
                 case R.id.maps:
                     // No necesitas iniciar la actividad actual nuevamente
                     return true;
-                case R.id.search:
-                    Fragment fragmentSearch = new SearchFragment(); // Reemplaza con el nombre correcto de tu fragmento
-                    loadFragment(fragmentSearch);
+                case R.id.mi_menu:
+                    int restauranteId = getIntent().getIntExtra("restaurante_id", -1);
+                    Fragment fragmentmenu = dueno_menu.newInstance(restauranteId);
+                    loadFragment(fragmentmenu);
+                    return true;
+
+                case R.id.editar_menu:
+                    Fragment fragmenteditar = new editar_menu(); // Reemplaza con el nombre correcto de tu fragmento
+                    loadFragment(fragmenteditar);
                     return true;
                 case R.id.ajustes:
                     Fragment fragmentSettings = new SettingsFragment(); // Reemplaza con el nombre correcto de tu fragmento
@@ -92,7 +100,7 @@ public class vista_dueno extends AppCompatActivity {
             transaction.show(existingFragment);
         } else {
             // Si el fragmento no existe, agrega la nueva instancia al contenedor
-            transaction.add(R.id.map_dueño, fragment, fragment.getClass().getName());
+            transaction.add(R.id.map_dueno, fragment, fragment.getClass().getName());
         }
 
         // Oculta los fragmentos que no se están mostrando
@@ -105,11 +113,11 @@ public class vista_dueno extends AppCompatActivity {
         transaction.addToBackStack(null);
         transaction.commit();
     }
+    // Función para obtener los datos del restaurante desde la base de datos
 
     private void fetchRestaurantDataFromDatabase(int restauranteId) {
         String url = "http://192.168.1.3/web2/controlador/cont_rest.php?restaurante_id=" + restauranteId;
         Log.d("url", url);
-
         String imageUrl = "http://192.168.1.3/modelo/icono_rest.php?id=" + restauranteId;
         Switch switchEstado = findViewById(R.id.boton_estado_rest);
         TextView nomrest_tx = findViewById(R.id.estado_rest);
@@ -140,7 +148,7 @@ public class vista_dueno extends AppCompatActivity {
 
                     TextView textViewNomRest = findViewById(R.id.nom_rest);
 
-                    SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_dueño);
+                    SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_dueno);
 
                     mapFragment.getMapAsync(googleMap -> {
                         LatLng restauranteLocation = new LatLng(latitud, longitud);
@@ -148,6 +156,16 @@ public class vista_dueno extends AppCompatActivity {
                         // Agrega el marcador al mapa con el color inicial según el estado del restaurante
                         float markerColor = (estadoRestaurante == 1) ? BitmapDescriptorFactory.HUE_GREEN : BitmapDescriptorFactory.HUE_RED;
                         BitmapDescriptor markerIcon = BitmapDescriptorFactory.defaultMarker(markerColor);
+
+                        // Aplica el estilo del mapa desde el archivo JSON
+                        try {
+                            boolean success = googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style_no_labels));
+                            if (!success) {
+                                Log.e("MapActivity", "Style parsing failed.");
+                            }
+                        } catch (Resources.NotFoundException e) {
+                            Log.e("MapActivity", "Can't find style. Error: ", e);
+                        }
 
                         MarkerOptions markerOptions = new MarkerOptions()
                                 .position(restauranteLocation)

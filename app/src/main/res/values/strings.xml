@@ -3,10 +3,15 @@
     <string name="primero">primero</string>
     <string name="segundo">segundo</string>
     <string name="tercero">tercero</string>
+
     <string name="title_activity_maps">MapsActivity</string>
-    <string name="fmaps" />
+    <string name="fmap">mi restaurante</string>
     <string name="buscar" />
     <string name="ajustes" />
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="map">mapa</string>
+    <string name="mimenu">mi menu</string>
+    <string name="editar_menu">editar</string>
+    <string name="ajustes_rest">ajustes</string>
 </resources>

@@ -1,72 +1,82 @@
-package com.example.foofmaps;
+    package com.example.foofmaps;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+    import android.graphics.Bitmap;
+    import android.graphics.BitmapFactory;
+    import android.util.Log;
+    import android.view.LayoutInflater;
+    import android.view.View;
+    import android.view.ViewGroup;
+    import android.widget.ImageView;
+    import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+    import androidx.annotation.NonNull;
+    import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.List;
+    import java.util.List;
 
-public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> {
-    private List<Plato> platos;
+    public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> {
+        private List<Plato> platos;
 
-    public PlatoAdapter(List<Plato> platos) {
-        this.platos = platos;
-    }
+        public PlatoAdapter(List<Plato> platos) {
+            this.platos = platos;
+        }
 
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.plato_item, parent, false);
-        return new ViewHolder(view);
-    }
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.plato_item, parent, false);
+            return new ViewHolder(view);
+        }
 
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Plato plato = platos.get(position);
-        Log.d("PLATO_NAME", plato.getNombre()); // Agregar esta línea
-        Log.d("PLATO_DESCRIPTION", plato.getDescripcion()); // Agregar esta línea
-        Log.d("PLATO_PRECIO", String.valueOf(plato.getPrecio())); // Agregar esta línea
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            Plato plato = platos.get(position);
+            Log.d("PLATO_NAME", plato.getNombre()); // Agregar esta línea
+            Log.d("PLATO_DESCRIPTION", plato.getDescripcion()); // Agregar esta línea
+            Log.d("PLATO_PRECIO", String.valueOf(plato.getPrecio())); // Agregar esta línea
 
 
-        // Asigna los datos del plato a las vistas en el diseño
-        holder.nombreTextView.setText(plato.getNombre());
-        holder.descripcionTextView.setText(plato.getDescripcion());
-        holder.precioTextView.setText(String.valueOf(plato.getPrecio()));
+            // Asigna los datos del plato a las vistas en el diseño
+            holder.nombreTextView.setText(plato.getNombre());
+            holder.descripcionTextView.setText(plato.getDescripcion());
+            holder.precioTextView.setText(String.valueOf(plato.getPrecio()));
 
-        // Convierte el array de bytes en un objeto Bitmap
-        Bitmap imagenBitmap = BitmapFactory.decodeByteArray(plato.getImagen(), 0, plato.getImagen().length);
+            // Convierte el array de bytes en un objeto Bitmap
+            Bitmap imagenBitmap = BitmapFactory.decodeByteArray(plato.getImagen(), 0, plato.getImagen().length);
 
-        // Establece el Bitmap en el ImageView
-        holder.imagenImageView.setImageBitmap(imagenBitmap);
-    }
+            // Establece el Bitmap en el ImageView
+            holder.imagenImageView.setImageBitmap(imagenBitmap);
 
-    @Override
-    public int getItemCount() {
-        return platos.size();
-    }
+            // Establece el icono de disponibilidad
+            if (plato.getDisponible() == 1) {
+                holder.ic.setImageResource(R.drawable.en_stock);
+            } else {
+                holder.ic.setImageResource(R.drawable.agotado);
+            }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView nombreTextView;
-        public TextView descripcionTextView;
-        public TextView precioTextView;
-        public ImageView imagenImageView;
+        }
 
-        public ViewHolder(View itemView) {
-            super(itemView);
-            nombreTextView = itemView.findViewById(R.id.nom_plato);
-            descripcionTextView = itemView.findViewById(R.id.desc_plato);
-            precioTextView = itemView.findViewById(R.id.precio);
-            imagenImageView = itemView.findViewById(R.id.imageViewPlato);
+        @Override
+        public int getItemCount() {
+            return platos.size();
+        }
+
+        public static class ViewHolder extends RecyclerView.ViewHolder {
+            public TextView nombreTextView;
+            public TextView descripcionTextView;
+            public TextView precioTextView;
+            public ImageView imagenImageView;
+            public ImageView ic;
+
+            public ViewHolder(View itemView) {
+                super(itemView);
+                nombreTextView = itemView.findViewById(R.id.nom_plato);
+                descripcionTextView = itemView.findViewById(R.id.desc_plato);
+                precioTextView = itemView.findViewById(R.id.precio);
+                imagenImageView = itemView.findViewById(R.id.imageViewPlato);
+                ic = itemView.findViewById(R.id.icon_disponible);
+            }
         }
     }
-}
 
 

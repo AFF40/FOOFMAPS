@@ -6,18 +6,24 @@
 
         android:id="@+id/maps"
         android:icon="@drawable/iconomaps"
-        android:title="@string/fmaps" />
+        android:title="@string/fmap" />
 
     <item
-        android:id="@+id/search"
+        android:id="@+id/mi_menu"
         android:icon="@drawable/searchicon"
-        android:title="@string/buscar"
+        android:title="@string/mimenu"
+
+        />
+    <item
+        android:id="@+id/editar_menu"
+        android:icon="@drawable/searchicon"
+        android:title="@string/editar_menu"
 
         />
 
     <item
         android:id="@+id/ajustes"
         android:icon="@drawable/campanaicon"
-        android:title="@string/ajustes" />
+        android:title="@string/ajustes_rest" />
 
 </menu>
