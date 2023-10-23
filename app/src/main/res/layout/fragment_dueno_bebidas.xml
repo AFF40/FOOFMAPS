@@ -3,14 +3,79 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".dueño.dueno_bebidas">
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/black"
+        android:paddingTop="10dp"
+        android:paddingStart="20dp"
+        android:paddingBottom="10dp"
+        >
+        <LinearLayout
+            android:id="@+id/añadirbebida"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingVertical="10dp"
+            android:layout_gravity="start"
+            android:paddingStart="25dp">
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/agregaricon"
+            >
+        </ImageView>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Añadir Bebida"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                >
+            </TextView>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/editarbebidas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingVertical="10dp"
+            android:layout_gravity="end"
+            android:paddingEnd="30dp">
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/editaricon"
+                >
+            </ImageView>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="editar Bebida"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                >
+            </TextView>
+        </LinearLayout>
 
+
+
+
+    </androidx.appcompat.widget.Toolbar>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="70dp"
+        >
     <!-- crea la lista de bebidas -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewBebidas"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="10dp"
-        android:background="@drawable/bordeform"/>
+        android:background="@drawable/bordeform"
+        />
 
+    </RelativeLayout>
 </FrameLayout>

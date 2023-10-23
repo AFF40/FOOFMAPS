@@ -54,12 +54,27 @@
             android:background="@android:color/transparent" />
     </androidx.appcompat.widget.Toolbar>
 
-    <!-- Agrega el RecyclerView para la lista de platos -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewPlatos"
+    <!-- Agrega un FrameLayout para contener el RecyclerView y el fragmento -->
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:padding="10dp"
-        android:backgroundTint="@color/white"/>
+        android:layout_weight="1">
+
+
+
+        <!-- Agrega un FrameLayout para cargar fragmentos (bebidas) -->
+        <FrameLayout
+            android:id="@+id/contenedorlista"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/platosybebidas"
+        android:background="@color/black"
+        app:itemIconTint="@color/rojo"
+        app:itemTextColor="@color/rojo"
+        app:menu="@menu/menu_doble_1" />
 </LinearLayout>

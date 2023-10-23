@@ -1,0 +1,166 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/bordeform"
+    android:backgroundTint="@color/white">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="AGREGAR PLATO"
+        android:textColor="@color/black"
+        android:textSize="30dp">
+
+    </TextView>
+    <!-- Campo para el nombre del plato -->
+    <EditText
+        android:id="@+id/editTextNomPlato"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nombre del Plato"
+        android:inputType="text"
+        style="@style/TextInputStyle"
+        android:textColorHint="@color/black"
+        android:layout_marginTop="20dp"/>
+
+    <!-- Campo para la descripción del plato -->
+    <EditText
+        android:id="@+id/editTextDescripcion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Descripción (aqui puede poner los ingredientes)"
+        android:inputType="textMultiLine"
+        style="@style/TextInputStyle"
+        android:textColorHint="@color/black"
+        android:layout_marginTop="10dp"/>
+
+    <!-- Campo para el precio del plato -->
+    <EditText
+        android:id="@+id/editTextPrecio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Precio"
+        android:inputType="numberDecimal"
+        style="@style/TextInputStyle"
+        android:textColorHint="@color/black"
+        android:layout_marginTop="10dp"/>
+
+    <!-- Botón para cargar una imagen desde la galería -->
+    <Button
+        android:id="@+id/btnSelectImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Cargar imagen desde la galería"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/black"
+        android:layout_marginTop="20dp"
+        />
+
+    <!-- Botón para cargar una imagen desde la cámara -->
+    <Button
+        android:id="@+id/btnselectcamara"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Tomar una foto"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/black"
+         />
+
+    <!-- ImageView para mostrar la imagen seleccionada o tomada -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:background="@drawable/bordeform"
+
+        >
+        <!-- ImageView para la imagen del plato -->
+        <ImageView
+            android:id="@+id/imagenPlato"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="15dp">
+
+            <!-- TextView para la descripción del plato -->
+            <TextView
+                android:id="@+id/nom_plato"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="nombre del plato"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                />
+            <TextView
+                android:id="@+id/desc_plato"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="descripcion plato"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:paddingTop="10dp"
+                />
+
+
+        </LinearLayout>
+
+        <!-- Botón para agregar el plato al carrito -->
+        <!-- TextView para el precio del plato -->
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+            <ImageView
+                android:id="@+id/icon_disponible"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:paddingBottom="0dp"
+                android:layout_marginBottom="30dp"
+                android:src="@drawable/en_stock"
+                />
+
+
+            <TextView
+                android:id="@+id/precio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$0.00"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/item_border"
+                android:padding="5dp"
+                />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Botón para enviar el formulario -->
+    <Button
+        android:id="@+id/btnEnviarFormulario"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Enviar"
+        android:backgroundTint="@color/black"
+        android:textColor="@color/rojo"
+        android:textSize="20dp"
+        android:layout_marginTop="30dp" />
+
+</LinearLayout>

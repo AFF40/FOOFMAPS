@@ -70,15 +70,15 @@ public class vista_dueno extends AppCompatActivity {
                 case R.id.maps:
                     // No necesitas iniciar la actividad actual nuevamente
                     return true;
-                case R.id.mi_menu:
+                case R.id.alimentos:
                     int restauranteId = getIntent().getIntExtra("restaurante_id", -1);
                     Fragment fragmentmenu = dueno_menu.newInstance(restauranteId);
                     loadFragment(fragmentmenu);
                     return true;
 
-                case R.id.editar_menu:
-                    Fragment fragmenteditar = new editar_menu(); // Reemplaza con el nombre correcto de tu fragmento
-                    loadFragment(fragmenteditar);
+                case R.id.bebidas:
+                    Fragment fragmentbebidas= new dueno_bebidas(); // Reemplaza con el nombre correcto de tu fragmento
+                    loadFragment(fragmentbebidas);
                     return true;
                 case R.id.ajustes:
                     Fragment fragmentSettings = new SettingsFragment(); // Reemplaza con el nombre correcto de tu fragmento

@@ -47,6 +47,7 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.8'
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
 
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Si alguna dependencia necesita androidx.annotation, agrégala aquí, asegurándote de que todas usen la misma versión.

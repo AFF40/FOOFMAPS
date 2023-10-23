@@ -3,4 +3,21 @@
     <style name="CustomButtonStyle">
         <item name="android:textColor">#FFFFFF</item> <!-- Color del texto en blanco -->
     </style>
+
+    <style name="TextInputStyle">
+        <item name="android:background">@drawable/edittext_background</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+    <style name="ButtonStyle" parent="Widget.AppCompat.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:backgroundTint">@color/material_dynamic_primary0</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <!-- Otros atributos de estilo que desees agregar -->
+    </style>
+
 </resources>

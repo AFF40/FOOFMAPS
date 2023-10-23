@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 <!-- agrega 2 items -->
     <item
-        android:id="@+id/Comida"
+        android:id="@+id/comidas"
         android:icon="@drawable/icono_plato"
-        android:title="" />
+        android:title="Productos" />
     <item
         android:id="@+id/bebidas"
         android:icon="@drawable/icono_bebida"
-        android:title="" />
+        android:title="Bebidas" />
 </menu>
