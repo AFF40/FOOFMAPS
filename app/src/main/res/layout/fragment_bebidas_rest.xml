@@ -3,14 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".restaurantes.bebidas_rest"
-    android:background="@android:color/white">
+    tools:context=".restaurantes.platos_rest">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <!-- Agrega el RecyclerView para la lista de platos dentro del FrameLayout -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewBebidas"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment"
-        android:background="@android:color/white"/>
+        android:padding="10dp" />
 
 </FrameLayout>

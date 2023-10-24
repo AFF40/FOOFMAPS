@@ -1,9 +1,5 @@
 package com.example.foofmaps.dueño;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -12,14 +8,17 @@ import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.foofmaps.MainActivity;
 import com.example.foofmaps.R;
-import com.example.foofmaps.SearchFragment;
-import com.example.foofmaps.SettingsFragment;
+import com.example.foofmaps.clientes.restaurantes.MainActivity;
+import com.example.foofmaps.clientes.restaurantes.SettingsFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -77,7 +76,8 @@ public class vista_dueno extends AppCompatActivity {
                     return true;
 
                 case R.id.bebidas:
-                    Fragment fragmentbebidas= new dueno_bebidas(); // Reemplaza con el nombre correcto de tu fragmento
+                    int restauranteId2 = getIntent().getIntExtra("restaurante_id", -1);
+                    Fragment fragmentbebidas = dueno_bebidas.newInstance(restauranteId2);
                     loadFragment(fragmentbebidas);
                     return true;
                 case R.id.ajustes:

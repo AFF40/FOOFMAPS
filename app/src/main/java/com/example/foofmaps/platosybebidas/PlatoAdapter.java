@@ -41,7 +41,7 @@
             // Asigna los datos del plato a las vistas en el diseño
             holder.nombreTextView.setText(plato.getNombre());
             holder.descripcionTextView.setText(plato.getDescripcion());
-            holder.precioTextView.setText(String.valueOf(plato.getPrecio()));
+            holder.precioTextView.setText(String.valueOf(plato.getPrecio()+" Bs."));
 
             // Convierte el array de bytes en un objeto Bitmap
             Bitmap imagenBitmap = BitmapFactory.decodeByteArray(plato.getImagen(), 0, plato.getImagen().length);

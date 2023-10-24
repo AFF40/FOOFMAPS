@@ -44,18 +44,7 @@
             LinearLayout btnAñadirPlato = view.findViewById(R.id.añadirplato);
             LinearLayout btnEditarPlato = view.findViewById(R.id.editarplato);
             LinearLayout btnActualizarlista = view.findViewById(R.id.actualizarlistaplatos);
-            btnAñadirPlato.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Obtén el restaurante_id
-                    int restauranteId = getArguments().getInt("restaurante_id", -1);
-                    // Abre la primera actividad cuando se hace clic en "Añadir plato"
-                    Intent intent = new Intent(requireContext(), agregar_platos.class);
-                    intent.putExtra("restaurante_id", restauranteId);
-                    Log.d("ID_DEBUGid_enviado_intent", "restaurante_id: " + restauranteId);
-                    startActivity(intent);
-                }
-            });
+
             // Configura un OnClickListener para el botón "Añadir plato"
             btnAñadirPlato.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -144,6 +133,7 @@
                 JSONArray jsonArray = new JSONArray(json);
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject platoJson = jsonArray.getJSONObject(i);
+
                     String nombre = platoJson.getString("nom_plato");
                     String descripcion = platoJson.getString("descripcion");
                     float precio = (float) platoJson.getDouble("precio");

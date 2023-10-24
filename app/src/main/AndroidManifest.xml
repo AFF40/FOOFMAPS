@@ -5,10 +5,13 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-feature android:name="android.hardware.camera" android:required="true" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
 
     <application
         android:allowBackup="true"
@@ -22,6 +25,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="tiramisu">
         <activity
+            android:name=".dueño.editar_bebida"
+            android:exported="false" />
+        <activity
+            android:name=".dueño.agregar_bebidas"
+            android:exported="false" />
+        <activity
             android:name=".dueño.editar_plato"
             android:exported="false" />
         <activity
@@ -31,7 +40,7 @@
             android:name=".dueño.vista_dueno"
             android:exported="false" />
         <activity
-            android:name=".MenuRest"
+            android:name=".clientes.restaurantes.MenuRest"
             android:exported="false"
             android:label="MenuRestActivity" />
 
@@ -40,14 +49,14 @@
             android:value="AIzaSyCSto7bMf939HbSUktPe0IWWn78J7B9hSQ" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name=".clientes.restaurantes.MapsActivity"
             android:exported="false"
             android:label="@string/title_activity_maps" />
         <activity
-            android:name=".registro"
+            android:name=".clientes.restaurantes.registro"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".clientes.restaurantes.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
