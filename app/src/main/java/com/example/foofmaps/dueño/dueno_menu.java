@@ -110,6 +110,7 @@
 
                     // Procesar el JSON y obtener la lista de platos
                     platos = parsePlatosFromJSON(jsonResponse);
+                    Log.d("platosss", platos.toString());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -120,7 +121,7 @@
             protected void onPostExecute(List<Plato> platos) {
                 // Configurar el RecyclerView con la lista de platos
                 RecyclerView recyclerViewPlatos = getView().findViewById(R.id.viewPlatos);
-                PlatoAdapter platoAdapter = new PlatoAdapter(platos);
+                PlatoAdapter platoAdapter = new PlatoAdapter(platos,false);
                 recyclerViewPlatos.setLayoutManager(new LinearLayoutManager(requireContext()));
                 recyclerViewPlatos.setAdapter(platoAdapter);
             }
@@ -133,7 +134,7 @@
                 JSONArray jsonArray = new JSONArray(json);
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject platoJson = jsonArray.getJSONObject(i);
-
+                    int id_comida = platoJson.getInt("id_comida");
                     String nombre = platoJson.getString("nom_plato");
                     String descripcion = platoJson.getString("descripcion");
                     float precio = (float) platoJson.getDouble("precio");
@@ -146,7 +147,7 @@
                     byte[] imagen = decodeBase64(imagenBase64);
 
                     // Crear un objeto Plato con los datos
-                    Plato plato = new Plato(nombre, descripcion, precio, imagen, disponible );
+                    Plato plato = new Plato(id_comida, nombre, descripcion, precio, imagen, disponible );
                     platos.add(plato);
                 }
             } catch (JSONException e) {

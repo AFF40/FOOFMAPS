@@ -10,7 +10,8 @@ public class Plato {
     private byte[] imagen; // Cambia el tipo de imagen a byte[]
     private int disponible;
 
-    public Plato(String nombre, String descripcion, double precio, byte[] imagen, int disponible) {
+    public Plato(int id_comida, String nombre, String descripcion, double precio, byte[] imagen, int disponible) {
+        this.id = id_comida;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;

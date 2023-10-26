@@ -2,19 +2,18 @@ package com.example.foofmaps.restaurantes;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.example.foofmaps.HttpUtils;
+import com.example.foofmaps.R;
 import com.example.foofmaps.platosybebidas.Plato;
 import com.example.foofmaps.platosybebidas.PlatoAdapter;
-import com.example.foofmaps.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,7 +65,7 @@ public class platos_rest extends Fragment {
         protected void onPostExecute(List<Plato> platos) {
             // Configurar el RecyclerView con la lista de platos
             RecyclerView recyclerViewPlatos = requireView().findViewById(R.id.recyclerViewPlatos);
-            PlatoAdapter platoAdapter = new PlatoAdapter(platos);
+            PlatoAdapter platoAdapter = new PlatoAdapter(platos,false);
             recyclerViewPlatos.setLayoutManager(new LinearLayoutManager(requireContext()));
             recyclerViewPlatos.setAdapter(platoAdapter);
         }
@@ -78,13 +77,14 @@ public class platos_rest extends Fragment {
             JSONArray jsonArray = new JSONArray(json);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject platoJson = jsonArray.getJSONObject(i);
+                int id_comida = platoJson.getInt("id_comida");
                 String nombre = platoJson.getString("nom_plato");
                 String descripcion = platoJson.getString("descripcion");
                 float precio = (float) platoJson.getDouble("precio");
                 int disponible = platoJson.getInt("disponible");
                 String imagenBase64 = platoJson.getString("imagen");
                 byte[] imagen = decodeBase64(imagenBase64);
-                Plato plato = new Plato(nombre, descripcion, precio, imagen, disponible);
+                Plato plato = new Plato(id_comida, nombre, descripcion, precio, imagen, disponible);
                 platos.add(plato);
             }
         } catch (JSONException e) {

@@ -18,17 +18,31 @@
 
     public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> {
         private List<Plato> platos;
+        private boolean isFromSpecificActivity; // Nuevo miembro para indicar si proviene de la actividad específica
 
-        public PlatoAdapter(List<Plato> platos) {
+
+        public PlatoAdapter(List<Plato> platos, boolean isFromSpecificActivity) {
             this.platos = platos;
+            this.isFromSpecificActivity = isFromSpecificActivity;
+            // Resto del constructor
         }
 
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.plato_item, parent, false);
+            View view;
+
+            if (isFromSpecificActivity) {
+                // Usa el diseño específico si proviene de la actividad específica
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.editplato_item, parent, false);
+            } else {
+                // Usa un diseño predeterminado en caso contrario
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.plato_item, parent, false);
+            }
+
             return new ViewHolder(view);
         }
+
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
