@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
+import com.example.foofmaps.Config;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,10 +12,10 @@ import java.util.Map;
 public class LoginRequest extends StringRequest {
 
     //conexion con el archivo php
-    private static final String Login_Request_URL="http://192.168.1.3/web2/controlador/controladorLogin.php";
+    private static final String controladorURL = Config.CONTROLADOR_URL+"controladorLogin.php";
     private final Map<String,String>params;
     public LoginRequest(String username, String pass1,  Response.Listener<String> listener){
-        super(Method.POST, Login_Request_URL,listener,null);
+        super(Method.POST, controladorURL,listener,null);
         params=new HashMap<>();
         Log.e("info",username);
         params.put("username",username);

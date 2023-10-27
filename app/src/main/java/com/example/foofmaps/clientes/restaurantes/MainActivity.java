@@ -15,6 +15,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
 import com.example.foofmaps.dueño.vista_dueno;
 
@@ -115,10 +116,10 @@ public class MainActivity extends AppCompatActivity {
     // Modificamos la función para que obtenga el restaurante_id de forma asíncrona
     private void obtenerIdRestDesdeBaseDeDatos(String username) {
 
-        String url = "http://192.168.1.3/web2/modelo/consultar_id_rest.php";
+        String modeloURL = Config.MODELO_URL+"/consultar_id_rest.php";
 
         RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, response -> {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, modeloURL, response -> {
             Log.d("Response", response);
             try {
                 JSONObject jsonResponse = new JSONObject(response);

@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.foofmaps.Config;
 import com.example.foofmaps.HttpUtils;
 import com.example.foofmaps.R;
 import com.example.foofmaps.platosybebidas.Plato;
@@ -50,8 +51,8 @@ public class platos_rest extends Fragment {
 
             try {
                 // Realizar una solicitud HTTP para obtener los datos JSON de la API
-                String apiUrl = "http://192.168.1.3/modelo/getPlatos.php?restaurante_id=" + idRestaurante;
-                String jsonResponse = HttpUtils.get(apiUrl);
+                String modeloURL = Config.MODELO_URL+"getPlatos.php?restaurante_id=" + idRestaurante;
+                String jsonResponse = HttpUtils.get(modeloURL);
 
                 // Procesar el JSON y obtener la lista de platos
                 platos = parsePlatosFromJSON(jsonResponse);

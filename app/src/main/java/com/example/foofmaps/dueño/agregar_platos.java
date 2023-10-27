@@ -29,6 +29,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
 
 import org.json.JSONException;
@@ -229,7 +230,7 @@ public class agregar_platos extends AppCompatActivity  implements onPlatoAddedLi
         Intent intent = getIntent();
         int restauranteId = intent.getIntExtra("restaurante_id", -1);
         Log.d("restaurante_id_en_agregar", "restaurante_id: " + restauranteId);
-        String url = "http://192.168.1.3/modelo/a%c3%b1adir_plato.php";
+        String modeloURL = Config.MODELO_URL+"a%c3%b1adir_plato.php";
 
         // Obtener los valores de los campos del formulario
         String nombrePlato = editTextNomPlato.getText().toString().trim();
@@ -271,7 +272,7 @@ public class agregar_platos extends AppCompatActivity  implements onPlatoAddedLi
 
             JsonObjectRequest request = new JsonObjectRequest(
                     Request.Method.POST,
-                    url,
+                    modeloURL,
                     platoData,
                     response -> {
                         // Maneja la respuesta del servidor aquí

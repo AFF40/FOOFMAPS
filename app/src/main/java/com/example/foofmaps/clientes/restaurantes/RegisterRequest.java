@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
+import com.example.foofmaps.Config;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,10 +12,10 @@ import java.util.Map;
 public class RegisterRequest extends StringRequest {
 
     //conexion con el archivo php
-    private static final String REGISTER_REQUEST_URL="http://192.168.1.3/web2/controlador/controladorPersona.php";
+    private static final String controladorURL = Config.CONTROLADOR_URL+"controladorPersona.php";
     private final Map<String,String>params;
     public RegisterRequest(String username, String email, String pass1, String pass2, Response.Listener<String> listener){
-        super(Method.POST, REGISTER_REQUEST_URL,listener,null);
+        super(Method.POST, controladorURL,listener,null);
         params=new HashMap<>();
         Log.e("info",username);
         Log.e("info",email);

@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
 import com.example.foofmaps.restaurantes.bebidas_rest;
 import com.example.foofmaps.restaurantes.platos_rest;
@@ -49,10 +50,10 @@ public class MenuRest extends AppCompatActivity {
         whatsappButton.setOnClickListener(v -> openWhatsApp(String.valueOf(celular)));
 
         // Construir la URL para obtener la imagen
-        String imageUrl = "http://192.168.1.3/modelo/icono_rest.php?id=" + restaurante_id;
+        String modeloURL = Config.MODELO_URL+"icono_rest.php?id=" + restaurante_id;
 
         // Cargar la imagen desde tu servidor utilizando Picasso
-        Picasso.get().load(imageUrl).into(imageViewRestaurante);
+        Picasso.get().load(modeloURL).into(imageViewRestaurante);
 
         // Inicializar los fragmentos si no están creados
         if (platosFragment == null) {

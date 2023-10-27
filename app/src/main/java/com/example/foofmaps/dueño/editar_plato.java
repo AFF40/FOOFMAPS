@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
 import com.example.foofmaps.clientes.restaurantes.Editaresteplato;
 import com.example.foofmaps.platosybebidas.Plato;
@@ -56,9 +57,9 @@ public class editar_plato extends AppCompatActivity {
 
             try {
                 // Construye la URL
-                String apiUrl = "http://192.168.1.3/modelo/getPlatos.php?restaurante_id=" + restauranteId;
-                URL url = new URL(apiUrl);
-                Log.d("urledit", "apiUrl: " + apiUrl);
+                String modeloURL = Config.MODELO_URL+"getPlatos.php?restaurante_id=" + restauranteId;
+                URL url = new URL(modeloURL);
+                Log.d("urledit", "apiUrl: " +modeloURL );
 
                 // Realiza la solicitud HTTP
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();

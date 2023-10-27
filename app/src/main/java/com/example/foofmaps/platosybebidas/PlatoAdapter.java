@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.foofmaps.R;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
@@ -49,7 +51,6 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
         holder.nombreTextView.setText(plato.getNombre());
         holder.descripcionTextView.setText(plato.getDescripcion());
         holder.precioTextView.setText(String.valueOf(plato.getPrecio() + " Bs."));
-
         Bitmap imagenBitmap = BitmapFactory.decodeByteArray(plato.getImagen(), 0, plato.getImagen().length);
         holder.imagenImageView.setImageBitmap(imagenBitmap);
 
@@ -74,27 +75,35 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
                 public void onClick(View view) {
                     if (onUpdatePlatoClickListener != null) {
                         onUpdatePlatoClickListener.onUpdatePlatoClick(plato);
-                        // URL para cambiar el estado del plato en el servidor
-                        String serverUrl = "http://192.168.1.3/modelo/cambiar_estado_plato.php?id_comida=" + plato.getId();
 
-                        Log.d("url", "serverUrldeesteplato: " + serverUrl);
+                        Log.d("esteplatodisponible",String.valueOf(plato.getDisponible()));
 
                         // Aquí puedes realizar la solicitud HTTP a la URL "serverUrl" utilizando una biblioteca de red como Retrofit, Volley, o HttpURLConnection.
 
                         // Asegúrate de manejar la solicitud HTTP de manera segura y manejar los errores y las respuestas del servidor de acuerdo a tus necesidades.
+                        String serverUrl = "http://192.168.172.109/modelo/cambiar_estado_plato.php?id_comida=" + plato.getId()+"&disponible="+plato.getDisponible();
 
+                        Log.d("url", "serverUrldeesteplato: " + serverUrl);
                         try {
-                            URL urlObject = new URL(serverUrl);
-                            HttpURLConnection connection = (HttpURLConnection) urlObject.openConnection();
-                            connection.setRequestMethod("GET");
 
-                            int responseCode = connection.getResponseCode();
-                            if (responseCode == HttpURLConnection.HTTP_OK) {
-                                // La solicitud se realizó con éxito, puedes realizar acciones adicionales si es necesario.
-                            } else {
-                                // Ocurrió un error al realizar la solicitud.
-                                // Puedes manejar el error de la manera que prefieras.
+                            URL url = new URL(serverUrl);
+                            Log.d("urlupdateesteplato", "apiUrl: " + url);
+
+
+
+                            // Realiza la solicitud HTTP
+                            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                            InputStream inputStream = connection.getInputStream();
+                            InputStreamReader reader = new InputStreamReader(inputStream);
+
+                            int data = reader.read();
+                            StringBuilder result = new StringBuilder();
+                            while (data != -1) {
+                                char current = (char) data;
+                                result.append(current);
+                                data = reader.read();
                             }
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -115,6 +124,7 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
         public TextView precioTextView;
         public ImageView imagenImageView;
         public ImageView ic;
+        public TextView disponibleTextView;
         public View button;
         public View button2;
 

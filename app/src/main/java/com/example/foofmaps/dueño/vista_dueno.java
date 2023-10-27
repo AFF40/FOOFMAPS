@@ -16,6 +16,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
 import com.example.foofmaps.clientes.restaurantes.MainActivity;
 import com.example.foofmaps.clientes.restaurantes.SettingsFragment;
@@ -116,18 +117,18 @@ public class vista_dueno extends AppCompatActivity {
     // Función para obtener los datos del restaurante desde la base de datos
 
     private void fetchRestaurantDataFromDatabase(int restauranteId) {
-        String url = "http://192.168.1.3/web2/controlador/cont_rest.php?restaurante_id=" + restauranteId;
-        Log.d("url", url);
-        String imageUrl = "http://192.168.1.3/modelo/icono_rest.php?id=" + restauranteId;
+        String controladorURL1 = Config.CONTROLADOR_URL+"cont_rest.php?restaurante_id=" + restauranteId;
+        Log.d("url", controladorURL1);
+        String modeloURL2 = Config.MODELO_URL+"icono_rest.php?id=" + restauranteId;
         Switch switchEstado = findViewById(R.id.boton_estado_rest);
         TextView nomrest_tx = findViewById(R.id.estado_rest);
         ImageView imageViewRestaurante = findViewById(R.id.icono_res);
 
         // Cargar la imagen desde tu servidor utilizando Picasso
-        Picasso.get().load(imageUrl).into(imageViewRestaurante);
+        Picasso.get().load(modeloURL2).into(imageViewRestaurante);
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, response -> {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, controladorURL1, response -> {
             try {
                 JSONArray jsonArray = new JSONArray(response);
                 for (int i = 0; i < jsonArray.length(); i++) {
@@ -220,10 +221,10 @@ public class vista_dueno extends AppCompatActivity {
 
     private void sendRequest(int restauranteId, int estado) {
         // Construye la URL con los parámetros
-        String url = "http://192.168.1.3/web2/modelo/cambiar_estado.php?restaurante_id=" + restauranteId + "&estado=" + estado;
-        Log.d("url_estado", url);
+        String modeloURL = Config.MODELO_URL+"cambiar_estado.php?restaurante_id=" + restauranteId + "&estado=" + estado;
+        Log.d("url_estado", modeloURL);
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, response -> {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, modeloURL, response -> {
             // Procesa la respuesta de la solicitud si es necesario
             // Puedes agregar código para manejar la respuesta aquí
         }, error -> {

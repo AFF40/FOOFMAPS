@@ -22,6 +22,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
 import com.example.foofmaps.Restaurante;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -199,9 +200,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
     private void fetchLocationsFromDatabase() {
-        String url = "http://192.168.1.3/web2/controlador/controlador_Rest.php";
+        String controladorURL = Config.CONTROLADOR_URL+"controlador_Rest.php";
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, response -> {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, controladorURL, response -> {
             try {
                 JSONArray jsonArray = new JSONArray(response);
                 Log.d("JSON Response", jsonArray.toString());
