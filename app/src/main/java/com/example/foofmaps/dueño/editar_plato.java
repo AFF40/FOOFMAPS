@@ -1,5 +1,6 @@
 package com.example.foofmaps.dueño;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Base64;
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.foofmaps.R;
+import com.example.foofmaps.clientes.restaurantes.Editaresteplato;
 import com.example.foofmaps.platosybebidas.Plato;
 import com.example.foofmaps.platosybebidas.PlatoAdapter;
 
@@ -96,11 +98,36 @@ public class editar_plato extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<Plato> platos) {
             super.onPostExecute(platos);
-            // Establece isFromSpecificActivity en true
+            if (adapter == null) {
+                adapter = new PlatoAdapter(platos, isFromSpecificActivity);
+                adapter.setOnPlatoClickListener(new PlatoAdapter.OnPlatoClickListener() {
+                    @Override
+                    public void onPlatoClick(Plato plato) {
+                        // Aquí abres el nuevo Activity y pasas los datos del plato
+                        Intent intent = new Intent(editar_plato.this, Editaresteplato.class);
+                        intent.putExtra("id_comida", plato.getId());
+                        intent.putExtra("nom_plato", plato.getNombre());
+                        intent.putExtra("descripcion", plato.getDescripcion());
+                        intent.putExtra("precio", plato.getPrecio());
+                        intent.putExtra("imagen", plato.getImagen());
+                        startActivity(intent);
+                    }
+                });
+                adapter.setOnUpdatePlatoClickListener(new PlatoAdapter.OnUpdatePlatoClickListener() {
+                    @Override
+                    public void onUpdatePlatoClick(Plato plato) {
 
-            // Crea una instancia del adaptador pasando el valor de isFromSpecificActivity
-            adapter = new PlatoAdapter(platos, isFromSpecificActivity);
-            recyclerView.setAdapter(adapter);
+                    }
+                });
+                recyclerView.setAdapter(adapter);
+            } else {
+                // Si ya existe un adaptador, actualiza la lista de platos
+                adapter.notifyDataSetChanged();
+            }
+
+
         }
+
+
     }
 }

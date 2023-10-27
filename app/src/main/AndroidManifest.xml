@@ -25,6 +25,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="tiramisu">
         <activity
+            android:name=".clientes.restaurantes.Editaresteplato"
+            android:exported="false" />
+        <activity
             android:name=".dueño.editar_bebida"
             android:exported="false" />
         <activity
