@@ -12,12 +12,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.List;
 
 public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> {
@@ -76,37 +79,35 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
                     if (onUpdatePlatoClickListener != null) {
                         onUpdatePlatoClickListener.onUpdatePlatoClick(plato);
 
-                        Log.d("esteplatodisponible",String.valueOf(plato.getDisponible()));
+                        Log.d("esteplatodisponible", String.valueOf(plato.getDisponible()));
 
-                        // Aquí puedes realizar la solicitud HTTP a la URL "serverUrl" utilizando una biblioteca de red como Retrofit, Volley, o HttpURLConnection.
+                        String modeloURL = Config.MODELO_URL + "cambiar_estado_plato.php?id_comida=" + plato.getId();
+                        Log.d("url", "serverUrldeesteplato: " + modeloURL);
 
-                        // Asegúrate de manejar la solicitud HTTP de manera segura y manejar los errores y las respuestas del servidor de acuerdo a tus necesidades.
-                        String serverUrl = "http://192.168.172.109/modelo/cambiar_estado_plato.php?id_comida=" + plato.getId()+"&disponible="+plato.getDisponible();
+                        // Crea una cola de solicitudes Volley
+                        RequestQueue requestQueue = Volley.newRequestQueue(view.getContext());
 
-                        Log.d("url", "serverUrldeesteplato: " + serverUrl);
-                        try {
-
-                            URL url = new URL(serverUrl);
-                            Log.d("urlupdateesteplato", "apiUrl: " + url);
-
-
-
-                            // Realiza la solicitud HTTP
-                            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                            InputStream inputStream = connection.getInputStream();
-                            InputStreamReader reader = new InputStreamReader(inputStream);
-
-                            int data = reader.read();
-                            StringBuilder result = new StringBuilder();
-                            while (data != -1) {
-                                char current = (char) data;
-                                result.append(current);
-                                data = reader.read();
+                        // Crea una solicitud GET utilizando StringRequest
+                        StringRequest stringRequest = new StringRequest(Request.Method.GET, modeloURL, new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                // Maneja la respuesta del servidor si es necesario
+                                // Aquí puedes actualizar el estado de plato según la respuesta del servidor si es necesario
+                                if (response.equals("success")) {
+                                    plato.setDisponible(1 - plato.getDisponible()); // Cambia el estado
+                                    notifyDataSetChanged(); // Notifica al adaptador que los datos han cambiado
+                                }
                             }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                // Maneja los errores de la solicitud
+                                Log.e("Error", "Error en la solicitud HTTP: " + error.getMessage());
+                            }
+                        });
 
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        // Agrega la solicitud a la cola de solicitudes
+                        requestQueue.add(stringRequest);
                     }
                 }
             });
