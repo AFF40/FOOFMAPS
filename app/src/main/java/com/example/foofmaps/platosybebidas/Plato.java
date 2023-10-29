@@ -45,6 +45,19 @@ public class Plato {
     public void setDisponible(int disponible) {
         this.disponible = disponible;
     }
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+    public void setImagen(byte[] imagen) {
+        this.imagen = imagen;
+    }
+
 
     // Puedes agregar setters si es necesario
 

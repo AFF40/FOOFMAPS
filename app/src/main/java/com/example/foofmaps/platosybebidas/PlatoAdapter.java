@@ -1,5 +1,10 @@
 package com.example.foofmaps.platosybebidas;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -8,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,6 +26,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
+import com.example.foofmaps.dueño.Editaresteplato;
 
 import java.util.List;
 
@@ -47,8 +54,8 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Plato plato = platos.get(position);
+    public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        Plato plato = platos.get(holder.getAdapterPosition());
 
         // Configuración de la vista con los datos del plato
         holder.nombreTextView.setText(plato.getNombre());
@@ -56,7 +63,6 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
         holder.precioTextView.setText(String.valueOf(plato.getPrecio() + " Bs."));
         Bitmap imagenBitmap = BitmapFactory.decodeByteArray(plato.getImagen(), 0, plato.getImagen().length);
         holder.imagenImageView.setImageBitmap(imagenBitmap);
-
         if (plato.getDisponible() == 1) {
             holder.ic.setImageResource(R.drawable.en_stock);
         } else {
@@ -64,29 +70,62 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
         }
 
         if (isFromSpecificActivity) {
+            // Agrega un OnClickListener al botón del elemento
             holder.button.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
-                    if (onPlatoClickListener != null) {
-                        onPlatoClickListener.onPlatoClick(plato);
-                    }
+                public void onClick(View v) {
+                    // Crea un Intent para abrir la nueva Activity
+                    Context context = v.getContext();
+                    Intent intent = new Intent(context, Editaresteplato.class);
+
+                    // Agrega los datos del plato como extras en el Intent
+                    intent.putExtra("id_comida", plato.getId());
+                    intent.putExtra("nombre_plato", plato.getNombre());
+                    intent.putExtra("descripcion_plato", plato.getDescripcion());
+                    intent.putExtra("precio_plato", plato.getPrecio());
+                    intent.putExtra("imagen_plato", plato.getImagen());
+                    Log.d("platoimagen", String.valueOf(plato.getImagen()));
+                    Log.d("platoimagen", String.valueOf(plato.getNombre()));
+                    Log.d("platoimagen", String.valueOf(plato.getDescripcion()));
+                    Log.d("platoimagen", String.valueOf(plato.getPrecio()));
+                    Log.d("platoimagen", String.valueOf(plato.getId()));
+
+                    // Inicia la nueva Activity editar este plato
+                    context.startActivity(intent);
+
                 }
             });
 
+            //boton para cambiar disponibilidad
             holder.button2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (onUpdatePlatoClickListener != null) {
                         onUpdatePlatoClickListener.onUpdatePlatoClick(plato);
 
+                        plato.setDisponible(1 - plato.getDisponible());
+
+                        // Configurar la imagen en función del estado del plato
+                        if (plato.getDisponible() == 1) {
+                            // Cambiar el estado del plato en la lista
+                            holder.ic.setImageResource(R.drawable.agotado);
+                            // Notifica al adaptador que los datos han cambiado para que actualice la vista
+                            notifyItemChanged(position);
+                        } else if(plato.getDisponible() == 0) {
+                            // Cambiar el estado del plato en la lista
+                            holder.ic.setImageResource(R.drawable.en_stock);
+                            // Notifica al adaptador que los datos han cambiado para que actualice la vista
+                            notifyItemChanged(position);
+                        }
+
                         Log.d("esteplatodisponible", String.valueOf(plato.getDisponible()));
 
+                        // Crea la URL para cambiar el estado del plato
                         String modeloURL = Config.MODELO_URL + "cambiar_estado_plato.php?id_comida=" + plato.getId();
                         Log.d("url", "serverUrldeesteplato: " + modeloURL);
 
                         // Crea una cola de solicitudes Volley
                         RequestQueue requestQueue = Volley.newRequestQueue(view.getContext());
-
                         // Crea una solicitud GET utilizando StringRequest
                         StringRequest stringRequest = new StringRequest(Request.Method.GET, modeloURL, new Response.Listener<String>() {
                             @Override
@@ -96,6 +135,7 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
                                 if (response.equals("success")) {
                                     plato.setDisponible(1 - plato.getDisponible()); // Cambia el estado
                                     notifyDataSetChanged(); // Notifica al adaptador que los datos han cambiado
+
                                 }
                             }
                         }, new Response.ErrorListener() {
@@ -105,10 +145,61 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
                                 Log.e("Error", "Error en la solicitud HTTP: " + error.getMessage());
                             }
                         });
-
                         // Agrega la solicitud a la cola de solicitudes
                         requestQueue.add(stringRequest);
                     }
+                }
+            });
+
+            holder.button3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                    builder.setTitle("Eliminar plato");
+                    builder.setMessage("¿Está seguro de que desea eliminar este plato?");
+                    builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Lógica para eliminar el plato
+                            if (onDeletePlatoClickListener != null) {
+                                onDeletePlatoClickListener.onDeletePlatoClick(plato);
+                            }
+                            // Elimina el plato de la lista y notifica al adaptador
+                            removePlato(plato);
+                            // Crea la URL para eliminar el plato
+                            String eliminarPlatoURL = Config.MODELO_URL + "eliminar_plato.php?id_comida=" + plato.getId();
+
+                            RequestQueue requestQueue = Volley.newRequestQueue(view.getContext());
+
+                            StringRequest eliminarPlatoRequest = new StringRequest(Request.Method.GET, eliminarPlatoURL, new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                    if (response.equals("success")) {
+                                        // Eliminación exitosa
+                                        Toast.makeText(view.getContext(), "Eliminación exitosa", Toast.LENGTH_SHORT).show();
+
+                                    } else {
+                                        // La eliminación falló, maneja el caso de error si es necesario
+                                        // Puedes considerar restaurar el plato en caso de error en la eliminación
+                                    }
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Log.e("Error", "Error en la solicitud HTTP: " + error.getMessage());
+                                }
+                            });
+
+                            requestQueue.add(eliminarPlatoRequest);
+                        }
+                    });
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.show();
                 }
             });
         }
@@ -128,11 +219,13 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
         public TextView disponibleTextView;
         public View button;
         public View button2;
+        public View button3;
 
         public ViewHolder(View itemView) {
             super(itemView);
             button = itemView.findViewById(R.id.boton_editar_plato);
             button2 = itemView.findViewById(R.id.btn_cambiar_disponibilidad);
+            button3 = itemView.findViewById(R.id.boton_eliminar_plato);
             nombreTextView = itemView.findViewById(R.id.nom_plato);
             descripcionTextView = itemView.findViewById(R.id.desc_plato);
             precioTextView = itemView.findViewById(R.id.precio);
@@ -140,7 +233,20 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
             ic = itemView.findViewById(R.id.icon_disponible);
         }
     }
+    // Método para actualizar la lista de platos
+    public void setPlatos(List<Plato> platos) {
+        this.platos = platos;
+        notifyDataSetChanged();
+    }
+    public Plato getPlatoAtPosition(int position) {
+        if (position >= 0 && position < platos.size()) {
+            return platos.get(position);
+        } else {
+            return null;
+        }
+    }
 
+    // Botón para editar plato
     public interface OnPlatoClickListener {
         void onPlatoClick(Plato plato);
     }
@@ -151,13 +257,34 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
         this.onPlatoClickListener = listener;
     }
 
+    // Botón para cambiar disponibilidad
+    private OnUpdatePlatoClickListener onUpdatePlatoClickListener;
+
     public interface OnUpdatePlatoClickListener {
         void onUpdatePlatoClick(Plato plato);
     }
 
-    private OnUpdatePlatoClickListener onUpdatePlatoClickListener;
-
     public void setOnUpdatePlatoClickListener(OnUpdatePlatoClickListener listener) {
         this.onUpdatePlatoClickListener = listener;
+    }
+
+    // Botón para eliminar plato
+    private OnDeletePlatoClickListener onDeletePlatoClickListener;
+
+    public interface OnDeletePlatoClickListener {
+        void onDeletePlatoClick(Plato plato);
+    }
+
+    public void setOnDeletePlatoClickListener(OnDeletePlatoClickListener listener) {
+        this.onDeletePlatoClickListener = listener;
+    }
+
+    // Método para eliminar un plato y notificar al adaptador
+    public void removePlato(Plato plato) {
+        int position = platos.indexOf(plato);
+        if (position != -1) {
+            platos.remove(position);
+            notifyItemRemoved(position);
+        }
     }
 }

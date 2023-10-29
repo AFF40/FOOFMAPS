@@ -159,11 +159,11 @@ public class agregar_platos extends AppCompatActivity  implements onPlatoAddedLi
         btnSelectImage.setOnClickListener(view -> {
             // Aquí puedes implementar la lógica para cargar una imagen desde la galería
             // Crea una intención para seleccionar una imagen desde la galería
-            Intent abrircamara = new Intent(Intent.ACTION_PICK);
-            abrircamara.setType("image/*");
+            Intent abrir_galeria = new Intent(Intent.ACTION_PICK);
+            abrir_galeria.setType("image/*");
 
             // Inicia la actividad de selección de imagen
-            startActivityForResult(abrircamara, PICK_IMAGE_REQUEST);
+            startActivityForResult(abrir_galeria, PICK_IMAGE_REQUEST);
         });
 
         btnSelectCamara.setOnClickListener(view -> {

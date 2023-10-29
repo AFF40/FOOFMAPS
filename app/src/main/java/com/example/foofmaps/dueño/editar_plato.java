@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
-import com.example.foofmaps.clientes.restaurantes.Editaresteplato;
 import com.example.foofmaps.platosybebidas.Plato;
 import com.example.foofmaps.platosybebidas.PlatoAdapter;
 
@@ -112,6 +111,7 @@ public class editar_plato extends AppCompatActivity {
                         intent.putExtra("precio", plato.getPrecio());
                         intent.putExtra("imagen", plato.getImagen());
                         startActivity(intent);
+
                     }
                 });
                 adapter.setOnUpdatePlatoClickListener(new PlatoAdapter.OnUpdatePlatoClickListener() {
