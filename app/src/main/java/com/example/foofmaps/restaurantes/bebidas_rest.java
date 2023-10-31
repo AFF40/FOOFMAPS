@@ -66,7 +66,7 @@ public class bebidas_rest extends Fragment {
         protected void onPostExecute(List<Bebida> bebidas) {
             // Configurar el RecyclerView con la lista de platos
             RecyclerView recyclerViewBeidas = requireView().findViewById(R.id.recyclerViewBebidas);
-            BebidaAdapter bebidaAdapter = new BebidaAdapter(bebidas);
+            BebidaAdapter bebidaAdapter = new BebidaAdapter(bebidas,false);
             recyclerViewBeidas.setLayoutManager(new LinearLayoutManager(requireContext()));
             recyclerViewBeidas.setAdapter(bebidaAdapter);
         }
@@ -78,13 +78,14 @@ public class bebidas_rest extends Fragment {
             JSONArray jsonArray = new JSONArray(json);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject bebidaJson = jsonArray.getJSONObject(i);
+                int id_bebida = bebidaJson.getInt("id_bebida");
                 String nombre = bebidaJson.getString("nom_bebida");
                 String descripcion = bebidaJson.getString("descripcion");
                 float precio = (float) bebidaJson.getDouble("precio");
                 int disponible = bebidaJson.getInt("disponible");
                 String imagenBase64 = bebidaJson.getString("imagen");
                 byte[] imagen = decodeBase64(imagenBase64);
-                Bebida bebida = new Bebida(nombre, descripcion, precio, imagen, disponible);
+                Bebida bebida = new Bebida(id_bebida,nombre, descripcion, precio, imagen, disponible);
                 bebidas.add(bebida);
             }
         } catch (JSONException e) {
