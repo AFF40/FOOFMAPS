@@ -15,6 +15,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.foofmaps.ADMIN.Vista_administrador;
 import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
 import com.example.foofmaps.dueño.vista_dueno;
@@ -86,6 +87,12 @@ public class MainActivity extends AppCompatActivity {
                                     // Realizar la consulta para obtener id_rest desde la base de datos
                                     obtenerIdRestDesdeBaseDeDatos(username);
                                 }
+                                else if (rol == 3) {
+                                    // Usuario con rol 3, redirige a vista_dueno
+                                    Intent intent_login_exitoso = new Intent(MainActivity.this, Vista_administrador.class);
+                                    MainActivity.this.startActivity(intent_login_exitoso);
+                                    finish(); // Finaliza la actividad actual para que no se pueda volver atrás desde aquí
+                                }
                             } else {
                                 // Error en el registro, mostrar un mensaje al usuario
                                 Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT).show();
@@ -108,6 +115,8 @@ public class MainActivity extends AppCompatActivity {
                 finish(); // Finaliza la actividad actual para que no se pueda volver atrás desde aquí
             } else if (userRole == 2) {
                 // Usuario con rol 2, se espera la respuesta de obtenerIdRestDesdeBaseDeDatos
+
+            }else if (userRole == 3) {
 
             }
         }

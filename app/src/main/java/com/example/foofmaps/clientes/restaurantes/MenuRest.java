@@ -13,8 +13,6 @@ import androidx.fragment.app.Fragment;
 
 import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
-import com.example.foofmaps.restaurantes.bebidas_rest;
-import com.example.foofmaps.restaurantes.platos_rest;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.squareup.picasso.Picasso;
 
