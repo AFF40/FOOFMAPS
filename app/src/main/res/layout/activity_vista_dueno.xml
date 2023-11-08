@@ -33,7 +33,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Tu Banner Texto Aquí"
+            android:text="nombre del restaurante"
             android:textSize="22sp"
             android:textColor="@color/white"
             android:gravity="center_vertical"

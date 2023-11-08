@@ -8,7 +8,7 @@
         android:id="@+id/btnWhatsApp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Abrir WhatsApp"
+        android:text="Agregar mi negocio"
         android:textSize="18sp"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp" />

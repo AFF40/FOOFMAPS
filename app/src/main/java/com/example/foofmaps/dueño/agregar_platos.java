@@ -226,7 +226,7 @@ public class agregar_platos extends AppCompatActivity  implements onPlatoAddedLi
 
 
     public void enviarFormulario(View view) {
-        // Recupera el valor del restaurante_id del Intent
+        //  restaurante_id recibido
         Intent intent = getIntent();
         int restauranteId = intent.getIntExtra("restaurante_id", -1);
         Log.d("restaurante_id_en_agregar", "restaurante_id: " + restauranteId);

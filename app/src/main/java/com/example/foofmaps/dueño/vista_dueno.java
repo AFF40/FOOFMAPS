@@ -225,10 +225,7 @@ public class vista_dueno extends AppCompatActivity {
         Log.d("url_estado", modeloURL);
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, modeloURL, response -> {
-            // Procesa la respuesta de la solicitud si es necesario
-            // Puedes agregar código para manejar la respuesta aquí
         }, error -> {
-            // Maneja el error si la solicitud falla
         });
 
         requestQueue.add(stringRequest);
