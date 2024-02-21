@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -214,6 +215,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     JSONObject ubicacion = jsonObject.getJSONObject("ubicacion");
                     double latitud = ubicacion.getDouble("latitud");
                     double longitud = ubicacion.getDouble("longitud");
+                    String imagen = jsonObject.getString("imagen");
                     int estadoRestaurante = jsonObject.getInt("estado"); // Asumiendo que el estado se llama "estado" en el JSON
                     // Determinar el color del marcador según el estado del restaurante
                     float hue = (estadoRestaurante == 0) ? BitmapDescriptorFactory.HUE_RED : BitmapDescriptorFactory.HUE_GREEN;
@@ -225,7 +227,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             .icon(BitmapDescriptorFactory.defaultMarker(hue)); // Configurar el color del marcador
                     Marker marker = mMap.addMarker(markerOptions);
                     // Crear un objeto Restaurante con los datos del restaurante
-                    Restaurante restaurante = new Restaurante(restaurante_id, celular, nomRest);
+                    Restaurante restaurante = new Restaurante(restaurante_id, celular, nomRest, imagen);
                     // Establecer el restaurante como etiqueta del marcador
                     marker.setTag(restaurante);
                     // Configurar el InfoWindow para que no sea clickeable
@@ -257,6 +259,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                             // Obtener referencias a los elementos de la vista personalizada
                             TextView markerTitle = infoView.findViewById(R.id.marker_title);
+                            ImageView markerImage = infoView.findViewById(R.id.marker_image);
 
                             // Configurar el contenido de la vista personalizada
                             markerTitle.setText(marker.getTitle());

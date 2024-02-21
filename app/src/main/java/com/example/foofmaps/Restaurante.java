@@ -5,10 +5,13 @@ public class Restaurante {
     private int celular;
     private String nomRest;
 
-    public Restaurante(int restauranteId, int celular, String nomRest) {
+    private String imagen;
+
+    public Restaurante(int restauranteId, int celular, String nomRest, String imagen) {
         this.restauranteId = restauranteId;
         this.celular = celular;
         this.nomRest = nomRest;
+        this.imagen = imagen;
     }
 
     public int getRestauranteId() {
@@ -21,5 +24,9 @@ public class Restaurante {
 
     public String getNomRest() {
         return nomRest;
+    }
+
+    public String getImagen() {
+        return imagen;
     }
 }
