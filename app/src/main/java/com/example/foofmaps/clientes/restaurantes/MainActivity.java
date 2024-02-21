@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                                 // Redirigir según el rol
                                 if (rol == 1) {
                                     // Usuario con rol 1, redirige a MapsActivity
-                                    Intent intent_login_exitoso = new Intent(MainActivity.this, MapsActivity.class);
+                                    Intent intent_login_exitoso = new Intent(MainActivity.this, MapsActivity2.class);
                                     MainActivity.this.startActivity(intent_login_exitoso);
                                     finish(); // Finaliza la actividad actual para que no se pueda volver atrás desde aquí
                                 } else if (rol == 2) {
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (userRole == 1) {
                 // Usuario con rol 1, redirige a MapsActivity
-                Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                Intent intent = new Intent(MainActivity.this, MapsActivity2.class);
                 startActivity(intent);
                 finish(); // Finaliza la actividad actual para que no se pueda volver atrás desde aquí
             } else if (userRole == 2) {

@@ -14,12 +14,13 @@ public class LoginRequest extends StringRequest {
     //conexion con el archivo php
     private static final String controladorURL = Config.CONTROLADOR_URL+"controladorLogin.php";
     private final Map<String,String>params;
-    public LoginRequest(String username, String pass1,  Response.Listener<String> listener){
+    public LoginRequest(String username, String password,  Response.Listener<String> listener){
         super(Method.POST, controladorURL,listener,null);
         params=new HashMap<>();
         Log.e("info",username);
+
         params.put("username",username);
-        params.put("pass1",pass1);
+        params.put("password",password);
 
     }
     @Override

@@ -160,7 +160,7 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
                     builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            // Lógica para eliminar el plato
+                            // Lógica para eliminar el plator
                             if (onDeletePlatoClickListener != null) {
                                 onDeletePlatoClickListener.onDeletePlatoClick(plato);
                             }
