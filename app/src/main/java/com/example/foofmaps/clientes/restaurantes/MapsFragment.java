@@ -1,6 +1,7 @@
 package com.example.foofmaps.clientes.restaurantes;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.location.Location;
@@ -9,11 +10,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
+import com.example.foofmaps.Restaurante;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -24,9 +32,15 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
@@ -72,6 +86,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             mMap.setMyLocationEnabled(true);
             startLocationUpdates();
         }
+        fetchLocationsFromDatabase();
     }
 
     private void startLocationUpdates() {
@@ -104,6 +119,75 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
+    private void fetchLocationsFromDatabase() {
+        String controladorURL = Config.CONTROLADOR_URL+"controlador_Rest.php";
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, controladorURL, response -> {
+            try {
+                JSONArray jsonArray = new JSONArray(response);
+                Log.d("JSON Response", jsonArray.toString());
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    int restaurante_id = jsonObject.getInt("restaurante_id"); // ID del restaurante del marcador
+                    int celular = jsonObject.getInt("celular");
+                    String nomRest = jsonObject.getString("nom_rest");
+                    double latitud = jsonObject.getDouble("latitud");
+                    double longitud = jsonObject.getDouble("longitud");
+                    int estadoRestaurante = jsonObject.getInt("estado"); // Asumiendo que el estado se llama "estado" en el JSON
+                    // Determinar el color del marcador según el estado del restaurante
+                    float hue = (estadoRestaurante == 0) ? BitmapDescriptorFactory.HUE_RED : BitmapDescriptorFactory.HUE_GREEN;
+                    // Agregar marcador en el mapa
+                    LatLng location = new LatLng(latitud, longitud);
+                    MarkerOptions markerOptions = new MarkerOptions()
+                            .position(location)
+                            .title(nomRest)
+                            .icon(BitmapDescriptorFactory.defaultMarker(hue)); // Configurar el color del marcador
+                    Marker restaurantMarker = mMap.addMarker(markerOptions);
+                    // Crear un objeto Restaurante con los datos del restaurante
+                    Restaurante restaurante = new Restaurante(restaurante_id, celular, nomRest);
+                    // Establecer el restaurante como etiqueta del marcador
+                    restaurantMarker.setTag(restaurante);
+                    // Configurar el InfoWindow para que no sea clickeable
+                    mMap.setOnInfoWindowClickListener(marker -> {
+                        // Obtener el restaurante desde la etiqueta del marcador
+                        Restaurante restaurante1 = (Restaurante) marker.getTag();
+                        if (restaurante1 != null) {
+                            //  se hace clic en el InfoWindow,
+                            Intent intent = new Intent(getActivity(), MenuRest.class);
+                            intent.putExtra("restaurant_id", restaurante1.getRestauranteId());
+                            intent.putExtra("restaurant_name", restaurante1.getNomRest());
+                            intent.putExtra("restaurant_phone", restaurante1.getCelular());
+                            startActivity(intent);
+                        }
+                    });
+                    // Configurar la vista personalizada para la ventana de información del marcador
+                    mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+                        @Override
+                        public View getInfoWindow(Marker marker) {
+                            return null; // Usar la vista predeterminada en blanco
+                        }
+                        @Override
+                        public View getInfoContents(Marker marker) {
+                            // Crear una vista personalizada para la ventana de información
+                            View infoView = getLayoutInflater().inflate(R.layout.custom_info_window, null);
 
+                            // Obtener referencias a los elementos de la vista personalizada
+                            TextView markerTitle = infoView.findViewById(R.id.marker_title);
 
+                            // Configurar el contenido de la vista personalizada
+                            markerTitle.setText(marker.getTitle());
+                            return infoView;
+                        }
+                    });
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.e("JSON Error", "Error al procesar los datos JSON: " + e.getMessage());
+            }
+        }, error -> {
+            Log.e("Volley Error", "Error al obtener datos desde el servidor: " + error.getMessage());
+        });
+
+        requestQueue.add(stringRequest);
+    }
 }
