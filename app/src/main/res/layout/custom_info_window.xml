@@ -2,14 +2,15 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="8dp">
+    android:padding="8dp"
+    >
 
     <ImageView
         android:id="@+id/marker_image"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_gravity="center"
-        android:src="@drawable/home6" />
+         />
     <TextView
         android:id="@+id/marker_title"
         android:layout_width="wrap_content"

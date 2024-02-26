@@ -11,10 +11,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import com.example.foofmaps.Config;
+import com.bumptech.glide.Glide;
 import com.example.foofmaps.R;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.squareup.picasso.Picasso;
 
 public class MenuRest extends AppCompatActivity {
 
@@ -32,6 +30,7 @@ public class MenuRest extends AppCompatActivity {
         restaurante_id = intent.getIntExtra("restaurant_id", 0);
         String nom_rest = intent.getStringExtra("restaurant_name");
         int celular = intent.getIntExtra("restaurant_phone", 0);
+        String modeloURL = intent.getStringExtra("image_url"); // Obtener la URL de la imagen
         Log.d("RESTAURANT_ID", String.valueOf(restaurante_id));
         Log.d("RESTAURANT_NAME", nom_rest);
         Log.d("RESTAURANT_CELULAR", String.valueOf(celular));
@@ -47,43 +46,10 @@ public class MenuRest extends AppCompatActivity {
         // Configurar el botón para abrir WhatsApp con el número de teléfono
         whatsappButton.setOnClickListener(v -> openWhatsApp(String.valueOf(celular)));
 
-        // Construir la URL para obtener la imagen
-        String modeloURL = Config.MODELO_URL+"icono_rest.php?id=" + restaurante_id;
-
-        // Cargar la imagen desde tu servidor utilizando Picasso
-        Picasso.get().load(modeloURL).into(imageViewRestaurante);
-
-        // Inicializar los fragmentos si no están creados
-        if (platosFragment == null) {
-            platosFragment = new platos_rest();
-        }
-        if (bebidasFragment == null) {
-            bebidasFragment = new bebidas_rest();
-        }
-
-        // Mostrar el fragmento de platos_rest por defecto
-        if (getSupportFragmentManager().findFragmentByTag("platosFragmentTag") == null) {
-            loadFragment(platosFragment, "platosFragmentTag");
-        }
-
-
-        // Configurar el BottomNavigationView y establecer un oyente
-        BottomNavigationView bottomNavigationView = findViewById(R.id.platosybebidas);
-        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.comidas:
-                    if (getSupportFragmentManager().findFragmentByTag("platosFragmentTag") == null) {
-                        loadFragment(platosFragment, "platosFragmentTag");
-                    }
-                    break;
-                case R.id.bebidas:
-                    if (getSupportFragmentManager().findFragmentByTag("bebidasFragmentTag") == null) {
-                        loadFragment(bebidasFragment, "bebidasFragmentTag");
-                    }
-                    break;
-            }
-            return true;
-        });
+        // Cargar la imagen desde tu servidor utilizando Glide
+        Glide.with(this)
+                .load(modeloURL)
+                .into(imageViewRestaurante);
     }
 
     private void loadFragment(Fragment fragment, String tag) {

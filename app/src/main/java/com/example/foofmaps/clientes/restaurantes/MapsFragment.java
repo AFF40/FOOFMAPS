@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -42,7 +43,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -57,17 +57,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MapsFragment extends Fragment implements OnMapReadyCallback {
-
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
-
     private Map<String, Bitmap> loadedBitmaps = new HashMap<>();
-
     private LocationRequest locationRequest;
-    private BitmapDescriptor defaultMarker;
-    private Marker currentUserLocationMarker;
-    private static final int Request_User_Location_Code = 99;
 
+
+    // Este método se ejecuta cuando el fragmento se crea por primera vez
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Infla la vista desde el archivo de diseño XML
@@ -81,6 +77,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         return view;
     }
 
+    // Este método se ejecuta cuando el mapa está listo para ser utilizado
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -125,6 +122,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         }
         fetchLocationsFromDatabase();
     }
+
+    // Este método se ejecuta cuando el estado del GPS cambia
     private BroadcastReceiver gpsSwitchStateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -144,23 +143,29 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             }
         }
     };
+
+    // Este método se ejecuta cuando la aplicación está en pausa
     @Override
     public void onResume() {
         super.onResume();
         getActivity().registerReceiver(gpsSwitchStateReceiver, new IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION));
     }
 
+    // Este método se ejecuta cuando la aplicación está en pausa
     @Override
     public void onPause() {
         super.onPause();
         getActivity().unregisterReceiver(gpsSwitchStateReceiver);
     }
+
+    // Este método inicia las actualizaciones de ubicación
     private void startLocationUpdates() {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
         }
     }
 
+    // Este método se ejecuta cuando la ubicación del usuario cambia
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
@@ -168,6 +173,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                 return;
             }
             for (Location location : locationResult.getLocations()) {
+                // Mueve la cámara a la nueva ubicación del usuario
                 if (location != null) {
                     LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
@@ -178,6 +184,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     };
 
 
+    // Este método obtiene la ubicación de los restaurantes desde la base de datos y los muestra en el mapa
     private void fetchLocationsFromDatabase() {
         String controladorURL = Config.CONTROLADOR_URL+"controlador_Rest.php";
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
@@ -194,8 +201,12 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                     double longitud = jsonObject.getDouble("longitud");
                     String imagen = jsonObject.getString("imagen");
                     int estadoRestaurante = jsonObject.getInt("estado"); // Asumiendo que el estado se llama "estado" en el JSON
-                    // Determinar el color del marcador según el estado del restaurante
-                    float hue = (estadoRestaurante == 0) ? BitmapDescriptorFactory.HUE_RED : BitmapDescriptorFactory.HUE_GREEN;
+
+                    // Determinar el recurso del icono según el estado del restaurante
+                    String iconName = (estadoRestaurante == 0) ? "label_rojo" : "label_verde";
+
+                    // Redimensionar el icono
+                    Bitmap iconBitmap = resizeMapIcons(iconName, 100, 100); // Cambia 100, 100 al tamaño deseado
 
                     Log.d("Restaurante", "ID: " + restaurante_id + ", Nombre: " + nomRest + ", Latitud: " + latitud + ", Longitud: " + longitud);
 
@@ -204,12 +215,15 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                     MarkerOptions markerOptions = new MarkerOptions()
                             .position(location)
                             .title(nomRest)
-                            .icon(BitmapDescriptorFactory.defaultMarker(hue)); // Configurar el color del marcador
+                            .icon(BitmapDescriptorFactory.fromBitmap(iconBitmap)); // Configurar el icono del marcador
                     Marker restaurantMarker = mMap.addMarker(markerOptions);
+
                     // Crear un objeto Restaurante con los datos del restaurante
                     Restaurante restaurante = new Restaurante(restaurante_id, celular, nomRest,imagen);
+
                     // Establecer el restaurante como etiqueta del marcador
                     restaurantMarker.setTag(restaurante);
+
                     // Configurar el InfoWindow para que no sea clickeable
                     mMap.setOnInfoWindowClickListener(marker -> {
                         // Obtener el restaurante desde la etiqueta del marcador
@@ -224,6 +238,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                             startActivity(intent);
                         }
                     });
+
                     // Configurar la vista personalizada para la ventana de información del marcador
                     mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
                         @Override
@@ -249,13 +264,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                                 // Obtener la URL de la imagen del restaurante
                                 String imageUrl = restaurante.getImagen();
 
-// Reemplazar "localhost" con "10.0.2.2" si estás usando un emulador de Android
+                                // Reemplazar "localhost" con "10.0.2.2" si estás usando un emulador de Android
                                 imageUrl = imageUrl.replace("localhost", "192.168.100.5");
 
-// Crear una variable final que contenga el valor de imageUrl
+                                // Crear una variable final que contenga el valor de imageUrl
                                 final String finalImageUrl = imageUrl;
 
-// Crear un Target personalizado para Glide
+                                // Crear un Target personalizado para Glide
                                 SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
                                     @Override
                                     public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
@@ -265,17 +280,16 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                                         marker.showInfoWindow();
                                     }
                                 };
-
-// Verificar si la imagen ya ha sido cargada
+                                // Verificar si la imagen ya está cargada
                                 if (loadedBitmaps.containsKey(finalImageUrl)) {
-                                    // Si la imagen ya ha sido cargada, establecerla en el ImageView
+                                    // Si la imagen ya está cargada, usarla directamente
                                     markerImage.setImageBitmap(loadedBitmaps.get(finalImageUrl));
                                 } else {
-                                    // Si la imagen no ha sido cargada, cargarla con Glide
+                                    // Si la imagen no está cargada, cargarla con Glide
                                     Glide.with(getActivity())
-                                            .asBitmap() // Indicar que queremos un Bitmap, no un Drawable
+                                            .asBitmap()
                                             .load(finalImageUrl)
-                                            .into(target); // Cargar la imagen en el Target personalizado
+                                            .into(target);
                                 }
                             }
 
@@ -285,13 +299,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
-                Log.e("JSON Error", "Error al procesar los datos JSON: " + e.getMessage());
             }
-        }, error -> {
-            Log.e("Volley Error", "Error al obtener datos desde el servidor: " + error.getMessage());
-        });
-
+        }, error -> Log.e("Volley Error", error.toString()));
         requestQueue.add(stringRequest);
     }
 
-}
+    private Bitmap resizeMapIcons(String iconName, int width, int height){
+        Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(), getResources().getIdentifier(iconName, "drawable", getActivity().getPackageName()));
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
+        return resizedBitmap;
+    }
+                            }
