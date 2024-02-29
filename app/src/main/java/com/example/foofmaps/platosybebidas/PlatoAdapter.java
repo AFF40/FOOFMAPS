@@ -5,8 +5,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +22,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
 import com.example.foofmaps.dueño.Editaresteplato;
@@ -61,8 +60,15 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
         holder.nombreTextView.setText(plato.getNombre());
         holder.descripcionTextView.setText(plato.getDescripcion());
         holder.precioTextView.setText(String.valueOf(plato.getPrecio() + " Bs."));
-        Bitmap imagenBitmap = BitmapFactory.decodeByteArray(plato.getImagen(), 0, plato.getImagen().length);
-        holder.imagenImageView.setImageBitmap(imagenBitmap);
+
+        //convertir el localhost a la ip de la maquina
+        plato.setImagen(plato.getImagen().replace("http://localhost", "http://192.168.100.5"));
+        Log.d("platoimagen", String.valueOf(plato.getImagen()));
+        // Cargar la imagen con Glide
+        Glide.with(holder.itemView.getContext())
+                .load(plato.getImagen())
+                .into(holder.imagenImageView);
+
         if (plato.getDisponible() == 1) {
             holder.ic.setImageResource(R.drawable.en_stock);
         } else {

@@ -35,7 +35,7 @@
             android:id="@+id/bannertop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Restaurante Detalles"
+            android:text="nombre restaurante"
             android:paddingTop="10dp"
             android:layout_marginStart="30dp"
             android:textSize="21dp"

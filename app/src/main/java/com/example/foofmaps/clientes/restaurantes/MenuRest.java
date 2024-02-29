@@ -9,7 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.example.foofmaps.R;
@@ -30,10 +31,13 @@ public class MenuRest extends AppCompatActivity {
         restaurante_id = intent.getIntExtra("restaurant_id", 0);
         String nom_rest = intent.getStringExtra("restaurant_name");
         int celular = intent.getIntExtra("restaurant_phone", 0);
-        String modeloURL = intent.getStringExtra("image_url"); // Obtener la URL de la imagen
+        String imagen = intent.getStringExtra("restaurant_image");
+        //convertir el localhost a la ip de la maquina
+        imagen = imagen.replace("http://localhost", "http://192.168.100.5");
         Log.d("RESTAURANT_ID", String.valueOf(restaurante_id));
         Log.d("RESTAURANT_NAME", nom_rest);
         Log.d("RESTAURANT_CELULAR", String.valueOf(celular));
+        Log.d("RESTAURANT_IMAGE", imagen);
 
         // Obtener referencias a los elementos en el diseño
         TextView bannertop = findViewById(R.id.bannertop);
@@ -48,17 +52,24 @@ public class MenuRest extends AppCompatActivity {
 
         // Cargar la imagen desde tu servidor utilizando Glide
         Glide.with(this)
-                .load(modeloURL)
+                .load(imagen) // Aquí debes poner la URL correcta del servidor
                 .into(imageViewRestaurante);
-    }
 
-    private void loadFragment(Fragment fragment, String tag) {
-        Bundle bundle = new Bundle();
-        bundle.putInt("restaurant_id", restaurante_id);  // Pasa el restaurante_id al fragmento
-        fragment.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.contenedorlista, fragment, tag)
-                .commit();
+        // Inflar el fragmento platos_rest en el contenedor contenedorlista
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        // Crear una instancia del fragmento platos_rest
+        platosFragment = new platos_rest();
+
+        // Crear un Bundle para pasar el restaurante_id al fragmento
+        Bundle args = new Bundle();
+        args.putInt("restaurant_id", restaurante_id);
+        platosFragment.setArguments(args);
+
+        // Agregar el fragmento al contenedor contenedorlista
+        fragmentTransaction.replace(R.id.contenedorlista, platosFragment);
+        fragmentTransaction.commit();
     }
 
     private void openWhatsApp(String celular) {

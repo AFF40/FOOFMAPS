@@ -3,7 +3,6 @@ package com.example.foofmaps.dueño;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -81,7 +80,7 @@ public class editar_plato extends AppCompatActivity {
                     String nombre_plato = jsonObject.getString("nom_plato");
                     String descripcion_plato = jsonObject.getString("descripcion");
                     double precio_plato = jsonObject.getDouble("precio");
-                    byte[] imagen_plato = Base64.decode(jsonObject.getString("imagen"), Base64.DEFAULT);
+                    String imagen_plato = jsonObject.getString("imagen");
                     int disponible_plato = jsonObject.getInt("disponible");
 
                     Plato plato = new Plato(id_comida, nombre_plato, descripcion_plato, precio_plato, imagen_plato, disponible_plato);

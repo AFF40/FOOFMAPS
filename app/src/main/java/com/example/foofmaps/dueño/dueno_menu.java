@@ -143,11 +143,7 @@
                     float precio = (float) platoJson.getDouble("precio");
                     int disponible = platoJson.getInt("disponible");
 
-                    // La imagen en formato Base64 (si está disponible)
-                    String imagenBase64 = platoJson.getString("imagen");
-
-                    // Decodificar la imagen desde Base64 a bytes (si está disponible)
-                    byte[] imagen = decodeBase64(imagenBase64);
+                    String imagen = platoJson.getString("imagen");
 
                     // Crear un objeto Plato con los datos
                     Plato plato = new Plato(id_comida, nombre, descripcion, precio, imagen, disponible );

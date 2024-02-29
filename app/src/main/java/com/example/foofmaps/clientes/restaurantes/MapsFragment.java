@@ -309,4 +309,4 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
         return resizedBitmap;
     }
-                            }
+}

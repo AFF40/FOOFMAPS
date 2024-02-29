@@ -7,10 +7,10 @@ public class Plato {
     private String nombre;
     private String descripcion;
     private double precio;
-    private byte[] imagen;
+    private String imagen;
     private int disponible;
 
-    public Plato(int id_comida, String nombre, String descripcion, double precio, byte[] imagen, int disponible) {
+    public Plato(int id_comida, String nombre, String descripcion, double precio, String imagen, int disponible) {
         this.id = id_comida;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -35,7 +35,7 @@ public class Plato {
         return precio;
     }
 
-    public byte[] getImagen() { // Cambia el tipo de retorno a byte[]
+    public String getImagen() { // Cambia el tipo de retorno a byte[]
         return imagen;
     }
     public int getDisponible() {
@@ -54,13 +54,10 @@ public class Plato {
     public void setPrecio(double precio) {
         this.precio = precio;
     }
-    public void setImagen(byte[] imagen) {
+    public void setImagen(String imagen) {
         this.imagen = imagen;
     }
 
 
-    // Puedes agregar setters si es necesario
-
-    // Otros métodos y propiedades de la clase Plato
 }
 

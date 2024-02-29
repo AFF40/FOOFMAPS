@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT).show();
 
                                 // Obtener el rol del usuario
-                                int rol = jsonResponse.getInt("rol");
+                                int rol = jsonResponse.getInt("id_rol");
 
                                 // Guardar el rol del usuario en SharedPreferences
                                 SharedPreferences.Editor editor = sharedPreferences.edit();

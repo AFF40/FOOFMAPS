@@ -61,4 +61,4 @@ public class MapsActivity2 extends AppCompatActivity {
             }
         });
     }
-}
+}   
