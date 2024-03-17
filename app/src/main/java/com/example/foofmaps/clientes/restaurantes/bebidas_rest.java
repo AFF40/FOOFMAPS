@@ -2,6 +2,7 @@ package com.example.foofmaps.clientes.restaurantes;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +54,7 @@ public class bebidas_rest extends Fragment {
                 // Realizar una solicitud HTTP para obtener los datos JSON de la API
                 String modeloURL = Config.MODELO_URL+"getBebidas.php?restaurante_id=" + idRestaurante;
                 String jsonResponse = HttpUtils.get(modeloURL);
+                Log.d("modeloURL", modeloURL);
 
                 // Procesar el JSON y obtener la lista de platos
                 bebidas = parseBebidasFromJSON(jsonResponse);
@@ -73,20 +75,33 @@ public class bebidas_rest extends Fragment {
     }
 
     private List<Bebida> parseBebidasFromJSON(String json) {
+        Log.d("DEBUG", "parsePlatosFromJSON iniciado"); // Log adicional
+
         List<Bebida> bebidas = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(json);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject bebidaJson = jsonArray.getJSONObject(i);
                 int id_bebida = bebidaJson.getInt("id_bebida");
-                String nombre = bebidaJson.getString("nom_bebida");
+                String nombre = bebidaJson.getString("nombre");
                 String descripcion = bebidaJson.getString("descripcion");
                 float precio = (float) bebidaJson.getDouble("precio");
-                int disponible = bebidaJson.getInt("disponible");
-                String imagenBase64 = bebidaJson.getString("imagen");
-                byte[] imagen = decodeBase64(imagenBase64);
-                Bebida bebida = new Bebida(id_bebida,nombre, descripcion, precio, imagen, disponible);
+                int disponible = bebidaJson.getInt("disponible"); // Usar el campo "disponible" de la respuesta JSON
+                String imagen = bebidaJson.getString("imagen"); // Usar el campo "imagen" de la respuesta JSON
+
+
+                //log para verificar todos los datos
+                Log.d("PLATO_DEBUG", "id: " + id_bebida);
+                Log.d("PLATO_DEBUG", "nombre: " + nombre);
+                Log.d("PLATO_DEBUG", "descripcion: " + descripcion);
+                Log.d("PLATO_DEBUG", "precio: " + precio);
+                Log.d("PLATO_DEBUG", "disponible: " + disponible);
+                Log.d("PLATO_DEBUG", "imagen: " + imagen);
+                Log.d("PLATO_DEBUG", "Platos: " + bebidas.toString());
+
+                Bebida bebida = new Bebida(id_bebida, nombre, descripcion, precio, imagen, disponible);
                 bebidas.add(bebida);
+                Log.d("PLATO_DEBUG", "Plato: " + bebida.toString());
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -94,7 +109,4 @@ public class bebidas_rest extends Fragment {
         return bebidas;
     }
 
-    private byte[] decodeBase64(String base64) {
-        return android.util.Base64.decode(base64, android.util.Base64.DEFAULT);
-    }
 }

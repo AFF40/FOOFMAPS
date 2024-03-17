@@ -5,8 +5,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +22,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
 import com.example.foofmaps.dueño.Editarestabebida;
@@ -62,8 +61,14 @@ public class BebidaAdapter extends RecyclerView.Adapter<BebidaAdapter.ViewHolder
         holder.nombreTextView.setText(bebida.getNombre());
         holder.descripcionTextView.setText(bebida.getDescripcion());
         holder.precioTextView.setText(String.valueOf(bebida.getPrecio() + " Bs."));
-        Bitmap imagenBitmap = BitmapFactory.decodeByteArray(bebida.getImagen(), 0, bebida.getImagen().length);
-        holder.imagenImageView.setImageBitmap(imagenBitmap);
+        String ip = Config.ip;
+        //convertir el localhost a la ip de la maquina
+        bebida.setImagen(bebida.getImagen().replace("http://localhost", ip));
+        Log.d("platoimagen", String.valueOf(bebida.getImagen()));
+        // Cargar la imagen con Glide
+        Glide.with(holder.itemView.getContext())
+                .load(bebida.getImagen())
+                .into(holder.imagenImageView);
         if (bebida.getDisponible() == 1) {
             holder.ic.setImageResource(R.drawable.en_stock);
         } else {

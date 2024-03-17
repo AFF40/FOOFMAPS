@@ -9,11 +9,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.example.foofmaps.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MenuRest extends AppCompatActivity {
 
@@ -70,7 +72,39 @@ public class MenuRest extends AppCompatActivity {
         // Agregar el fragmento al contenedor contenedorlista
         fragmentTransaction.replace(R.id.contenedorlista, platosFragment);
         fragmentTransaction.commit();
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.platosybebidas);
+
+        // Configurar un OnNavigationItemSelectedListener en el BottomNavigationView
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            Fragment fragment;
+            args.putInt("restaurant_id", restaurante_id);
+            switch (item.getItemId()) {
+                case R.id.comidas: // Reemplaza esto con el id de tu elemento de menú para platos
+                    if (platosFragment == null) {
+                        platosFragment = new platos_rest();
+                        platosFragment.setArguments(args);
+                    }
+                    fragment = platosFragment;
+                    break;
+                case R.id.bebidas: // Reemplaza esto con el id de tu elemento de menú para bebidas
+                    // Crear una instancia del fragmento bebidas_rest si aún no existe
+                    if (bebidasFragment == null) {
+                        bebidasFragment = new bebidas_rest();
+                        bebidasFragment.setArguments(args);
+                    }
+                    fragment = bebidasFragment;
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + item.getItemId());
+            }
+            // Reemplaza el fragmento en el contenedor contenedorlista
+            getSupportFragmentManager().beginTransaction().replace(R.id.contenedorlista, fragment).commit();
+            return true;
+        });
     }
+
+
 
     private void openWhatsApp(String celular) {
         String url = "https://wa.me/591" + celular;

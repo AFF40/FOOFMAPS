@@ -60,9 +60,10 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
         holder.nombreTextView.setText(plato.getNombre());
         holder.descripcionTextView.setText(plato.getDescripcion());
         holder.precioTextView.setText(String.valueOf(plato.getPrecio() + " Bs."));
+        String ip = Config.ip;
 
         //convertir el localhost a la ip de la maquina
-        plato.setImagen(plato.getImagen().replace("http://localhost", "http://192.168.100.5"));
+        plato.setImagen(plato.getImagen().replace("http://localhost", ip));
         Log.d("platoimagen", String.valueOf(plato.getImagen()));
         // Cargar la imagen con Glide
         Glide.with(holder.itemView.getContext())

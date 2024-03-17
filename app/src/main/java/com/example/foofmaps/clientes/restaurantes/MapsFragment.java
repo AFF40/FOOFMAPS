@@ -262,10 +262,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                             Restaurante restaurante = (Restaurante) marker.getTag();
                             if (restaurante != null) {
                                 // Obtener la URL de la imagen del restaurante
+                                String ip = Config.ip;
                                 String imageUrl = restaurante.getImagen();
 
-                                // Reemplazar "localhost" con "10.0.2.2" si estás usando un emulador de Android
-                                imageUrl = imageUrl.replace("localhost", "192.168.100.5");
+                                imageUrl = imageUrl.replace("http://localhost", ip);
+                                Log.d("Image URL", imageUrl);
 
                                 // Crear una variable final que contenga el valor de imageUrl
                                 final String finalImageUrl = imageUrl;

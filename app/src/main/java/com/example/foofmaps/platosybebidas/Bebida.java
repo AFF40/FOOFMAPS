@@ -7,10 +7,10 @@ public class Bebida {
     private String nombre;
     private String descripcion;
     private double precio;
-    private byte[] imagen; // Cambia el tipo de imagen a byte[]
+    private String imagen; // Cambia el tipo de imagen a byte[]
     private int disponible;
 
-    public Bebida(int id_bebida,String nombre, String descripcion, double precio, byte[] imagen, int disponible) {
+    public Bebida(int id_bebida,String nombre, String descripcion, double precio, String imagen, int disponible) {
         this.id_bebida = id_bebida;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -35,7 +35,7 @@ public class Bebida {
         return precio;
     }
 
-    public byte[] getImagen() { // Cambia el tipo de retorno a byte[]
+    public String getImagen() { // Cambia el tipo de retorno a byte[]
         return imagen;
     }
     public int getDisponible() {
@@ -54,7 +54,7 @@ public class Bebida {
     public void setPrecio(double precio) {
         this.precio = precio;
     }
-    public void setImagen(byte[] imagen) {
+    public void setImagen(String imagen) {
         this.imagen = imagen;
     }
 }

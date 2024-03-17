@@ -147,10 +147,8 @@ public class dueno_bebidas extends Fragment {
                 int disponible = bebidaJson.getInt("disponible");
 
                 // La imagen en formato Base64 (si está disponible)
-                String imagenBase64 = bebidaJson.getString("imagen");
+                String imagen = bebidaJson.getString("imagen");
 
-                // Decodificar la imagen desde Base64 a bytes (si está disponible)
-                byte[] imagen = decodeBase64(imagenBase64);
 
                 // Crear un objeto Plato con los datos
                 Bebida bebida = new Bebida(id_bebida,nombre, descripcion, precio, imagen, disponible );
