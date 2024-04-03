@@ -20,6 +20,7 @@
         android:id="@+id/imageViewPlato"
         android:layout_width="80dp"
         android:layout_height="80dp"
+        android:layout_gravity="center"
         android:scaleType="centerCrop" />
 
     <LinearLayout
@@ -37,7 +38,7 @@
             android:layout_height="wrap_content"
             android:text="nombre del plato"
             android:textColor="@color/black"
-            android:textSize="16sp"
+            android:textSize="18sp"
             />
         <TextView
             android:id="@+id/desc_plato"

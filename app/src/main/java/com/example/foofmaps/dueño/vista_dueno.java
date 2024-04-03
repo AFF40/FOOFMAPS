@@ -16,6 +16,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
 import com.example.foofmaps.clientes.restaurantes.MainActivity;
@@ -29,7 +30,6 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,21 +44,18 @@ public class vista_dueno extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vista_dueno);
 
+        Log.d("vista_dueno", "onCreate");
 
         int restaurante_id = getIntent().getIntExtra("restaurante_id", -1);
+        Log.d("recibido_id_rest", "El valor de id_rest es: " + restaurante_id);
 
-        // Verificar si el id_rest se ha pasado correctamente
         if (restaurante_id != -1) {
-            // El id_rest se pasó correctamente, puedes usarlo aquí
-            // Por ejemplo, imprimirlo en el logcat
             Log.d("recibido_id_rest", "El valor de id_rest es: " + restaurante_id);
 
-            // Llamar a la función para obtener datos del restaurante
             fetchRestaurantDataFromDatabase(restaurante_id);
         } else {
-            // El id_rest no se pasó correctamente, maneja esta situación
-            // Puedes mostrar un mensaje de error o tomar otras medidas
-            // Por ejemplo, regresar a MainActivity
+            Log.e("recibido_id_rest", "Error: restaurante_id no recibido correctamente");
+
             Intent intent = new Intent(vista_dueno.this, MainActivity.class);
             startActivity(intent);
             finish();
@@ -68,20 +65,23 @@ public class vista_dueno extends AppCompatActivity {
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case R.id.maps:
+                    Log.d("BottomNav", "Selected: Maps");
                     // No necesitas iniciar la actividad actual nuevamente
                     return true;
                 case R.id.alimentos:
+                    Log.d("BottomNav", "Selected: Alimentos");
                     int restauranteId = getIntent().getIntExtra("restaurante_id", -1);
                     Fragment fragmentmenu = dueno_menu.newInstance(restauranteId);
                     loadFragment(fragmentmenu);
                     return true;
-
                 case R.id.bebidas:
+                    Log.d("BottomNav", "Selected: Bebidas");
                     int restauranteId2 = getIntent().getIntExtra("restaurante_id", -1);
                     Fragment fragmentbebidas = dueno_bebidas.newInstance(restauranteId2);
                     loadFragment(fragmentbebidas);
                     return true;
                 case R.id.ajustes:
+                    Log.d("BottomNav", "Selected: Ajustes");
                     Fragment fragmentSettings = new SettingsFragment(); // Reemplaza con el nombre correcto de tu fragmento
                     loadFragment(fragmentSettings);
                     return true;
@@ -114,18 +114,43 @@ public class vista_dueno extends AppCompatActivity {
         transaction.addToBackStack(null);
         transaction.commit();
     }
-    // Función para obtener los datos del restaurante desde la base de datos
 
+    // Función para obtener los datos del restaurante desde la base de datos
     private void fetchRestaurantDataFromDatabase(int restauranteId) {
-        String controladorURL1 = Config.CONTROLADOR_URL+"cont_rest.php?restaurante_id=" + restauranteId;
-        Log.d("url", controladorURL1);
-        String modeloURL2 = Config.MODELO_URL+"icono_rest.php?id=" + restauranteId;
+        String controladorURL1 = Config.CONTROLADOR_URL + "cont_rest.php?restaurante_id=" + restauranteId;
+        Log.d("url_rest", controladorURL1);
+        String modeloURL2 = Config.MODELO_URL + "icono_rest.php?id=" + restauranteId;
+        Log.d("url_sql", modeloURL2);
         Switch switchEstado = findViewById(R.id.boton_estado_rest);
         TextView nomrest_tx = findViewById(R.id.estado_rest);
         ImageView imageViewRestaurante = findViewById(R.id.icono_res);
 
-        // Cargar la imagen desde tu servidor utilizando Picasso
-        Picasso.get().load(modeloURL2).into(imageViewRestaurante);
+
+        //obtener la url de la imagen
+        RequestQueue requestQueue2 = Volley.newRequestQueue(this);
+        StringRequest stringRequest2 = new StringRequest(Request.Method.GET, modeloURL2, response -> {
+            try {
+                String imagen = response;
+                //convertir localhost por la ip del servidor
+                imagen = imagen.replace("http://localhost", Config.ip);
+                Log.d("imagen", imagen);
+                if (!imagen.isEmpty()) {
+                    // Cargar la imagen desde tu servidor utilizando Glide
+                    Glide.with(this)
+                            .load(imagen) // Aquí debes poner la URL correcta del servidor
+                            .into(imageViewRestaurante); // Aquí debes poner el ImageView correcto
+                }
+            } catch (StringIndexOutOfBoundsException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            // Maneja el error si la solicitud falla
+            Log.e("FetchDataError", "Error fetching data: " + error.toString());
+        });
+        requestQueue2.add(stringRequest2);
+
+
+
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, controladorURL1, response -> {
@@ -174,15 +199,15 @@ public class vista_dueno extends AppCompatActivity {
                                 .icon(markerIcon);
                         Marker restauranteMarker = googleMap.addMarker(markerOptions);
 
-                        if (estadoRestaurante==1){
+                        if (estadoRestaurante == 1) {
                             switchEstado.setChecked(true);
                             restauranteMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                            TextView  textViewEstado = findViewById(R.id.estado_rest);
+                            TextView textViewEstado = findViewById(R.id.estado_rest);
                             textViewEstado.setText("abierto");
-                        }else {
+                        } else {
                             switchEstado.setChecked(false);
                             restauranteMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                            TextView  textViewEstado = findViewById(R.id.estado_rest);
+                            TextView textViewEstado = findViewById(R.id.estado_rest);
                             textViewEstado.setText("cerrado");
                         }
 
@@ -213,15 +238,14 @@ public class vista_dueno extends AppCompatActivity {
             }
         }, error -> {
             // Maneja el error si la solicitud falla
+            Log.e("FetchDataError", "Error fetching data: " + error.toString());
         });
         requestQueue.add(stringRequest);
     }
 
-
-
     private void sendRequest(int restauranteId, int estado) {
         // Construye la URL con los parámetros
-        String modeloURL = Config.MODELO_URL+"cambiar_estado.php?restaurante_id=" + restauranteId + "&estado=" + estado;
+        String modeloURL = Config.MODELO_URL + "cambiar_estado.php?restaurante_id=" + restauranteId + "&estado=" + estado;
         Log.d("url_estado", modeloURL);
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, modeloURL, response -> {
@@ -230,7 +254,4 @@ public class vista_dueno extends AppCompatActivity {
 
         requestQueue.add(stringRequest);
     }
-
-
-
 }

@@ -32,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
     Button btnLogin;
     TextView btnRegistrar;
 
+    // Agrega una variable de instancia para username
+    private String username;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +56,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnLogin.setOnClickListener(v -> {
-            final String username = ed_username.getText().toString();
+            // Asigna el valor de ed_username a la variable username
+            username = ed_username.getText().toString();
             final String pass1 = ed_password.getText().toString();
 
             // Realizar la solicitud al servidor
@@ -63,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                             JSONObject jsonResponse = new JSONObject(response);
                             int exito = jsonResponse.getInt("exito");
                             String mensaje = jsonResponse.getString("msg");
-                            Log.e("info", jsonResponse.toString());
+                            Log.e("info_login", jsonResponse.toString());
                             if (exito == 1) {
                                 // Registro exitoso, manejar el resultado aquí
                                 Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT).show();
@@ -80,15 +84,17 @@ public class MainActivity extends AppCompatActivity {
                                 // Redirigir según el rol
                                 if (rol == 1) {
                                     // Usuario con rol 1, redirige a MapsActivity
+                                    Log.d("Redirect", "Redirecting to MapsActivity2");
                                     Intent intent_login_exitoso = new Intent(MainActivity.this, MapsActivity2.class);
                                     MainActivity.this.startActivity(intent_login_exitoso);
                                     finish(); // Finaliza la actividad actual para que no se pueda volver atrás desde aquí
                                 } else if (rol == 2) {
                                     // Realizar la consulta para obtener id_rest desde la base de datos
-                                    obtenerIdRestDesdeBaseDeDatos(username);
-                                }
-                                else if (rol == 3) {
-                                    // Usuario con rol 3, redirige a vista_dueno
+                                    Log.d("Redirect", "Redirecting to vista_dueno");
+                                    obtenerIdRestDesdeBaseDeDatos();
+                                } else if (rol == 3) {
+                                    // Usuario con rol 3, redirige a Vista_administrador
+                                    Log.d("Redirect", "Redirecting to Vista_administrador");
                                     Intent intent_login_exitoso = new Intent(MainActivity.this, Vista_administrador.class);
                                     MainActivity.this.startActivity(intent_login_exitoso);
                                     finish(); // Finaliza la actividad actual para que no se pueda volver atrás desde aquí
@@ -107,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Verificar si el usuario ha iniciado sesión previamente
         if (isLoggedIn) {
-
+            // Usuario ya ha iniciado sesión, redirigir según su rol
             if (userRole == 1) {
                 // Usuario con rol 1, redirige a MapsActivity
                 Intent intent = new Intent(MainActivity.this, MapsActivity2.class);
@@ -115,28 +121,36 @@ public class MainActivity extends AppCompatActivity {
                 finish(); // Finaliza la actividad actual para que no se pueda volver atrás desde aquí
             } else if (userRole == 2) {
                 // Usuario con rol 2, se espera la respuesta de obtenerIdRestDesdeBaseDeDatos
-
-            }else if (userRole == 3) {
-
+                obtenerIdRestDesdeBaseDeDatos();
+            } else if (userRole == 3) {
+                // Usuario con rol 3, redirige a Vista_administrador
+                Intent intent = new Intent(MainActivity.this, Vista_administrador.class);
+                startActivity(intent);
+                finish(); // Finaliza la actividad actual para que no se pueda volver atrás desde aquí
             }
         }
     }
 
     // Modificamos la función para que obtenga el restaurante_id de forma asíncrona
-    private void obtenerIdRestDesdeBaseDeDatos(String username) {
+    private void obtenerIdRestDesdeBaseDeDatos() {
 
         String modeloURL = Config.MODELO_URL+"/consultar_id_rest.php";
+        Log.d ("urledit", "apiUrl: " +modeloURL );
 
         RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, modeloURL, response -> {
-            Log.d("Response", response);
+            Log.d("usuarioenviado", username);
             try {
                 JSONObject jsonResponse = new JSONObject(response);
-                int restaurante_id = jsonResponse.getInt("restaurante_id");
+                Log.d("response_id_rest", jsonResponse.toString());
+                int id_rest = jsonResponse.getInt("id_rest");
+                Log.d("restaurante_id_rec", String.valueOf(id_rest));
                 // Se ha obtenido el restaurante_id, redirige a vista_dueno
                 Intent intent_login_dueño = new Intent(MainActivity.this, vista_dueno.class);
-                intent_login_dueño.putExtra("restaurante_id", restaurante_id);
+                intent_login_dueño.putExtra("restaurante_id", id_rest);
+                Log.d("restaurante_id_enviado", String.valueOf(id_rest));
                 MainActivity.this.startActivity(intent_login_dueño);
+
                 finish(); // Finaliza la actividad actual
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -156,3 +170,4 @@ public class MainActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 }
+

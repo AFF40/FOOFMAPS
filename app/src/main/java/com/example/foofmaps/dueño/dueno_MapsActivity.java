@@ -12,7 +12,7 @@ import com.example.foofmaps.clientes.restaurantes.SearchFragment;
 import com.example.foofmaps.clientes.restaurantes.SettingsFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MapsActivity2 extends AppCompatActivity {
+public class dueno_MapsActivity extends AppCompatActivity {
 
     private MapsFragment mapsFragment;
     private SearchFragment searchFragment;

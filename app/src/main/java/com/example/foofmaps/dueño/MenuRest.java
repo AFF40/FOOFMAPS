@@ -1,4 +1,5 @@
-package com.example.foofmaps.clientes.restaurantes;
+
+package com.example.foofmaps.dueño;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -15,6 +16,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.example.foofmaps.R;
+import com.example.foofmaps.clientes.restaurantes.bebidas_rest;
+import com.example.foofmaps.clientes.restaurantes.platos_rest;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MenuRest extends AppCompatActivity {
@@ -55,7 +58,7 @@ public class MenuRest extends AppCompatActivity {
         // Cargar la imagen desde tu servidor utilizando Glide
         Glide.with(this)
                 .load(imagen) // Aquí debes poner la URL correcta del servidor
-                .into(imageViewRestaurante); // Aquí debes poner el ImageView correcto
+                .into(imageViewRestaurante);
 
         // Inflar el fragmento platos_rest en el contenedor contenedorlista
         FragmentManager fragmentManager = getSupportFragmentManager();
