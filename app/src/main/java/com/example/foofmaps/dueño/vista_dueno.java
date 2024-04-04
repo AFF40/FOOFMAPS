@@ -20,7 +20,6 @@ import com.bumptech.glide.Glide;
 import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
 import com.example.foofmaps.clientes.restaurantes.MainActivity;
-import com.example.foofmaps.clientes.restaurantes.SettingsFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -51,7 +50,6 @@ public class vista_dueno extends AppCompatActivity {
 
         if (restaurante_id != -1) {
             Log.d("recibido_id_rest", "El valor de id_rest es: " + restaurante_id);
-
             fetchRestaurantDataFromDatabase(restaurante_id);
         } else {
             Log.e("recibido_id_rest", "Error: restaurante_id no recibido correctamente");
@@ -82,7 +80,7 @@ public class vista_dueno extends AppCompatActivity {
                     return true;
                 case R.id.ajustes:
                     Log.d("BottomNav", "Selected: Ajustes");
-                    Fragment fragmentSettings = new SettingsFragment(); // Reemplaza con el nombre correcto de tu fragmento
+                    Fragment fragmentSettings = new SettingsDuenoFragment(); // Reemplaza con el nombre correcto de tu fragmento
                     loadFragment(fragmentSettings);
                     return true;
             }
