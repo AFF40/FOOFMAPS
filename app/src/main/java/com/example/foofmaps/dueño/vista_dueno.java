@@ -103,6 +103,7 @@ public class vista_dueno extends AppCompatActivity {
         ImageView imageViewRestaurante = findViewById(R.id.icono_res);
 
 
+
         //obtener la url de la imagen
         RequestQueue requestQueue2 = Volley.newRequestQueue(this);
         StringRequest stringRequest2 = new StringRequest(Request.Method.GET, modeloURL2, response -> {
@@ -148,6 +149,8 @@ public class vista_dueno extends AppCompatActivity {
                     Log.d("Restaurante", "Latitud: " + latitud);
                     Log.d("Restaurante", "Longitud: " + longitud);
                     Log.d("Restaurante", "Estado: " + estadoRestaurante);
+
+
 
                     TextView textViewNomRest = findViewById(R.id.nom_rest);
 
