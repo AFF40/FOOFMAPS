@@ -18,7 +18,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.foofmaps.ADMIN.Vista_administrador;
 import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
-import com.example.foofmaps.dueño.vista_dueno;
+import com.example.foofmaps.dueño.vista_dueno2;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
                 int id_rest = jsonResponse.getInt("id_rest");
                 Log.d("restaurante_id_rec", String.valueOf(id_rest));
                 // Se ha obtenido el restaurante_id, redirige a vista_dueno
-                Intent intent_login_dueño = new Intent(MainActivity.this, vista_dueno.class);
+                Intent intent_login_dueño = new Intent(MainActivity.this, vista_dueno2.class);
                 intent_login_dueño.putExtra("restaurante_id", id_rest);
                 Log.d("restaurante_id_enviado", String.valueOf(id_rest));
                 MainActivity.this.startActivity(intent_login_dueño);

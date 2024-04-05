@@ -7,12 +7,76 @@
     tools:context=".clientes.restaurantes.MapsActivity2"
     >
 
+    <LinearLayout
+        android:id="@+id/bannertop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/black"
+        android:paddingTop="10dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="10dp">
+
+        <!-- ImageView en el banner -->
+        <ImageView
+            android:id="@+id/icono_res"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center_vertical"
+            />
+
+        <!-- TextView en el banner -->
+        <TextView
+            android:id="@+id/nom_rest"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="nombre del restaurante"
+            android:textSize="22sp"
+            android:textColor="@color/white"
+            android:gravity="center_vertical"
+            android:paddingTop="20dp"
+            android:paddingStart="10dp"
+            />
+
+        <!-- Layout para el Switch y el TextView "cerrado" al final del banner -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="end|center_vertical">
+
+            <!-- Botón en el banner (a la derecha) -->
+            <Switch
+                android:id="@+id/boton_estado_rest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:paddingEnd="10dp"
+                />
+
+            <!-- TextView "cerrado" debajo del botón dentro del banner -->
+            <TextView
+                android:id="@+id/estado_rest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:text="cerrado"
+                android:textColor="@color/white"
+                android:textSize="15dp"
+                android:paddingEnd="10dp"
+                />
+        </LinearLayout>
+    </LinearLayout>
+
 
     <!-- activity_maps2.xml -->
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@+id/bannertop"/>
 
 
 
@@ -21,6 +85,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        app:menu="@menu/bottom_navigation_menu" />
+        app:menu="@menu/bottom_navigation_menu_dueno" />
 
 </RelativeLayout>

@@ -32,6 +32,7 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class dueno_bebidas extends Fragment {
+    // En el fragmento dueno_bebidas.java
     public static dueno_bebidas newInstance(int restauranteId) {
         dueno_bebidas fragment = new dueno_bebidas();
         Bundle args = new Bundle();

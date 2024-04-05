@@ -37,7 +37,6 @@ import org.json.JSONObject;
 public class vista_dueno extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +52,6 @@ public class vista_dueno extends AppCompatActivity {
             fetchRestaurantDataFromDatabase(restaurante_id);
         } else {
             Log.e("recibido_id_rest", "Error: restaurante_id no recibido correctamente");
-
             Intent intent = new Intent(vista_dueno.this, MainActivity.class);
             startActivity(intent);
             finish();
@@ -64,51 +62,32 @@ public class vista_dueno extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.maps:
                     Log.d("BottomNav", "Selected: Maps");
-                    // No necesitas iniciar la actividad actual nuevamente
+                    loadFragment(new MapsFragment());
                     return true;
                 case R.id.alimentos:
                     Log.d("BottomNav", "Selected: Alimentos");
-                    int restauranteId = getIntent().getIntExtra("restaurante_id", -1);
-                    Fragment fragmentmenu = dueno_menu.newInstance(restauranteId);
-                    loadFragment(fragmentmenu);
+                    loadFragment(dueno_menu.newInstance(restaurante_id));
                     return true;
                 case R.id.bebidas:
                     Log.d("BottomNav", "Selected: Bebidas");
-                    int restauranteId2 = getIntent().getIntExtra("restaurante_id", -1);
-                    Fragment fragmentbebidas = dueno_bebidas.newInstance(restauranteId2);
-                    loadFragment(fragmentbebidas);
+                    loadFragment(dueno_bebidas.newInstance(restaurante_id));  // Asegúrate de pasar el restaurante_id
                     return true;
                 case R.id.ajustes:
                     Log.d("BottomNav", "Selected: Ajustes");
-                    Fragment fragmentSettings = new SettingsDuenoFragment(); // Reemplaza con el nombre correcto de tu fragmento
-                    loadFragment(fragmentSettings);
+                    loadFragment(new SettingsDuenoFragment());
                     return true;
+                default:
+                    return false;
             }
-            return false;
         });
+
+        // Inflar el MapsFragment al iniciar la actividad
+        loadFragment(new MapsFragment());
     }
 
     private void loadFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-        // Verifica si el fragmento ya está en el contenedor
-        Fragment existingFragment = getSupportFragmentManager().findFragmentByTag(fragment.getClass().getName());
-
-        if (existingFragment != null) {
-            // Si el fragmento existe, simplemente muestra el fragmento
-            transaction.show(existingFragment);
-        } else {
-            // Si el fragmento no existe, agrega la nueva instancia al contenedor
-            transaction.add(R.id.map_dueno, fragment, fragment.getClass().getName());
-        }
-
-        // Oculta los fragmentos que no se están mostrando
-        for (Fragment fragmentToHide : getSupportFragmentManager().getFragments()) {
-            if (fragmentToHide != existingFragment) {
-                transaction.hide(fragmentToHide);
-            }
-        }
-
+        transaction.replace(R.id.fragment_container, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }

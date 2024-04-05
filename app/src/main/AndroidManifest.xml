@@ -25,6 +25,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="tiramisu">
         <activity
+            android:name=".dueño.vista_dueno2"
+            android:exported="false" />
+        <activity
             android:name=".ADMIN.Vista_administrador"
             android:exported="false" />
         <activity
@@ -52,7 +55,7 @@
             android:name=".clientes.restaurantes.MenuRest"
             android:exported="false"
             android:label="MenuRestActivity" />
-        <activity android:name=".clientes.restaurantes.MapsActivity2"/>
+        <activity android:name=".clientes.restaurantes.MapsActivity2" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
