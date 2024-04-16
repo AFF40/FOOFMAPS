@@ -10,11 +10,30 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsFragment extends Fragment {
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-    private int restauranteId;
+public class MapsFragment extends Fragment implements OnMapReadyCallback {
+
+    private GoogleMap mMap;
+    private Marker restauranteMarker;
+    private int restauranteId = -1; // Inicializa con un valor por defecto
 
     @Nullable
     @Override
@@ -26,9 +45,75 @@ public class MapsFragment extends Fragment {
         if (bundle != null) {
             restauranteId = bundle.getInt("restaurante_id", -1);
             Log.d("id_rest_enmap", String.valueOf(restauranteId));
+
+            // Aquí construimos la URL para obtener los datos del restaurante
+            String controladorURL1 = Config.CONTROLADOR_URL + "cont_rest.php?restaurante_id=" + restauranteId;
+            Log.d("BeforeURL", "Before defining controladorURL1");
+            Log.d("controladorURL1", controladorURL1);
+
+            // Hacemos la solicitud para obtener los datos del restaurante
+            // Hacemos la solicitud para obtener los datos del restaurante
+            RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, controladorURL1,
+                    response -> {
+                        try {
+                            // Parsear la respuesta JSON
+                            JSONArray jsonArray = new JSONArray(response);
+                            if (jsonArray.length() > 0) {
+                                JSONObject jsonObject = jsonArray.getJSONObject(0); // Tomar el primer objeto
+                                String nomRest = jsonObject.getString("nom_rest");
+                                JSONObject ubicacion = jsonObject.getJSONObject("ubicacion");
+                                double latitud = Double.parseDouble(ubicacion.getString("latitud"));
+                                double longitud = Double.parseDouble(ubicacion.getString("longitud"));
+                                Log.d("Restaurante___datos ", nomRest + " - " + latitud + " - " + longitud);
+
+                                LatLng restauranteLatLng = new LatLng(latitud, longitud);
+
+                                // Inicializar el mapa
+                                SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_dueno);
+                                if (mapFragment != null) {
+                                    mapFragment.getMapAsync(googleMap -> {
+                                        mMap = googleMap;
+                                        // Aplicar estilo personalizado
+                                        boolean success = mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.map_style_no_labels));
+
+
+                                        // Agregar marcador
+                                        if (restauranteMarker != null) {
+                                            restauranteMarker.remove(); // Eliminar el marcador anterior
+                                        }
+                                        restauranteMarker = mMap.addMarker(new MarkerOptions().position(restauranteLatLng).title(nomRest));
+                                        // Mover cámara
+                                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(restauranteLatLng, 16));
+                                    });
+                                } else {
+                                    Log.e("MapFragment", "Map fragment is null");
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }, error -> Log.e("FetchDataError", "Error fetching data: " + error.toString()));
+
+            requestQueue.add(stringRequest);
+        } else {
+            Log.d("BundleCheck", "Bundle is null");
+        }
+
+        // Inicializar el mapa
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        } else {
+            Log.e("MapFragment", "Map fragment is null");
         }
 
         return view;
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
     }
 
 }

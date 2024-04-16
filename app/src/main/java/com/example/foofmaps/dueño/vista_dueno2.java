@@ -47,6 +47,11 @@ public class vista_dueno2 extends AppCompatActivity {
         platos_Fragment = new dueno_platos();
         bebidas_Fragment = new dueno_bebidas2();
 
+        // Crear un Bundle y agregar el restauranteId
+        Bundle bundle = new Bundle();
+        bundle.putInt("restaurante_id", id_rest);
+        mapsFragment.setArguments(bundle); // Asignar el Bundle al MapsFragment
+
         // Carga el fragmento inicialmente
         loadFragment(mapsFragment);
 
@@ -148,16 +153,6 @@ public class vista_dueno2 extends AppCompatActivity {
 
                     Log.d("Restaurante", "Nombre: " + nomRest);
                     Log.d("Restaurante", "Estado: " + estadoRestaurante);
-
-                    // Aquí configuramos los argumentos del MapsFragment
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("restaurante_id", restaurante_id);
-
-                    // Si el MapsFragment ya está creado, actualizamos sus argumentos
-                    if (mapsFragment != null && mapsFragment.isAdded()) {
-                        mapsFragment.setArguments(bundle);
-                        Log.d("id_rest_enmap", String.valueOf(restaurante_id)); // Imprimir aquí también
-                    }
 
                     TextView textViewNomRest = findViewById(R.id.nom_rest);
                     // Actualiza el contenido de la vista con el valor.

@@ -129,7 +129,6 @@ public class vista_dueno extends AppCompatActivity {
 
 
 
-
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, controladorURL1, response -> {
             try {
