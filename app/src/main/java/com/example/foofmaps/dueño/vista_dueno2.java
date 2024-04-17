@@ -1,5 +1,7 @@
 package com.example.foofmaps.dueño;
 
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -27,19 +29,25 @@ import org.json.JSONObject;
 
 public class vista_dueno2 extends AppCompatActivity {
 
+    public interface OnRestaurantStatusChangeListener {
+        void onStatusChange(int status);
+    }
+
+    private OnRestaurantStatusChangeListener onRestaurantStatusChangeListener;
+
     private MapsFragment mapsFragment;
     private SettingsDuenoFragment settingsDuenoFragment;
     private dueno_platos platos_Fragment;
     private dueno_bebidas2 bebidas_Fragment;
+
+    private int initialRestaurantStatus = -1; // Agrega esta línea
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps2);
 
-        // Obtiene el id del restaurante desde el intent desde la actividad anterior
         int id_rest = getIntent().getIntExtra("restaurante_id", -1);
-        //imprime el id del restaurante
         Log.d("id_rest", String.valueOf(id_rest));
 
         mapsFragment = new MapsFragment();
@@ -47,12 +55,10 @@ public class vista_dueno2 extends AppCompatActivity {
         platos_Fragment = new dueno_platos();
         bebidas_Fragment = new dueno_bebidas2();
 
-        // Crear un Bundle y agregar el restauranteId
         Bundle bundle = new Bundle();
         bundle.putInt("restaurante_id", id_rest);
-        mapsFragment.setArguments(bundle); // Asignar el Bundle al MapsFragment
+        mapsFragment.setArguments(bundle);
 
-        // Carga el fragmento inicialmente
         loadFragment(mapsFragment);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -117,25 +123,21 @@ public class vista_dueno2 extends AppCompatActivity {
         TextView nomrest_tx = findViewById(R.id.estado_rest);
         ImageView imageViewRestaurante = findViewById(R.id.icono_res);
 
-        //obtener la url de la imagen
         RequestQueue requestQueue2 = Volley.newRequestQueue(this);
         StringRequest stringRequest2 = new StringRequest(Request.Method.GET, modeloURL2, response -> {
             try {
                 String imagen = response;
-                //convertir localhost por la ip del servidor
                 imagen = imagen.replace("http://localhost", Config.ip);
                 Log.d("imagen", imagen);
                 if (!imagen.isEmpty()) {
-                    // Cargar la imagen desde tu servidor utilizando Glide
                     Glide.with(this)
-                            .load(imagen) // Aquí debes poner la URL correcta del servidor
-                            .into(imageViewRestaurante); // Aquí debes poner el ImageView correcto
+                            .load(imagen)
+                            .into(imageViewRestaurante);
                 }
             } catch (StringIndexOutOfBoundsException e) {
                 e.printStackTrace();
             }
         }, error -> {
-            // Maneja el error si la solicitud falla
             Log.e("FetchDataError", "Error fetching data: " + error.toString());
         });
         requestQueue2.add(stringRequest2);
@@ -150,31 +152,35 @@ public class vista_dueno2 extends AppCompatActivity {
                     String nomRest = jsonObject.getString("nom_rest");
 
                     int estadoRestaurante = jsonObject.getInt("estado");
+                    initialRestaurantStatus = estadoRestaurante; // Agrega esta línea
 
                     Log.d("Restaurante", "Nombre: " + nomRest);
                     Log.d("Restaurante", "Estado: " + estadoRestaurante);
 
                     TextView textViewNomRest = findViewById(R.id.nom_rest);
-                    // Actualiza el contenido de la vista con el valor.
                     textViewNomRest.setText(nomRest);
 
-                    // Actualiza el estado del restaurante en la vista
                     if (estadoRestaurante == 1) {
                         switchEstado.setChecked(true);
                         nomrest_tx.setText("Abierto");
+                        switchEstado.getTrackDrawable().setColorFilter(Color.GREEN, PorterDuff.Mode.MULTIPLY);
                     } else {
                         switchEstado.setChecked(false);
                         nomrest_tx.setText("Cerrado");
+                        switchEstado.getTrackDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
                     }
                     switchEstado.setOnCheckedChangeListener((buttonView, isChecked) -> {
                         int nuevoEstado = isChecked ? 1 : 0;
                         sendRequest(restaurante_id, nuevoEstado);
-                        // Actualiza el estado del restaurante en la vista si está abierto o cerrado
                         if (isChecked) {
                             nomrest_tx.setText("Abierto");
                         } else {
                             nomrest_tx.setText("Cerrado");
                         }
+                        if (onRestaurantStatusChangeListener != null) {
+                            onRestaurantStatusChangeListener.onStatusChange(nuevoEstado);
+                        }
+                        updateSwitchState(nuevoEstado);
                     });
 
                 }
@@ -182,14 +188,12 @@ public class vista_dueno2 extends AppCompatActivity {
                 e.printStackTrace();
             }
         }, error -> {
-            // Maneja el error si la solicitud falla
             Log.e("FetchDataError", "Error fetching data: " + error.toString());
         });
         requestQueue.add(stringRequest);
     }
 
     private void sendRequest(int restauranteId, int estado) {
-        // Construye la URL con los parámetros
         String modeloURL = Config.MODELO_URL + "cambiar_estado.php?restaurante_id=" + restauranteId + "&estado=" + estado;
         Log.d("url_estado", modeloURL);
         RequestQueue requestQueue = Volley.newRequestQueue(this);
@@ -199,4 +203,28 @@ public class vista_dueno2 extends AppCompatActivity {
 
         requestQueue.add(stringRequest);
     }
+
+    public void setOnRestaurantStatusChangeListener(OnRestaurantStatusChangeListener listener) {
+        this.onRestaurantStatusChangeListener = listener;
+    }
+
+    public int getInitialRestaurantStatus() {
+        return initialRestaurantStatus;
+    }
+
+    public void updateSwitchState(int estado) {
+        Switch switchEstado = findViewById(R.id.boton_estado_rest);
+        TextView nomrest_tx = findViewById(R.id.estado_rest);
+
+        if (estado == 1) {
+            switchEstado.setChecked(true);
+            nomrest_tx.setText("Abierto");
+            switchEstado.getTrackDrawable().setColorFilter(Color.GREEN, PorterDuff.Mode.MULTIPLY);
+        } else {
+            switchEstado.setChecked(false);
+            nomrest_tx.setText("Cerrado");
+            switchEstado.getTrackDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
+        }
+    }
+
 }

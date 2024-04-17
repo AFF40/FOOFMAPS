@@ -28,7 +28,7 @@ public class SettingsDuenoFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // Abrir WhatsApp con un número de teléfono específico
-                Agregar_mi_negocio("+59169474930");
+                Informar_Error("+59169474930");
             }
         });
 
@@ -43,10 +43,10 @@ public class SettingsDuenoFragment extends Fragment {
         return view;
     }
 
-    private void Agregar_mi_negocio(String phoneNumber) {
+    private void Informar_Error(String phoneNumber) {
         try {
             String url = "https://api.whatsapp.com/send?phone=" + phoneNumber+
-                    "&text=Hola!!!%20me%20gustaria%20agregar%20mi%20negocio%20a%20la%20aplicacion.";
+                    "&text=" + "Hola, tengo un problema con la aplicacion. ¿Puedes ayudarme?";
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse(url));
             startActivity(intent);
