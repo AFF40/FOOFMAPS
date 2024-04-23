@@ -62,14 +62,11 @@
             android:value="AIzaSyCSto7bMf939HbSUktPe0IWWn78J7B9hSQ" />
 
         <activity
-            android:name=".clientes.restaurantes.MapsActivity"
-            android:exported="false"
-            android:label="@string/title_activity_maps" />
-        <activity
             android:name=".clientes.restaurantes.registro"
             android:exported="false" />
         <activity
             android:name=".clientes.restaurantes.MainActivity"
+
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

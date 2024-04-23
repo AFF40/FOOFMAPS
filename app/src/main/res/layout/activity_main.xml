@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,70 +8,80 @@
     android:orientation="vertical"
     android:background="@color/white"
     style="@style/Theme.AppCompat.NoActionBar"
-    >
-    <TextView
+    android:weightSum="10"
+    android:gravity="center">
+
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:text="FOODMAPS"
-        android:textSize="35dp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_size_title"
         android:layout_gravity="center"
-        android:paddingTop="20dp"
-        >
-    </TextView>
+        android:layout_marginTop="5dp" />
+
     <ImageView
         android:id="@+id/logo"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="170dp"
+        android:layout_height="0dp"
+        android:layout_weight="3"
         android:src="@drawable/foodmapsicon"
         android:layout_gravity="center"
-        android:layout_marginTop="30dp"
-        >
-    </ImageView>
-    <TextView
+        android:layout_marginTop="5dp" />
+
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/titulo"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:text="INICIAR SESION"
-        android:textSize="30sp"
+        android:textSize="30dp"
         android:textColor="@color/black"
-        android:gravity="center"
-        >
-    </TextView>
-    <EditText
-        android:drawableStart="@drawable/baseline_person_24"
+        android:gravity="center" />
+
+    <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/tv_usuario"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="30sp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_weight="1"
+        android:autoSizeTextType="uniform"
         android:background="@drawable/bordeform"
+        android:drawableStart="@drawable/baseline_person_24"
+        android:drawablePadding="5sp"
         android:gravity="left"
         android:hint="Usuario:"
-        android:minHeight="48dp"
-        android:paddingLeft="10dp"
-        android:textColorHint="@color/black"
-        android:textSize="25sp"
-        android:textColor="@color/black"
-        android:padding="10dp"
         android:inputType="text"
-        >
-    </EditText>
-    <EditText
+        android:minHeight="48dp"
+        android:paddingVertical="15dp"
+        android:paddingLeft="20dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black" />
+
+    <androidx.appcompat.widget.AppCompatEditText
         android:drawableStart="@drawable/baseline_key_24"
+        android:drawablePadding="5sp"
         android:id="@+id/tv_pass1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="30sp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginBottom="30sp"
+        android:layout_marginHorizontal="30sp"
+        android:layout_marginTop="15sp"
         android:background="@drawable/bordeform"
         android:gravity="left"
         android:hint="Contraseña: "
         android:minHeight="48dp"
-        android:paddingLeft="10dp"
+        android:paddingLeft="20dp"
         android:textColorHint="@color/black"
         android:textColor="@color/black"
-        android:textSize="25sp"
-        android:padding="10dp"
-        android:inputType="textPassword">
-    </EditText>
+        android:autoSizeTextType="uniform"
+        android:paddingVertical="15dp"
+        android:inputType="textPassword" />
+
     <Button
         android:id="@+id/btn_inicio"
         android:layout_width="wrap_content"
@@ -78,28 +89,29 @@
         android:textColor="@color/rojo"
         android:text="Ingresar"
         android:layout_gravity="center"
-        android:backgroundTint="@color/black"
-        >
-    </Button>
-    <TextView
-        android:layout_height="wrap_content"
+        android:backgroundTint="@color/black" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_height="0dp"
         android:layout_width="wrap_content"
+        android:layout_weight="1"
         android:layout_gravity="center"
         android:textColor="@color/black"
         android:layout_marginTop="20dp"
-        android:textSize="20sp"
+        android:textAlignment="center"
+        android:textSize="20dp"
         android:text="No tienes una cuenta aun ?"
-        >
-    </TextView>
-    <TextView
+        />
+
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_reg"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_width="wrap_content"
+        android:layout_weight="1"
+        android:textAlignment="center"
         android:layout_gravity="center"
-        android:layout_marginTop="10dp"
         android:textColor="#002BFF"
-        android:textSize="20sp"
-        android:text="Click aqui para crear una"
-        >
-    </TextView>
+        android:textSize="20dp"
+        android:text="Click aqui para crear una" />
+
 </LinearLayout>
