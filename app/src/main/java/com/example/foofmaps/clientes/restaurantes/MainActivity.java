@@ -84,8 +84,8 @@ public class MainActivity extends AppCompatActivity {
                                 // Redirigir según el rol
                                 if (rol == 1) {
                                     // Usuario con rol 1, redirige a MapsActivity
-                                    Log.d("Redirect", "Redirecting to MapsActivity2");
-                                    Intent intent_login_exitoso = new Intent(MainActivity.this, MapsActivity2.class);
+                                    Log.d("Redirect", "Redirecting to MapsActivity");
+                                    Intent intent_login_exitoso = new Intent(MainActivity.this, MapsCliActivity.class);
                                     MainActivity.this.startActivity(intent_login_exitoso);
                                     finish(); // Finaliza la actividad actual para que no se pueda volver atrás desde aquí
                                 } else if (rol == 2) {
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
             // Usuario ya ha iniciado sesión, redirigir según su rol
             if (userRole == 1) {
                 // Usuario con rol 1, redirige a MapsActivity
-                Intent intent = new Intent(MainActivity.this, MapsActivity2.class);
+                Intent intent = new Intent(MainActivity.this, MapsCliActivity.class);
                 startActivity(intent);
                 finish(); // Finaliza la actividad actual para que no se pueda volver atrás desde aquí
             } else if (userRole == 2) {

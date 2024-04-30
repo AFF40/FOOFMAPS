@@ -15,6 +15,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.example.foofmaps.R;
+import com.example.foofmaps.clientes.restaurantes.fragments.bebidas_rest;
+import com.example.foofmaps.clientes.restaurantes.fragments.platos_rest;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MenuRest extends AppCompatActivity {

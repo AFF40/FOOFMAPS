@@ -4,21 +4,9 @@
     android:layout_height="match_parent">
 
     <fragment
-        android:id="@+id/map_dueno"
+        android:id="@+id/fragment_container_cli"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
-    <!-- Aquí puedes agregar cualquier otro componente que desees, como TextView para el estado -->
-    <TextView
-        android:id="@+id/estado_rest"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:padding="16dp"
-        android:text="Estado del Restaurante"
-        android:textColor="@android:color/black"
-        android:textSize="16sp" />
 
 </RelativeLayout>

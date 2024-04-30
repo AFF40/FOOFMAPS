@@ -8,8 +8,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.foofmaps.R;
-import com.example.foofmaps.clientes.restaurantes.SearchFragment;
-import com.example.foofmaps.clientes.restaurantes.SettingsFragment;
+import com.example.foofmaps.clientes.restaurantes.fragments.SearchFragment;
+import com.example.foofmaps.clientes.restaurantes.fragments.SettingsFragment;
+import com.example.foofmaps.dueño.fragments.MapsFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class dueno_MapsActivity extends AppCompatActivity {

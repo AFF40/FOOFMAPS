@@ -55,7 +55,15 @@
             android:name=".clientes.restaurantes.MenuRest"
             android:exported="false"
             android:label="MenuRestActivity" />
-        <activity android:name=".clientes.restaurantes.MapsActivity2" />
+        <activity
+            android:name=".clientes.restaurantes.MapsCliActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
