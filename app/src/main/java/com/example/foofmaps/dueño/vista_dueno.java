@@ -20,6 +20,8 @@ import com.bumptech.glide.Glide;
 import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
 import com.example.foofmaps.clientes.restaurantes.MainActivity;
+import com.example.foofmaps.dueño.fragments.MapsFragment;
+import com.example.foofmaps.dueño.fragments.dueno_menu;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;

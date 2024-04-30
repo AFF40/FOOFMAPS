@@ -1,4 +1,4 @@
-package com.example.foofmaps.clientes.restaurantes;
+package com.example.foofmaps.clientes.restaurantes.fragments;
 
 import android.os.AsyncTask;
 import android.os.Bundle;

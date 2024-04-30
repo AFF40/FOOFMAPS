@@ -21,6 +21,9 @@ import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
+import com.example.foofmaps.dueño.fragments.MapsFragment;
+import com.example.foofmaps.dueño.fragments.dueno_bebidas2;
+import com.example.foofmaps.dueño.fragments.dueno_platos;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.json.JSONArray;

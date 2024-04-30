@@ -1,4 +1,4 @@
-package com.example.foofmaps.dueño;
+package com.example.foofmaps.dueño.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,10 +11,10 @@ import com.example.foofmaps.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link dueno_bebidas2#newInstance} factory method to
+ * Use the {@link dueno_platos#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class dueno_bebidas2 extends Fragment {
+public class dueno_platos extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -25,7 +25,7 @@ public class dueno_bebidas2 extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public dueno_bebidas2() {
+    public dueno_platos() {
         // Required empty public constructor
     }
 
@@ -35,11 +35,11 @@ public class dueno_bebidas2 extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment dueno_bebidas2.
+     * @return A new instance of fragment dueno_platos.
      */
     // TODO: Rename and change types and number of parameters
-    public static dueno_bebidas2 newInstance(String param1, String param2) {
-        dueno_bebidas2 fragment = new dueno_bebidas2();
+    public static dueno_platos newInstance(String param1, String param2) {
+        dueno_platos fragment = new dueno_platos();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -60,6 +60,6 @@ public class dueno_bebidas2 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_dueno_bebidas2, container, false);
+        return inflater.inflate(R.layout.fragment_dueno_platos, container, false);
     }
 }

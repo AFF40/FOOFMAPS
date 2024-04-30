@@ -1,4 +1,4 @@
-    package com.example.foofmaps.dueño;
+    package com.example.foofmaps.dueño.fragments;
 
     import android.content.Intent;
     import android.os.AsyncTask;
@@ -16,6 +16,8 @@
     import com.example.foofmaps.Config;
     import com.example.foofmaps.HttpUtils;
     import com.example.foofmaps.R;
+    import com.example.foofmaps.dueño.agregar_platos;
+    import com.example.foofmaps.dueño.editar_plato;
     import com.example.foofmaps.platosybebidas.Plato;
     import com.example.foofmaps.platosybebidas.PlatoAdapter;
 

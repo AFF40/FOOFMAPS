@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".clientes.restaurantes.platos_rest">
+    tools:context=".clientes.restaurantes.fragments.platos_rest">
 
     <!-- Agrega el RecyclerView para la lista de platos dentro del FrameLayout -->
     <androidx.recyclerview.widget.RecyclerView

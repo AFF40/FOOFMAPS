@@ -1,4 +1,4 @@
-package com.example.foofmaps.dueño;
+package com.example.foofmaps.dueño.fragments;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +16,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
+import com.example.foofmaps.dueño.vista_dueno2;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
