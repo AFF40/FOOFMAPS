@@ -21,7 +21,7 @@ import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
-import com.example.foofmaps.dueño.fragments.MapsFragment;
+import com.example.foofmaps.dueño.fragments.MapsDueFragment;
 import com.example.foofmaps.dueño.fragments.dueno_bebidas2;
 import com.example.foofmaps.dueño.fragments.dueno_platos;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -38,7 +38,7 @@ public class vista_dueno2 extends AppCompatActivity {
 
     private OnRestaurantStatusChangeListener onRestaurantStatusChangeListener;
 
-    private MapsFragment mapsFragment;
+    private MapsDueFragment mapsDueFragment;
     private SettingsDuenoFragment settingsDuenoFragment;
     private dueno_platos platos_Fragment;
     private dueno_bebidas2 bebidas_Fragment;
@@ -53,16 +53,16 @@ public class vista_dueno2 extends AppCompatActivity {
         int id_rest = getIntent().getIntExtra("restaurante_id", -1);
         Log.d("id_rest", String.valueOf(id_rest));
 
-        mapsFragment = new MapsFragment();
+        mapsDueFragment = new MapsDueFragment();
         settingsDuenoFragment = new SettingsDuenoFragment();
         platos_Fragment = new dueno_platos();
         bebidas_Fragment = new dueno_bebidas2();
 
         Bundle bundle = new Bundle();
         bundle.putInt("restaurante_id", id_rest);
-        mapsFragment.setArguments(bundle);
+        mapsDueFragment.setArguments(bundle);
 
-        loadFragment(mapsFragment);
+        loadFragment(mapsDueFragment);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -71,7 +71,7 @@ public class vista_dueno2 extends AppCompatActivity {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 switch (item.getItemId()) {
                     case R.id.maps:
-                        loadFragment(mapsFragment);
+                        loadFragment(mapsDueFragment);
                         return true;
                     case R.id.ajustes:
                         loadFragment(settingsDuenoFragment);
@@ -93,8 +93,9 @@ public class vista_dueno2 extends AppCompatActivity {
     private void loadFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-        if (mapsFragment != null && mapsFragment.isVisible()) {
-            transaction.hide(mapsFragment);
+        // Ocultar los fragmentos existentes
+        if (mapsDueFragment != null && mapsDueFragment.isVisible()) {
+            transaction.hide(mapsDueFragment);
         }
         if (platos_Fragment != null && platos_Fragment.isVisible()) {
             transaction.hide(platos_Fragment);
@@ -106,6 +107,7 @@ public class vista_dueno2 extends AppCompatActivity {
             transaction.hide(settingsDuenoFragment);
         }
 
+        // Mostrar el nuevo fragmento
         if (fragment != null) {
             if (fragment.isAdded()) {
                 transaction.show(fragment);
@@ -114,8 +116,10 @@ public class vista_dueno2 extends AppCompatActivity {
             }
         }
 
+        // Llamar a commit solo una vez al final
         transaction.commit();
     }
+
 
     private void fetchRestaurantDataFromDatabase(int restauranteId) {
         String controladorURL1 = Config.CONTROLADOR_URL + "cont_rest.php?restaurante_id=" + restauranteId;

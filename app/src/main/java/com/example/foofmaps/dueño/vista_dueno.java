@@ -20,7 +20,7 @@ import com.bumptech.glide.Glide;
 import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
 import com.example.foofmaps.clientes.restaurantes.MainActivity;
-import com.example.foofmaps.dueño.fragments.MapsFragment;
+import com.example.foofmaps.dueño.fragments.MapsDueFragment;
 import com.example.foofmaps.dueño.fragments.dueno_menu;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -64,7 +64,7 @@ public class vista_dueno extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.maps:
                     Log.d("BottomNav", "Selected: Maps");
-                    loadFragment(new MapsFragment());
+                    loadFragment(new MapsDueFragment());
                     return true;
                 case R.id.alimentos:
                     Log.d("BottomNav", "Selected: Alimentos");
@@ -84,7 +84,7 @@ public class vista_dueno extends AppCompatActivity {
         });
 
         // Inflar el MapsFragment al iniciar la actividad
-        loadFragment(new MapsFragment());
+        loadFragment(new MapsDueFragment());
     }
 
     private void loadFragment(Fragment fragment) {

@@ -10,12 +10,12 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.foofmaps.R;
 import com.example.foofmaps.clientes.restaurantes.fragments.SearchFragment;
 import com.example.foofmaps.clientes.restaurantes.fragments.SettingsFragment;
-import com.example.foofmaps.dueño.fragments.MapsFragment;
+import com.example.foofmaps.dueño.fragments.MapsDueFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class dueno_MapsActivity extends AppCompatActivity {
 
-    private MapsFragment mapsFragment;
+    private MapsDueFragment mapsFragment;
     private SearchFragment searchFragment;
     private SettingsFragment settingsFragment;
 
@@ -24,7 +24,7 @@ public class dueno_MapsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps2);
 
-        mapsFragment = new MapsFragment();
+        mapsFragment = new MapsDueFragment();
         searchFragment = new SearchFragment();
         settingsFragment = new SettingsFragment();
 
