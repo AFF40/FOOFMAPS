@@ -1,6 +1,7 @@
 package com.example.foofmaps.clientes.restaurantes.fragments;
 
-import android.content.Context;
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -30,22 +31,10 @@ public class SettingsFragment extends Fragment {
         TextView textViewLogout = view.findViewById(R.id.btnLogout);
 
         // Configurar el clic del botón de WhatsApp
-        textViewWhatsApp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Llamar al método para abrir WhatsApp
-                abrirWhatsApp("+59169474930");
-            }
-        });
+        textViewWhatsApp.setOnClickListener(v -> abrirWhatsApp("+59169474930"));
 
         // Configurar el clic del botón de Cerrar sesión
-        textViewLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Llamar al método para cerrar sesión
-                cerrarSesion();
-            }
-        });
+        textViewLogout.setOnClickListener(v -> cerrarSesion());
 
         return view;
     }
@@ -65,15 +54,21 @@ public class SettingsFragment extends Fragment {
 
     // Método para cerrar sesión
     private void cerrarSesion() {
-        // Eliminar el valor de sesión en SharedPreferences
-        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+        // Comprobar si la actividad es nula
+        if (getActivity() == null) {
+            return;
+        }
+
+        // Eliminar el valor de sesión y el rol del usuario en SharedPreferences
+        SharedPreferences.Editor editor = getActivity().getSharedPreferences("MyPrefs", MODE_PRIVATE).edit();
         editor.putBoolean("isLoggedIn", false);
+        editor.remove("userRole"); // Elimina el rol del usuario
         editor.apply();
 
         // Redirigir a la actividad de inicio de sesión
-        Intent intent = new Intent(requireActivity(), MainActivity.class);
+        Intent intent = new Intent(getActivity(), MainActivity.class);
         startActivity(intent);
-        requireActivity().finish(); // Finalizar la actividad actual (fragment)
+        getActivity().finish(); // Finalizar la actividad actual
     }
 }
+

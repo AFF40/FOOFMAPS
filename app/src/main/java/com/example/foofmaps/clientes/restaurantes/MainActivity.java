@@ -45,6 +45,40 @@ public class MainActivity extends AppCompatActivity {
         boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
         int userRole = sharedPreferences.getInt("userRole", -1); // Obtiene el rol del usuario desde SharedPreferences
 
+        if (isLoggedIn && userRole != -1) {
+            // Usuario ya ha iniciado sesión, redirigir según su rol
+            redirectAccordingToRole(userRole);
+        } else {
+            // Usuario no ha iniciado sesión, mostrar pantalla de inicio de sesión
+            initializeLoginScreen();
+        }
+    }
+
+    private void redirectAccordingToRole(int userRole) {
+        Intent intent;
+        switch (userRole) {
+            case 1:
+                // Usuario con rol 1, redirige a MapsActivity
+                intent = new Intent(MainActivity.this, MapsCliActivity.class);
+                break;
+            case 2:
+                // Realizar la consulta para obtener id_rest desde la base de datos
+                obtenerIdRestDesdeBaseDeDatos();
+                return; // Evita que la actividad se cierre antes de obtener el id_rest
+            case 3:
+                // Usuario con rol 3, redirige a Vista_administrador
+                intent = new Intent(MainActivity.this, Vista_administrador.class);
+                break;
+            default:
+                // Cerrar sesión si el rol no es válido
+                logout();
+                return;
+        }
+        startActivity(intent);
+        finish(); // Finaliza la actividad actual para que no se pueda volver atrás desde aquí
+    }
+
+    private void initializeLoginScreen() {
         ed_username = findViewById(R.id.tv_usuario);
         ed_password = findViewById(R.id.tv_pass1);
         btnLogin = findViewById(R.id.btn_inicio);
@@ -52,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
         btnRegistrar.setOnClickListener(v -> {
             Intent intent_registro = new Intent(MainActivity.this, registro.class);
-            MainActivity.this.startActivity(intent_registro);
+            startActivity(intent_registro);
         });
 
         btnLogin.setOnClickListener(v -> {
@@ -76,29 +110,13 @@ public class MainActivity extends AppCompatActivity {
                                 int rol = jsonResponse.getInt("id_rol");
 
                                 // Guardar el rol del usuario en SharedPreferences
-                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                SharedPreferences.Editor editor = getSharedPreferences("MyPrefs", MODE_PRIVATE).edit();
                                 editor.putBoolean("isLoggedIn", true);
                                 editor.putInt("userRole", rol); // Guarda el rol del usuario
                                 editor.apply();
 
                                 // Redirigir según el rol
-                                if (rol == 1) {
-                                    // Usuario con rol 1, redirige a MapsActivity
-                                    Log.d("Redirect", "Redirecting to MapsActivity");
-                                    Intent intent_login_exitoso = new Intent(MainActivity.this, MapsCliActivity.class);
-                                    MainActivity.this.startActivity(intent_login_exitoso);
-                                    finish(); // Finaliza la actividad actual para que no se pueda volver atrás desde aquí
-                                } else if (rol == 2) {
-                                    // Realizar la consulta para obtener id_rest desde la base de datos
-                                    Log.d("Redirect", "Redirecting to vista_dueno");
-                                    obtenerIdRestDesdeBaseDeDatos();
-                                } else if (rol == 3) {
-                                    // Usuario con rol 3, redirige a Vista_administrador
-                                    Log.d("Redirect", "Redirecting to Vista_administrador");
-                                    Intent intent_login_exitoso = new Intent(MainActivity.this, Vista_administrador.class);
-                                    MainActivity.this.startActivity(intent_login_exitoso);
-                                    finish(); // Finaliza la actividad actual para que no se pueda volver atrás desde aquí
-                                }
+                                redirectAccordingToRole(rol);
                             } else {
                                 // Error en el registro, mostrar un mensaje al usuario
                                 Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT).show();
@@ -110,32 +128,12 @@ public class MainActivity extends AppCompatActivity {
             RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
             queue.add(loginRequest);
         });
-
-        // Verificar si el usuario ha iniciado sesión previamente
-        if (isLoggedIn) {
-            // Usuario ya ha iniciado sesión, redirigir según su rol
-            if (userRole == 1) {
-                // Usuario con rol 1, redirige a MapsActivity
-                Intent intent = new Intent(MainActivity.this, MapsCliActivity.class);
-                startActivity(intent);
-                finish(); // Finaliza la actividad actual para que no se pueda volver atrás desde aquí
-            } else if (userRole == 2) {
-                // Usuario con rol 2, se espera la respuesta de obtenerIdRestDesdeBaseDeDatos
-                obtenerIdRestDesdeBaseDeDatos();
-            } else if (userRole == 3) {
-                // Usuario con rol 3, redirige a Vista_administrador
-                Intent intent = new Intent(MainActivity.this, Vista_administrador.class);
-                startActivity(intent);
-                finish(); // Finaliza la actividad actual para que no se pueda volver atrás desde aquí
-            }
-        }
     }
 
     // Modificamos la función para que obtenga el restaurante_id de forma asíncrona
     private void obtenerIdRestDesdeBaseDeDatos() {
-
         String modeloURL = Config.MODELO_URL+"/consultar_id_rest.php";
-        Log.d ("urledit", "apiUrl: " +modeloURL );
+        Log.d("urledit", "apiUrl: " + modeloURL);
 
         RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, modeloURL, response -> {
@@ -149,8 +147,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent_login_dueño = new Intent(MainActivity.this, vista_dueno2.class);
                 intent_login_dueño.putExtra("restaurante_id", id_rest);
                 Log.d("restaurante_id_enviado", String.valueOf(id_rest));
-                MainActivity.this.startActivity(intent_login_dueño);
-
+                startActivity(intent_login_dueño);
                 finish(); // Finaliza la actividad actual
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -166,8 +163,19 @@ public class MainActivity extends AppCompatActivity {
                 return params;
             }
         };
-
         queue.add(stringRequest);
+    }
+
+    private void logout() {
+        // Eliminar el valor de sesión en SharedPreferences
+        SharedPreferences.Editor editor = getSharedPreferences("MyPrefs", MODE_PRIVATE).edit();
+        editor.putBoolean("isLoggedIn", false);
+        editor.apply();
+
+        // Redirigir a la actividad de inicio de sesión
+        Intent intent = new Intent(MainActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish(); // Finalizar la actividad actual
     }
 }
 
