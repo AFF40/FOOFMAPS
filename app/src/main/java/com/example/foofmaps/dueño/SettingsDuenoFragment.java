@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.foofmaps.R;
 import com.example.foofmaps.clientes.restaurantes.MainActivity;
+import com.example.foofmaps.dueño.cliente.MapsDueCliActivity;
 
 public class SettingsDuenoFragment extends Fragment {
 
@@ -23,12 +24,23 @@ public class SettingsDuenoFragment extends Fragment {
 
         TextView textViewWhatsApp = view.findViewById(R.id.btnWhatsApp);
         TextView textViewLogout = view.findViewById(R.id.btnLogout);
+        TextView textViewCambiarRol = view.findViewById(R.id.btn_cambiar_rol);
 
         textViewWhatsApp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Abrir WhatsApp con un número de teléfono específico
                 Informar_Error("+59169474930");
+            }
+        });
+
+        textViewCambiarRol.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Redirigir a la actividad de inicio de sesión
+                Intent intent = new Intent(requireActivity(), MapsDueCliActivity.class);
+                startActivity(intent);
+                requireActivity().finish(); // Finalizar la actividad actual (fragment)
             }
         });
 

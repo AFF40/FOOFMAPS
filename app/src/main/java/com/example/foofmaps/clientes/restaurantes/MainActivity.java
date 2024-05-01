@@ -47,7 +47,13 @@ public class MainActivity extends AppCompatActivity {
 
         if (isLoggedIn && userRole != -1) {
             // Usuario ya ha iniciado sesión, redirigir según su rol
+            if (userRole == 2) {
+                // Realizar la consulta para obtener id_rest desde la base de datos
+                logout();
+            }
+
             redirectAccordingToRole(userRole);
+            Log.d("userRole", String.valueOf(userRole));
         } else {
             // Usuario no ha iniciado sesión, mostrar pantalla de inicio de sesión
             initializeLoginScreen();

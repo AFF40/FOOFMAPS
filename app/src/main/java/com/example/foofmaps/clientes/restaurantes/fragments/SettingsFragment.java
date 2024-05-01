@@ -1,7 +1,6 @@
 package com.example.foofmaps.clientes.restaurantes.fragments;
 
-import static android.content.Context.MODE_PRIVATE;
-
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -54,21 +53,16 @@ public class SettingsFragment extends Fragment {
 
     // Método para cerrar sesión
     private void cerrarSesion() {
-        // Comprobar si la actividad es nula
-        if (getActivity() == null) {
-            return;
-        }
-
-        // Eliminar el valor de sesión y el rol del usuario en SharedPreferences
-        SharedPreferences.Editor editor = getActivity().getSharedPreferences("MyPrefs", MODE_PRIVATE).edit();
+        // Eliminar el valor de sesión en SharedPreferences
+        SharedPreferences.Editor editor = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE).edit();
         editor.putBoolean("isLoggedIn", false);
-        editor.remove("userRole"); // Elimina el rol del usuario
         editor.apply();
 
         // Redirigir a la actividad de inicio de sesión
-        Intent intent = new Intent(getActivity(), MainActivity.class);
+        Intent intent = new Intent(requireActivity(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-        getActivity().finish(); // Finalizar la actividad actual
+        requireActivity().finish(); // Finalizar la actividad actual (fragment)
     }
 }
 
