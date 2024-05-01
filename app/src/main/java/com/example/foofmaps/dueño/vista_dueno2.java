@@ -43,6 +43,7 @@ public class vista_dueno2 extends AppCompatActivity {
     private dueno_platos platos_Fragment;
     private dueno_bebidas2 bebidas_Fragment;
 
+
     private int initialRestaurantStatus = -1; // Agrega esta línea
 
     @Override
@@ -51,7 +52,7 @@ public class vista_dueno2 extends AppCompatActivity {
         setContentView(R.layout.activity_maps2);
 
         int id_rest = getIntent().getIntExtra("restaurante_id", -1);
-        Log.d("id_rest", String.valueOf(id_rest));
+        Log.d("id_rest_en_vistadueno", String.valueOf(id_rest));
 
         mapsDueFragment = new MapsDueFragment();
         settingsDuenoFragment = new SettingsDuenoFragment();
@@ -61,6 +62,7 @@ public class vista_dueno2 extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putInt("restaurante_id", id_rest);
         mapsDueFragment.setArguments(bundle);
+        settingsDuenoFragment.setArguments(bundle);
 
         loadFragment(mapsDueFragment);
 

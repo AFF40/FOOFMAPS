@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +23,18 @@ public class SettingsDuenoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings_dueno, container, false);
 
+        // Configurar los botones de la interfaz de usuario
         TextView textViewWhatsApp = view.findViewById(R.id.btnWhatsApp);
         TextView textViewLogout = view.findViewById(R.id.btnLogout);
         TextView textViewCambiarRol = view.findViewById(R.id.btn_cambiar_rol);
+        // Obtener el id del restaurante
+        int id_rest = requireActivity().getIntent().getIntExtra("restaurante_id", -1);
+        Bundle bundle = new Bundle();
+        bundle.putInt("restaurante_id", id_rest);
+        Log.d("id_rest_en_settings_due", String.valueOf(id_rest));
 
+        // Configurar los eventos de clic de los botones
+        // si el usuario hace clic en el botón de WhatsApp
         textViewWhatsApp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -35,12 +44,20 @@ public class SettingsDuenoFragment extends Fragment {
         });
 
         textViewCambiarRol.setOnClickListener(new View.OnClickListener() {
+
+            // cambiar de activity a MapsDueCliActivity
             @Override
             public void onClick(View v) {
-                // Redirigir a la actividad de inicio de sesión
+                //enviar el idRest
+                // Crear un nuevo Intent para la actividad MapsDueCliActivity
                 Intent intent = new Intent(requireActivity(), MapsDueCliActivity.class);
+                // Agregar el id del restaurante como un dato extra en el Intent
+                intent.putExtra("restaurante_id", id_rest);
+                Log.d("id_rest_enviando_a_duecli", String.valueOf(id_rest));
+                // Iniciar la actividad
                 startActivity(intent);
-                requireActivity().finish(); // Finalizar la actividad actual (fragment)
+
+
             }
         });
 

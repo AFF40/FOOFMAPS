@@ -3,6 +3,7 @@ package com.example.foofmaps.dueño.cliente;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
@@ -25,6 +26,12 @@ public class MapsDueCliActivity extends AppCompatActivity {
         mapsDueCliFragment = new MapsDueCliFragment();
         searchDueCliFragment = new SearchDueCliFragment();
         settingsDuenoCliFragment = new SettingsDuenoCliFragment();
+        //enviar el id del restaurante a settingsDuenoCliFragment
+        int id_rest = getIntent().getIntExtra("restaurante_id", -1);
+        Bundle bundle = new Bundle();
+        bundle.putInt("restaurante_id", id_rest);
+        Log.d("id_rest_en_maps_duecli", String.valueOf(id_rest));
+        settingsDuenoCliFragment.setArguments(bundle);
 
         // Agregar los fragmentos al contenedor solo si no hay una instancia guardada
         if (savedInstanceState == null) {

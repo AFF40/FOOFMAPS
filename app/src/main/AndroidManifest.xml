@@ -59,6 +59,7 @@
             android:name=".clientes.restaurantes.MapsCliActivity"
             android:exported="true">
         </activity>
+        <activity android:name=".dueño.cliente.MapsDueCliActivity" />
 
 
         <meta-data
