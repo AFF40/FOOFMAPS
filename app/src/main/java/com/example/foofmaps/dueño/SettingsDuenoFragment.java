@@ -27,6 +27,8 @@ public class SettingsDuenoFragment extends Fragment {
         TextView textViewWhatsApp = view.findViewById(R.id.btnWhatsApp);
         TextView textViewLogout = view.findViewById(R.id.btnLogout);
         TextView textViewCambiarRol = view.findViewById(R.id.btn_cambiar_rol);
+        //setear el texto del boton
+        textViewCambiarRol.setText("Cambiar a Modo Cliente");
         // Obtener el id del restaurante
         int id_rest = requireActivity().getIntent().getIntExtra("restaurante_id", -1);
         Bundle bundle = new Bundle();
@@ -56,8 +58,8 @@ public class SettingsDuenoFragment extends Fragment {
                 Log.d("id_rest_enviando_a_duecli", String.valueOf(id_rest));
                 // Iniciar la actividad
                 startActivity(intent);
-
-
+                //finalizar la actividad para que no se pueda volver atras
+                requireActivity().finish();
             }
         });
 

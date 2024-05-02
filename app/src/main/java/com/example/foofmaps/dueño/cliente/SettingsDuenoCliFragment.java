@@ -27,6 +27,8 @@ public class SettingsDuenoCliFragment extends Fragment {
         TextView textViewWhatsApp = view.findViewById(R.id.btnWhatsApp);
         TextView textViewLogout = view.findViewById(R.id.btnLogout);
         TextView textViewCambiarRol = view.findViewById(R.id.btn_cambiar_rol);
+        //setear el texto del boton
+        textViewCambiarRol.setText("Cambiar a Modo Restaurante");
         // Obtener el id del restaurante
         int id_rest = requireActivity().getIntent().getIntExtra("restaurante_id", -1);
         Bundle bundle = new Bundle();
@@ -46,11 +48,6 @@ public class SettingsDuenoCliFragment extends Fragment {
         });
 
         textViewCambiarRol.setOnClickListener(new View.OnClickListener() {
-
-            // si el usuario esta en la activity vistadueno se redirige a la activity MapsDueCliActivity
-
-
-            // si el usuario esta en la activity MapsDueCliActivity se redirige a la activity vistadueno y enviar el idRest
             @Override
             public void onClick(View v) {
                 // Crear un nuevo Intent para la actividad vistadueno2
@@ -59,6 +56,9 @@ public class SettingsDuenoCliFragment extends Fragment {
                 intent.putExtra("restaurante_id", id_rest);
                 // Iniciar la actividad
                 startActivity(intent);
+
+                //que no se pueda volver atras
+                requireActivity().finish();
             }
         });
 
