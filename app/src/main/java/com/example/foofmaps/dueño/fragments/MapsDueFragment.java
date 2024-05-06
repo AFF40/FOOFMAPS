@@ -41,7 +41,6 @@ public class MapsDueFragment extends Fragment implements OnMapReadyCallback, vis
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_maps_due, container, false);
-
         // Obtener los argumentos del Bundle
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -145,4 +144,5 @@ public class MapsDueFragment extends Fragment implements OnMapReadyCallback, vis
             currentMarker = mMap.addMarker(markerOptions);
         }
     }
+
 }

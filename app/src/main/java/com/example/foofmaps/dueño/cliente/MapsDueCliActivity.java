@@ -3,7 +3,9 @@ package com.example.foofmaps.dueño.cliente;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
@@ -16,6 +18,10 @@ public class MapsDueCliActivity extends AppCompatActivity {
     private MapsDueCliFragment mapsDueCliFragment;
     private SearchDueCliFragment searchDueCliFragment;
     private SettingsDuenoCliFragment settingsDuenoCliFragment;
+    private boolean doubleBackToExitPressedOnce = false;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,4 +89,17 @@ public class MapsDueCliActivity extends AppCompatActivity {
             return true;
         });
     }
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            // Si se presiona de nuevo dentro de los 2 segundos, finalizar la actividad
+            super.onBackPressed(); // Llama al método predeterminado
+        } else {
+            doubleBackToExitPressedOnce = true;
+            Toast.makeText(this, "Presione de nuevo para salir", Toast.LENGTH_SHORT).show();
+
+            new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
+        }
+    }
+
 }

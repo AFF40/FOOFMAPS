@@ -62,11 +62,14 @@ public class MapsDueCliFragment extends Fragment implements OnMapReadyCallback {
     private FusedLocationProviderClient mFusedLocationClient;
     private Map<String, Bitmap> loadedBitmaps = new HashMap<>();
     private LocationRequest locationRequest;
+    private long backPressedTime;
 
 
     // Este método se ejecuta cuando el fragmento se crea por primera vez
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+
         // Infla la vista desde el archivo de diseño XML
         View view = inflater.inflate(R.layout.fragment_maps, container, false);
 
@@ -313,4 +316,6 @@ public class MapsDueCliFragment extends Fragment implements OnMapReadyCallback {
         Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
         return resizedBitmap;
     }
+
+
 }

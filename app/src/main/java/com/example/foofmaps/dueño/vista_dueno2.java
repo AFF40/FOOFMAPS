@@ -62,6 +62,8 @@ public class vista_dueno2 extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putInt("restaurante_id", id_rest);
         mapsDueFragment.setArguments(bundle);
+        platos_Fragment.setArguments(bundle);
+        bebidas_Fragment.setArguments(bundle);
         settingsDuenoFragment.setArguments(bundle);
 
         loadFragment(mapsDueFragment);
