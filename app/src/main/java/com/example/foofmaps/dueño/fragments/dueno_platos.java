@@ -28,11 +28,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link dueno_platos#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class dueno_platos extends Fragment {public static dueno_platos newInstance(int restauranteId) {
     dueno_platos fragment = new dueno_platos();
     Bundle args = new Bundle();
@@ -44,7 +39,7 @@ public class dueno_platos extends Fragment {public static dueno_platos newInstan
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_dueno_menu, container, false);
+        View view = inflater.inflate(R.layout.fragment_dueno_platos, container, false);
         int restauranteId = getArguments().getInt("restaurante_id", -1);
         Log.d("ID_DEBUGid_recibido", "restaurante_id: " + restauranteId);
         // Ahora puedes utilizar restauranteId directamente para obtener la lista de platos
@@ -60,10 +55,17 @@ public class dueno_platos extends Fragment {public static dueno_platos newInstan
             public void onClick(View v) {
                 // Obtén el restaurante_id
                 int restauranteId = getArguments().getInt("restaurante_id", -1);
+                // Dentro del método onCreateView() o cualquier método donde desees obtener el nombre del restaurante
+                String nombreRestaurante = getArguments().getString("nombre_restaurante");
+
+
+                Log.d("nombre_restaurante_enviado_añadirplato", "nombre_restaurante: " + nombreRestaurante);
                 // Abre la primera actividad cuando se hace clic en "Añadir plato"
                 Intent intent = new Intent(requireContext(), agregar_platos.class);
                 intent.putExtra("restaurante_id", restauranteId);
+                intent.putExtra("nombre_restaurante", nombreRestaurante);
                 Log.d("ID_DEBUGid_enviado_intent", "restaurante_id: " + restauranteId);
+                Log.d("nombre_restaurante_enviado_intent", "nombre_restaurante: " + nombreRestaurante);
                 startActivity(intent);
             }
         });

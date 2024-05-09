@@ -1,11 +1,9 @@
-<!-- activity_maps2.xml -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".clientes.restaurantes.MapsCliActivity"
-    >
+    tools:context=".clientes.restaurantes.MapsCliActivity">
 
     <LinearLayout
         android:id="@+id/bannertop"
@@ -75,7 +73,8 @@
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/bannertop"/>
+        android:layout_below="@id/bannertop"
+        android:layout_above="@id/bottom_navigation"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"

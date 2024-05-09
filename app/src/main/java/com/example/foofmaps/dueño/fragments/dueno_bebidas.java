@@ -1,4 +1,4 @@
-package com.example.foofmaps.dueño;
+package com.example.foofmaps.dueño.fragments;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.foofmaps.Config;
 import com.example.foofmaps.HttpUtils;
 import com.example.foofmaps.R;
+import com.example.foofmaps.dueño.agregar_bebidas;
+import com.example.foofmaps.dueño.editar_bebida;
 import com.example.foofmaps.platosybebidas.Bebida;
 import com.example.foofmaps.platosybebidas.BebidaAdapter;
 
@@ -32,7 +34,7 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class dueno_bebidas extends Fragment {
-    // En el fragmento dueno_bebidas.java
+
     public static dueno_bebidas newInstance(int restauranteId) {
         dueno_bebidas fragment = new dueno_bebidas();
         Bundle args = new Bundle();
@@ -159,10 +161,5 @@ public class dueno_bebidas extends Fragment {
             e.printStackTrace();
         }
         return bebidas;
-    }
-
-    // Método para decodificar una cadena Base64 en un arreglo de bytes
-    private byte[] decodeBase64(String base64) {
-        return android.util.Base64.decode(base64, android.util.Base64.DEFAULT);
     }
 }

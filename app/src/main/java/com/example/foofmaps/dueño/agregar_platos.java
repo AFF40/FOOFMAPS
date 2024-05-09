@@ -5,11 +5,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
@@ -27,6 +27,8 @@ import androidx.core.content.ContextCompat;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.foofmaps.Config;
@@ -36,9 +38,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
-
-public class agregar_platos extends AppCompatActivity  implements onPlatoAddedListener {
+public class agregar_platos extends AppCompatActivity implements onPlatoAddedListener {
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 1001;
     private EditText editTextNomPlato;
     private EditText editTextDescripcion;
@@ -46,107 +48,77 @@ public class agregar_platos extends AppCompatActivity  implements onPlatoAddedLi
     private Button btnSelectImage;
     private Button btnSelectCamara;
     private Button btnEnviar;
-
+    private Bitmap imageBitmap;
     private ImageView imagenPlato;
     private TextView nomPlato;
     private TextView descripcion_plato;
     private TextView precio_plato;
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int CAMERA_REQUEST = 2;
+    private static final String modeloURL = Config.MODELO_URL + "a%c3%b1adir_plato.php";
+
 
     @Override
     public void onPlatoAdded() {
-        // Notifica al fragment dueno_menu que se ha agregado un plato
         Intent intent = new Intent();
         setResult(Activity.RESULT_OK, intent);
-        finish(); // Cierra la actividad actual
+        finish();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_agregar_platos);
-        // Verifica si el permiso de la cámara está otorgado
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            // Si no se otorgó el permiso, solicítalo al usuario
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
         }
 
-
-
-        // Vincula las vistas desde el diseño XML
         editTextNomPlato = findViewById(R.id.editTextNomPlato);
         nomPlato = findViewById(R.id.nom_plato);
-        // Configura un TextWatcher para el EditText
         editTextNomPlato.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // Este método se llama antes de que el texto cambie.
-            }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // Este método se llama cuando el texto cambia.
-                // Actualiza el TextView "nom_plato" con el texto del EditText
                 nomPlato.setText(charSequence.toString());
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {
-                // Este método se llama después de que el texto cambie.
-            }
+            public void afterTextChanged(Editable editable) {}
         });
 
-        // Vincula las vistas desde el diseño XML
         editTextDescripcion = findViewById(R.id.editTextDescripcion);
         descripcion_plato = findViewById(R.id.desc_plato);
         editTextDescripcion.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // Este método se llama antes de que el texto cambie.
-            }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // Este método se llama cuando el texto cambia.
-                // Actualiza el TextView "nom_plato" con el texto del EditText
                 descripcion_plato.setText(charSequence.toString());
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {
-                // Este método se llama después de que el texto cambie.
-
-            }
+            public void afterTextChanged(Editable editable) {}
         });
 
-        // Vincula las vistas desde el diseño XML
         editTextPrecio = findViewById(R.id.editTextPrecio);
         precio_plato = findViewById(R.id.precio);
         editTextPrecio.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // Este método se llama antes de que el texto cambie.
-            }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // Este método se llama cuando el texto cambia.
-                // Actualiza el TextView "nom_plato" con el texto del EditText
                 precio_plato.setText(charSequence.toString());
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {
-                // Este método se llama después de que el texto cambie.
-            }
+            public void afterTextChanged(Editable editable) {}
         });
 
-
-
-
-
-        // Vincula las vistas desde el diseño XML
         editTextNomPlato = findViewById(R.id.editTextNomPlato);
         editTextDescripcion = findViewById(R.id.editTextDescripcion);
         editTextPrecio = findViewById(R.id.editTextPrecio);
@@ -155,148 +127,177 @@ public class agregar_platos extends AppCompatActivity  implements onPlatoAddedLi
         imagenPlato = findViewById(R.id.imagenPlato);
         btnEnviar = findViewById(R.id.btnEnviarFormulario);
 
-        // Configura clics de botones o lógica adicional según sea necesario
         btnSelectImage.setOnClickListener(view -> {
-            // Aquí puedes implementar la lógica para cargar una imagen desde la galería
-            // Crea una intención para seleccionar una imagen desde la galería
             Intent abrir_galeria = new Intent(Intent.ACTION_PICK);
             abrir_galeria.setType("image/*");
-
-            // Inicia la actividad de selección de imagen
             startActivityForResult(abrir_galeria, PICK_IMAGE_REQUEST);
         });
 
         btnSelectCamara.setOnClickListener(view -> {
-            // Aquí puedes implementar la lógica para tomar una foto
-
-            // Crea una intención para abrir la aplicación de cámara
             Intent abrircamara = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-            // Verifica si hay una aplicación de cámara disponible en el dispositivo
             if (abrircamara.resolveActivity(getPackageManager()) != null) {
-                // Inicia la aplicación de cámara
-                startActivityForResult(abrircamara, CAMERA_REQUEST); // Usando el valor de CAMERA_REQUEST
+                startActivityForResult(abrircamara, CAMERA_REQUEST);
             } else {
-                // Si no hay una aplicación de cámara disponible, muestra un mensaje de error o proporciona una alternativa
                 Toast.makeText(this, "No se encontró una aplicación de cámara en el dispositivo", Toast.LENGTH_SHORT).show();
             }
         });
 
-
-
-        // Configura un listener de clics para el botón
         btnEnviar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                enviarFormulario(view); // Llama al método enviarFormulario cuando se hace clic en el botón
+                enviarFormulario(view);
             }
         });
-
-
-
-
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
-            // La imagen ha sido seleccionada exitosamente, y la ubicación de la imagen se encuentra en 'data.getData()'
-            // Puedes utilizar 'data.getData()' para cargar la imagen en el ImageView.
             Uri selectedImageUri = data.getData();
-
-            // Configura la imagen seleccionada en el ImageView "imagenPlato"
-            imagenPlato.setImageURI(selectedImageUri);
+            try {
+                imageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                imagenPlato.setImageBitmap(imageBitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
-            // La foto se ha tomado exitosamente y se encuentra en 'data' (generalmente como un bitmap)
-            // Puedes procesar y mostrar la foto aquí, o guardarla en el almacenamiento de tu aplicación.
-
-            // Ejemplo de cómo obtener la imagen como un bitmap (puede variar según la cámara)
             Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-
-            // Configura el bitmap en el ImageView "imagenPlato" o realiza otras acciones según tus necesidades
+            imageBitmap = (Bitmap) extras.get("data");
             imagenPlato.setImageBitmap(imageBitmap);
         }
-
-
-
     }
 
-
     public void enviarFormulario(View view) {
-        //  restaurante_id recibido
         Intent intent = getIntent();
         int restauranteId = intent.getIntExtra("restaurante_id", -1);
-        Log.d("restaurante_id_en_agregar", "restaurante_id: " + restauranteId);
-        String modeloURL = Config.MODELO_URL+"a%c3%b1adir_plato.php";
+        String nombreRestaurante = intent.getStringExtra("nombre_restaurante");
+        Log.d ("log_anadir_nombre_rest", "Nombre del restaurante: " + nombreRestaurante);
+        Log.d("log_anadir_url", "url: " + modeloURL);
 
-        // Obtener los valores de los campos del formulario
         String nombrePlato = editTextNomPlato.getText().toString().trim();
         String descripcionPlato = editTextDescripcion.getText().toString().trim();
         String precioPlato = editTextPrecio.getText().toString().trim();
+        //enviar el nombre del restaurante como string
+
         String restauranteIdString = String.valueOf(restauranteId);
 
-        // Verificar que todos los campos estén llenos
         if (nombrePlato.isEmpty() || descripcionPlato.isEmpty() || precioPlato.isEmpty()) {
             Toast.makeText(this, "Por favor, rellena todos los campos del formulario", Toast.LENGTH_SHORT).show();
-            return; // No se envía la solicitud si falta algún campo
+            return;
         }
 
-        // Verificar que se haya seleccionado una imagen
-        if (imagenPlato.getDrawable() == null) {
+        if (imageBitmap == null) {
             Toast.makeText(this, "Por favor, selecciona una imagen", Toast.LENGTH_SHORT).show();
-            return; // No se envía la solicitud si no hay imagen seleccionada
+            return;
         }
 
+        guardarImagenEnServidor(nombrePlato, descripcionPlato, precioPlato, restauranteIdString, nombreRestaurante);
+    }
+
+    public void guardarImagenEnServidor(String nombrePlato, String descripcionPlato, String precioPlato, String restauranteIdString, String nombreRestaurante) {
+        String imageBase64 = convertImageToBase64(imageBitmap);
+
+        JSONObject platoData = new JSONObject();
         try {
-            // Crear un objeto JSON para enviar al servidor
-            JSONObject platoData = new JSONObject();
-            platoData.put("nom_plato", nombrePlato);
+            platoData.put("nombre", nombrePlato);
             platoData.put("descripcion", descripcionPlato);
             platoData.put("precio", precioPlato);
             platoData.put("restaurante_id", restauranteIdString);
-
-            // Obtener la imagen como Bitmap (por ejemplo, desde un ImageView)
-            Bitmap imageBitmap = ((BitmapDrawable) imagenPlato.getDrawable()).getBitmap();
-
-            // Convertir la imagen a Base64
-            String imageBase64 = convertImageToBase64(imageBitmap);
-
-            // Agregar la imagen al objeto JSON
+            platoData.put("restaurante_nombre", nombreRestaurante);
             platoData.put("imagen", imageBase64);
-
-            // Crear una solicitud HTTP POST con Volley
-            RequestQueue requestQueue = Volley.newRequestQueue(this);
-
-            JsonObjectRequest request = new JsonObjectRequest(
-                    Request.Method.POST,
-                    modeloURL,
-                    platoData,
-                    response -> {
-                        // Maneja la respuesta del servidor aquí
-                        Toast.makeText(this, "¡Plato agregado con éxito!", Toast.LENGTH_SHORT).show();
-                        Log.d("MiApp", "Respuesta del servidor: " + response.toString());
-
-                        // Puedes realizar otras acciones, como volver a la actividad anterior o limpiar los campos del formulario.
-
-                        // En el éxito al agregar el plato, llama al método onPlatoAdded
-                        onPlatoAdded();
-
-
-                    },
-                    error -> {
-                        // Maneja errores de la solicitud aquí
-                        Toast.makeText(this, "Error al agregar el plato", Toast.LENGTH_SHORT).show();
-                        Log.d("erroralenviar", "error: " + error);
-                    }
-            );
-
-            // Agregar la solicitud a la cola
-            requestQueue.add(request);
         } catch (JSONException e) {
             e.printStackTrace();
+            return;
+        }
+
+        Log.d("log_anadir_platodata", "platoData: " + platoData);
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST,
+                modeloURL,
+                platoData,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String responseData = response.toString();
+                            Log.d("log_anadir_ResponseData", "Response data: " + responseData); // Agregar registro de depuración
+                            if (isJSONValid(responseData)) {
+                                handleServerResponse(responseData); // Llamar a la función para manejar la respuesta del servidor
+                            } else {
+                                // La respuesta del servidor no es un JSON válido
+                                Toast.makeText(agregar_platos.this, "Error: Respuesta del servidor no válida", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            // Manejar el error si la respuesta no es un objeto JSON válido
+                            Toast.makeText(agregar_platos.this, "Error: Respuesta del servidor no válida", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                },
+                // Manejar el error de la solicitud
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        String errorMessage = "Error al agregar el plato: " + error.getMessage();
+                        Toast.makeText(agregar_platos.this, errorMessage, Toast.LENGTH_SHORT).show();
+                        Log.e("log_anadir_Error", errorMessage, error);
+
+                        // Imprimir toda la respuesta del servidor en el Logcat
+                        if (error.networkResponse != null) {
+                            Log.e("log_anadir_Error_serv", "Respuesta del servidor: " + new String(error.networkResponse.data));
+                        } else {
+                            Log.e("log_anadir_Error_serv", "No se recibió respuesta del servidor");
+                        }
+
+                        // Verificar si hay un mensaje de error en la respuesta del servidor
+                        if (error.networkResponse != null && error.networkResponse.data != null) {
+                            try {
+                                JSONObject errorJson = new JSONObject(new String(error.networkResponse.data));
+                                String serverErrorMessage = errorJson.optString("error");
+                                if (!TextUtils.isEmpty(serverErrorMessage)) {
+                                    // Mostrar el mensaje de error del servidor
+                                    Toast.makeText(agregar_platos.this, serverErrorMessage, Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+
+        );
+
+        requestQueue.add(request);
+    }
+
+    // Función para verificar si una cadena es un JSON válido
+    private boolean isJSONValid(String json) {
+        try {
+            new JSONObject(json);
+            return true;
+        } catch (JSONException e) {
+            return false;
+        }
+    }
+
+    // Función para manejar la respuesta del servidor
+    private void handleServerResponse(String responseData) {
+        try {
+            JSONObject response = new JSONObject(responseData);
+            String message = response.getString("message");
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            onPlatoAdded();
+            finish();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            // Manejar el error si la respuesta no tiene el formato esperado
+            Toast.makeText(this, "Error: Respuesta del servidor no válida", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -306,6 +307,5 @@ public class agregar_platos extends AppCompatActivity  implements onPlatoAddedLi
         byte[] imageBytes = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(imageBytes, Base64.DEFAULT);
     }
-
 
 }

@@ -22,7 +22,7 @@ import com.bumptech.glide.Glide;
 import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
 import com.example.foofmaps.dueño.fragments.MapsDueFragment;
-import com.example.foofmaps.dueño.fragments.dueno_bebidas2;
+import com.example.foofmaps.dueño.fragments.dueno_bebidas;
 import com.example.foofmaps.dueño.fragments.dueno_platos;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -41,10 +41,9 @@ public class vista_dueno2 extends AppCompatActivity {
     private MapsDueFragment mapsDueFragment;
     private SettingsDuenoFragment settingsDuenoFragment;
     private dueno_platos platos_Fragment;
-    private dueno_bebidas2 bebidas_Fragment;
-
-
-    private int initialRestaurantStatus = -1; // Agrega esta línea
+    private dueno_bebidas bebidas_Fragment;
+    private String nombreRestaurante;
+    private int initialRestaurantStatus = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,15 +56,18 @@ public class vista_dueno2 extends AppCompatActivity {
         mapsDueFragment = new MapsDueFragment();
         settingsDuenoFragment = new SettingsDuenoFragment();
         platos_Fragment = new dueno_platos();
-        bebidas_Fragment = new dueno_bebidas2();
+        bebidas_Fragment = new dueno_bebidas();
 
+        // Agrega el nombre del restaurante al bundle
         Bundle bundle = new Bundle();
         bundle.putInt("restaurante_id", id_rest);
+        bundle.putString("nombre_restaurante", "Nombre del Restaurante"); // Aquí deberías agregar el nombre del restaurante
         mapsDueFragment.setArguments(bundle);
         platos_Fragment.setArguments(bundle);
         bebidas_Fragment.setArguments(bundle);
         settingsDuenoFragment.setArguments(bundle);
 
+        // Carga el fragmento de mapas como el inicial
         loadFragment(mapsDueFragment);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -81,6 +83,13 @@ public class vista_dueno2 extends AppCompatActivity {
                         loadFragment(settingsDuenoFragment);
                         return true;
                     case R.id.alimentos:
+                        // Agregar el ID del restaurante al fragmento dueno_platos
+                        Bundle bundlePlatos = new Bundle();
+                        bundlePlatos.putInt("restaurante_id", id_rest);
+                        bundlePlatos.putString("nombre_restaurante", nombreRestaurante); // Agrega esta línea
+                        Log.d("id_rest_enviado_a_platosF", String.valueOf(id_rest));
+                        Log.d("nombre_rest_enviado_a_platosF", nombreRestaurante);
+                        platos_Fragment.setArguments(bundlePlatos);
                         loadFragment(platos_Fragment);
                         return true;
                     case R.id.bebidas:
@@ -91,6 +100,7 @@ public class vista_dueno2 extends AppCompatActivity {
                 return false;
             }
         });
+
         fetchRestaurantDataFromDatabase(id_rest);
     }
 
@@ -133,7 +143,6 @@ public class vista_dueno2 extends AppCompatActivity {
         Switch switchEstado = findViewById(R.id.boton_estado_rest);
         TextView nomrest_tx = findViewById(R.id.estado_rest);
         ImageView imageViewRestaurante = findViewById(R.id.icono_res);
-
         RequestQueue requestQueue2 = Volley.newRequestQueue(this);
         StringRequest stringRequest2 = new StringRequest(Request.Method.GET, modeloURL2, response -> {
             try {
@@ -160,16 +169,30 @@ public class vista_dueno2 extends AppCompatActivity {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                     int restaurante_id = jsonObject.getInt("restaurante_id");
-                    String nomRest = jsonObject.getString("nom_rest");
 
+
+                    String nomRest = jsonObject.getString("nom_rest");
+                    nombreRestaurante = jsonObject.getString("nom_rest");
+
+                    Log.d("nom_rest_envistadueno", "Nombre: " + nomRest);
+                    Log.d("nom_rest_envistadueno", "Nombre: " + nombreRestaurante);
                     int estadoRestaurante = jsonObject.getInt("estado");
-                    initialRestaurantStatus = estadoRestaurante; // Agrega esta línea
+                    initialRestaurantStatus = estadoRestaurante;
 
                     Log.d("Restaurante", "Nombre: " + nomRest);
                     Log.d("Restaurante", "Estado: " + estadoRestaurante);
 
                     TextView textViewNomRest = findViewById(R.id.nom_rest);
                     textViewNomRest.setText(nomRest);
+
+                    // Crear un Bundle para pasar datos al fragmento
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("restaurante_id", restaurante_id);
+                    bundle.putString("nombre_restaurante", nombreRestaurante);
+                    mapsDueFragment.setArguments(bundle);
+                    platos_Fragment.setArguments(bundle);
+                    bebidas_Fragment.setArguments(bundle);
+                    settingsDuenoFragment.setArguments(bundle);
 
                     if (estadoRestaurante == 1) {
                         switchEstado.setChecked(true);
@@ -204,6 +227,7 @@ public class vista_dueno2 extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
 
+
     private void sendRequest(int restauranteId, int estado) {
         String modeloURL = Config.MODELO_URL + "cambiar_estado.php?restaurante_id=" + restauranteId + "&estado=" + estado;
         Log.d("url_estado", modeloURL);
@@ -237,5 +261,4 @@ public class vista_dueno2 extends AppCompatActivity {
             switchEstado.getTrackDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
         }
     }
-
 }
