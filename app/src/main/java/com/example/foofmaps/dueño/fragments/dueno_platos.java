@@ -32,7 +32,7 @@ public class dueno_platos extends Fragment {public static dueno_platos newInstan
     dueno_platos fragment = new dueno_platos();
     Bundle args = new Bundle();
     args.putInt("restaurante_id", restauranteId);
-    Log.d("ID_DEBUGid_enviado", "restaurante_id: " + restauranteId);
+    Log.d("dueno_plato_id_rest", "restaurante_id: " + restauranteId);
     fragment.setArguments(args);
     return fragment;
 }
@@ -41,7 +41,7 @@ public class dueno_platos extends Fragment {public static dueno_platos newInstan
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dueno_platos, container, false);
         int restauranteId = getArguments().getInt("restaurante_id", -1);
-        Log.d("ID_DEBUGid_recibido", "restaurante_id: " + restauranteId);
+        Log.d("dueno_plato_recibido", "restaurante_id: " + restauranteId);
         // Ahora puedes utilizar restauranteId directamente para obtener la lista de platos
         new dueno_platos.GetPlatosTask().execute(restauranteId);
         // Obtén una referencia a los botones
@@ -55,16 +55,15 @@ public class dueno_platos extends Fragment {public static dueno_platos newInstan
             public void onClick(View v) {
                 // Obtén el restaurante_id
                 int restauranteId = getArguments().getInt("restaurante_id", -1);
+
                 // Dentro del método onCreateView() o cualquier método donde desees obtener el nombre del restaurante
                 String nombreRestaurante = getArguments().getString("nombre_restaurante");
 
-
-                Log.d("nombre_restaurante_enviado_añadirplato", "nombre_restaurante: " + nombreRestaurante);
                 // Abre la primera actividad cuando se hace clic en "Añadir plato"
                 Intent intent = new Intent(requireContext(), agregar_platos.class);
                 intent.putExtra("restaurante_id", restauranteId);
                 intent.putExtra("nombre_restaurante", nombreRestaurante);
-                Log.d("ID_DEBUGid_enviado_intent", "restaurante_id: " + restauranteId);
+                Log.d("dueno_plato_id_enviado_intent", "restaurante_id: " + restauranteId);
                 Log.d("nombre_restaurante_enviado_intent", "nombre_restaurante: " + nombreRestaurante);
                 startActivity(intent);
             }
@@ -78,7 +77,7 @@ public class dueno_platos extends Fragment {public static dueno_platos newInstan
                 // Abre la segunda actividad cuando se hace clic en "Editar plato"
                 Intent intent = new Intent(requireContext(), editar_plato.class);
                 intent.putExtra("restaurante_id", restauranteId);
-                Log.d("ID_DEBUGid_enviado_intent", "restaurante_id: " + restauranteId);
+                Log.d("dueno_plato_enviado_intent", "restaurante_id: " + restauranteId);
                 startActivity(intent);
             }
         });
@@ -115,13 +114,13 @@ public class dueno_platos extends Fragment {public static dueno_platos newInstan
             try {
                 // Realizar una solicitud HTTP para obtener los datos JSON de la API
                 String modeloURL = Config.MODELO_URL+"getPlatos.php?restaurante_id=" + idRestaurante;
-                Log.d("URL_DEBUGurl", "apiUrl: " + modeloURL);
+                Log.d("dueno_plato_url", "apiUrl: " + modeloURL);
                 String jsonResponse = HttpUtils.get(modeloURL);
-                Log.d("JSON_RESPONSEs", jsonResponse);
+                Log.d("dueno_plato_JSON_RESPONSEs", jsonResponse);
 
                 // Procesar el JSON y obtener la lista de platos
                 platos = parsePlatosFromJSON(jsonResponse);
-                Log.d("platosss", platos.toString());
+                Log.d("dueno_plato_platos", platos.toString());
             } catch (Exception e) {
                 e.printStackTrace();
             }

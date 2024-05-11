@@ -93,6 +93,11 @@ public class vista_dueno2 extends AppCompatActivity {
                         loadFragment(platos_Fragment);
                         return true;
                     case R.id.bebidas:
+                        // Agregar el ID del restaurante al fragmento dueno_bebidas
+                        Bundle bundleBebidas = new Bundle();
+                        bundleBebidas.putInt("restaurante_id", id_rest);
+                        bundleBebidas.putString("nombre_restaurante", nombreRestaurante); // Agrega esta línea
+                        bebidas_Fragment.setArguments(bundleBebidas);
                         loadFragment(bebidas_Fragment);
                         return true;
                 }

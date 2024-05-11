@@ -28,18 +28,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link dueno_bebidas#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class dueno_bebidas extends Fragment {
 
     public static dueno_bebidas newInstance(int restauranteId) {
         dueno_bebidas fragment = new dueno_bebidas();
         Bundle args = new Bundle();
         args.putInt("restaurante_id", restauranteId);
-        Log.d("ID_DEBUGid_enviado", "restaurante_id: " + restauranteId);
+        Log.d("dueno_bebidas_id_enviado", "restaurante_id: " + restauranteId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -48,61 +43,66 @@ public class dueno_bebidas extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dueno_bebidas, container, false);
         int restauranteId = getArguments().getInt("restaurante_id", -1);
-        Log.d("ID_DEBUGid_recibido", "restaurante_id: " + restauranteId);
-        // Ahora puedes utilizar restauranteId directamente para obtener la lista de platos
-        new dueno_bebidas.GetBebidasTask().execute(restauranteId);
+        Log.d("dueno_bebidas_id_recibido", "restaurante_id: " + restauranteId);
+        // Ahora puedes utilizar restauranteId directamente para obtener la lista de bebidas
+        new GetBebidasTask().execute(restauranteId);
+
         // Obtén una referencia a los botones
-        LinearLayout btnAñadirbebida = view.findViewById(R.id.añadirbebida);
+        LinearLayout btnAñadirBebida = view.findViewById(R.id.añadirbebida);
         LinearLayout btnEditarBebida = view.findViewById(R.id.editarbebidas);
-        LinearLayout btnActualizarlista = view.findViewById(R.id.actualizarlistabebidas);
-        btnAñadirbebida.setOnClickListener(new View.OnClickListener() {
+        LinearLayout btnActualizarLista = view.findViewById(R.id.actualizarlistabebidas);
+
+        // Configura un OnClickListener para el botón "Añadir bebida"
+        btnAñadirBebida.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Obtén el restaurante_id
                 int restauranteId = getArguments().getInt("restaurante_id", -1);
-                // Abre la primera actividad cuando se hace clic en "Añadir plato"
+                String nombreRestaurante = getArguments().getString("nombre_restaurante");
+
+                // Abre la actividad de agregar bebida
                 Intent intent = new Intent(requireContext(), agregar_bebidas.class);
                 intent.putExtra("restaurante_id", restauranteId);
-                Log.d("ID_DEBUGid_enviado_intent", "restaurante_id: " + restauranteId);
+                intent.putExtra("nombre_restaurante", nombreRestaurante);
+                Log.d("dueno_bebidas_nombre_restaurante_enviado", "nombre_restaurante: " + nombreRestaurante);
+                Log.d("dueno_bebidas_id_enviado", "restaurante_id: " + restauranteId);
                 startActivity(intent);
             }
         });
 
-        // Configura un OnClickListener para el botón "Editar plato"
+        // Configura un OnClickListener para el botón "Editar bebida"
         btnEditarBebida.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Obtén el restaurante_id
                 int restauranteId = getArguments().getInt("restaurante_id", -1);
-                // Abre la segunda actividad cuando se hace clic en "Editar plato"
+                // Abre la actividad de editar bebida
                 Intent intent = new Intent(requireContext(), editar_bebida.class);
                 intent.putExtra("restaurante_id", restauranteId);
-                Log.d("ID_DEBUGid_enviado_intent", "restaurante_id: " + restauranteId);
                 startActivity(intent);
             }
         });
 
-
-        // Configura un OnClickListener para el botón "Actualizar lista de platos"
-        btnActualizarlista.setOnClickListener(new View.OnClickListener() {
+        // Configura un OnClickListener para el botón "Actualizar lista de bebidas"
+        btnActualizarLista.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Llama al método para actualizar la lista de platos
+                // Llama al método para actualizar la lista de bebidas
                 actualizarListaBebidas();
             }
         });
 
-        // Realiza la carga inicial de platos
-        int restaurante_id = getArguments().getInt("restaurante_id", -1);
-        new dueno_bebidas.GetBebidasTask().execute(restauranteId);
+        // Realiza la carga inicial de bebidas
+        int restauranteIdArg = getArguments().getInt("restaurante_id", -1);
+        new GetBebidasTask().execute(restauranteIdArg);
         return view;
     }
 
-    // Método para actualizar la lista de platos
+    // Método para actualizar la lista de bebidas
     private void actualizarListaBebidas() {
-        // Realiza la carga de platos nuevamente
+        // Realiza la carga de bebidas nuevamente
         int restauranteId = getArguments().getInt("restaurante_id", -1);
-        new dueno_bebidas.GetBebidasTask().execute(restauranteId);
+        new GetBebidasTask().execute(restauranteId);
     }
 
     private class GetBebidasTask extends AsyncTask<Integer, Void, List<Bebida>> {
@@ -113,12 +113,12 @@ public class dueno_bebidas extends Fragment {
 
             try {
                 // Realizar una solicitud HTTP para obtener los datos JSON de la API
-                String modeloURL = Config.MODELO_URL+"getBebidas.php?restaurante_id=" + idRestaurante;
-                Log.d("URL_DEBUGurl", "apiUrl: " + modeloURL);
+                String modeloURL = Config.MODELO_URL + "getBebidas.php?restaurante_id=" + idRestaurante;
+                Log.d("dueno_bebidas_url", "apiUrl: " + modeloURL);
                 String jsonResponse = HttpUtils.get(modeloURL);
-                Log.d("JSON_RESPONSEs", jsonResponse);
+                Log.d("dueno_bebidas_JSON_RESPONSE", jsonResponse);
 
-                // Procesar el JSON y obtener la lista de platos
+                // Procesar el JSON y obtener la lista de bebidas
                 bebidas = parseBebidasFromJSON(jsonResponse);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -128,23 +128,23 @@ public class dueno_bebidas extends Fragment {
 
         @Override
         protected void onPostExecute(List<Bebida> bebidas) {
-            // Configurar el RecyclerView con la lista de platos
+            // Configurar el RecyclerView con la lista de bebidas
             RecyclerView recyclerViewBebidas = getView().findViewById(R.id.viewbebidas);
-            BebidaAdapter bebidaAdapter = new BebidaAdapter(bebidas,false);
+            BebidaAdapter bebidaAdapter = new BebidaAdapter(bebidas, false);
             recyclerViewBebidas.setLayoutManager(new LinearLayoutManager(requireContext()));
             recyclerViewBebidas.setAdapter(bebidaAdapter);
         }
     }
 
-    // Método para analizar el JSON y obtener una lista de platos
+    // Método para analizar el JSON y obtener una lista de bebidas
     private List<Bebida> parseBebidasFromJSON(String json) {
         List<Bebida> bebidas = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(json);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject bebidaJson = jsonArray.getJSONObject(i);
-                int id_bebida= bebidaJson.getInt("id_bebida");
-                String nombre = bebidaJson.getString("nom_bebida");
+                int id_bebida = bebidaJson.getInt("id_bebida");
+                String nombre = bebidaJson.getString("nombre");
                 String descripcion = bebidaJson.getString("descripcion");
                 float precio = (float) bebidaJson.getDouble("precio");
                 int disponible = bebidaJson.getInt("disponible");
@@ -152,9 +152,8 @@ public class dueno_bebidas extends Fragment {
                 // La imagen en formato Base64 (si está disponible)
                 String imagen = bebidaJson.getString("imagen");
 
-
-                // Crear un objeto Plato con los datos
-                Bebida bebida = new Bebida(id_bebida,nombre, descripcion, precio, imagen, disponible );
+                // Crear un objeto Bebida con los datos
+                Bebida bebida = new Bebida(id_bebida, nombre, descripcion, precio, imagen, disponible);
                 bebidas.add(bebida);
             }
         } catch (JSONException e) {

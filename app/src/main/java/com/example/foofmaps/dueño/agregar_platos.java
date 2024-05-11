@@ -272,7 +272,6 @@ public class agregar_platos extends AppCompatActivity implements onPlatoAddedLis
                 }
 
         );
-
         requestQueue.add(request);
     }
 

@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
@@ -27,6 +28,8 @@ import androidx.core.content.ContextCompat;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.foofmaps.Config;
@@ -37,8 +40,7 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 
-
-public class agregar_bebidas extends AppCompatActivity  implements onBebidaAddedListener {
+public class agregar_bebidas extends AppCompatActivity implements onBebidaAddedListener {
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 1001;
     private EditText editTextNomBebida;
     private EditText editTextDescripcion;
@@ -46,91 +48,79 @@ public class agregar_bebidas extends AppCompatActivity  implements onBebidaAdded
     private Button btnSelectImage;
     private Button btnSelectCamara;
     private Button btnEnviar;
-
     private ImageView imagenBebida;
     private TextView nomBebida;
     private TextView descripcion_bebida;
     private TextView precio_bebida;
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int CAMERA_REQUEST = 2;
+    private static final String modeloURL = Config.MODELO_URL + "a%c3%b1adir_bebida.php";
 
     @Override
     public void onBebidaAdded() {
-        // Notifica al fragment dueno_menu que se ha agregado un plato
+        // Notifica al fragment dueno_menu que se ha agregado una bebida
         Intent intent = new Intent();
         setResult(Activity.RESULT_OK, intent);
         finish(); // Cierra la actividad actual
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_agregar_bebidas);
+
         // Verifica si el permiso de la cámara está otorgado
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             // Si no se otorgó el permiso, solicítalo al usuario
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
         }
+
         // Vincula las vistas desde el diseño XML
         editTextNomBebida = findViewById(R.id.editTextNomBebida);
         nomBebida = findViewById(R.id.nom_bebida);
-        // Configura un TextWatcher para el EditText
         editTextNomBebida.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // Este método se llama antes de que el texto cambie.
-            }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // Este método se llama cuando el texto cambia.
-                // Actualiza el TextView "nom_plato" con el texto del EditText
                 nomBebida.setText(charSequence.toString());
             }
+
             @Override
-            public void afterTextChanged(Editable editable) {
-                // Este método se llama después de que el texto cambie.
-            }
+            public void afterTextChanged(Editable editable) {}
         });
-        // Vincula las vistas desde el diseño XML
+
         editTextDescripcion = findViewById(R.id.editTextDescripcionBebida);
         descripcion_bebida = findViewById(R.id.desc_bebida);
         editTextDescripcion.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // Este método se llama antes de que el texto cambie.
-            }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // Este método se llama cuando el texto cambia.
-                // Actualiza el TextView "nom_plato" con el texto del EditText
                 descripcion_bebida.setText(charSequence.toString());
             }
-            @Override
-            public void afterTextChanged(Editable editable) {
-                // Este método se llama después de que el texto cambie.
 
-            }
+            @Override
+            public void afterTextChanged(Editable editable) {}
         });
-        // Vincula las vistas desde el diseño XML
+
         editTextPrecio = findViewById(R.id.editTextPrecioBebida);
         precio_bebida = findViewById(R.id.precio);
         editTextPrecio.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // Este método se llama antes de que el texto cambie.
-            }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // Este método se llama cuando el texto cambia.
-                // Actualiza el TextView "nom_plato" con el texto del EditText
                 precio_bebida.setText(charSequence.toString());
             }
+
             @Override
-            public void afterTextChanged(Editable editable) {
-                // Este método se llama después de que el texto cambie.
-            }
+            public void afterTextChanged(Editable editable) {}
         });
-        // Vincula las vistas desde el diseño XML
+
         editTextNomBebida = findViewById(R.id.editTextNomBebida);
         editTextDescripcion = findViewById(R.id.editTextDescripcionBebida);
         editTextPrecio = findViewById(R.id.editTextPrecioBebida);
@@ -139,134 +129,172 @@ public class agregar_bebidas extends AppCompatActivity  implements onBebidaAdded
         imagenBebida = findViewById(R.id.imagenBebida);
         btnEnviar = findViewById(R.id.btnEnviarFormulario);
 
-        // Configura clics de botones o lógica adicional según sea necesario
         btnSelectImage.setOnClickListener(view -> {
-            // Aquí puedes implementar la lógica para cargar una imagen desde la galería
-            // Crea una intención para seleccionar una imagen desde la galería
-            Intent abrircamara = new Intent(Intent.ACTION_PICK);
-            abrircamara.setType("image/*");
-
-            // Inicia la actividad de selección de imagen
-            startActivityForResult(abrircamara, PICK_IMAGE_REQUEST);
+            Intent abrir_galeria = new Intent(Intent.ACTION_PICK);
+            abrir_galeria.setType("image/*");
+            startActivityForResult(abrir_galeria, PICK_IMAGE_REQUEST);
         });
 
         btnSelectCamara.setOnClickListener(view -> {
-            // Aquí puedes implementar la lógica para tomar una foto
-
-            // Crea una intención para abrir la aplicación de cámara
             Intent abrircamara = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-            // Verifica si hay una aplicación de cámara disponible en el dispositivo
             if (abrircamara.resolveActivity(getPackageManager()) != null) {
-                // Inicia la aplicación de cámara
-                startActivityForResult(abrircamara, CAMERA_REQUEST); // Usando el valor de CAMERA_REQUEST
+                startActivityForResult(abrircamara, CAMERA_REQUEST);
             } else {
-                // Si no hay una aplicación de cámara disponible, muestra un mensaje de error o proporciona una alternativa
                 Toast.makeText(this, "No se encontró una aplicación de cámara en el dispositivo", Toast.LENGTH_SHORT).show();
             }
         });
-        // Configura un listener de clics para el botón
+
         btnEnviar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                enviarFormulario(view); // Llama al método enviarFormulario cuando se hace clic en el botón
+                enviarFormulario(view);
             }
         });
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
-            // La imagen ha sido seleccionada exitosamente, y la ubicación de la imagen se encuentra en 'data.getData()'
-            // Puedes utilizar 'data.getData()' para cargar la imagen en el ImageView.
-            Uri selectedImageUri = data.getData();
 
-            // Configura la imagen seleccionada en el ImageView "imagenPlato"
-            imagenBebida.setImageURI(selectedImageUri);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
+            Uri selectedImageUri = data.getData();
+            try {
+                Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                imagenBebida.setImageBitmap(imageBitmap);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
-            // La foto se ha tomado exitosamente y se encuentra en 'data' (generalmente como un bitmap)
-            // Puedes procesar y mostrar la foto aquí, o guardarla en el almacenamiento de tu aplicación.
-
-            // Ejemplo de cómo obtener la imagen como un bitmap (puede variar según la cámara)
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            // Configura el bitmap en el ImageView "imagenPlato" o realiza otras acciones según tus necesidades
             imagenBebida.setImageBitmap(imageBitmap);
         }
     }
+
     public void enviarFormulario(View view) {
-        // Recupera el valor del restaurante_id del Intent
         Intent intent = getIntent();
         int restauranteId = intent.getIntExtra("restaurante_id", -1);
+        String nombreRestaurante = intent.getStringExtra("nombre_restaurante");
         Log.d("restaurante_id_en_agregar", "restaurante_id: " + restauranteId);
-        String modeloURL = Config.MODELO_URL+"a%c3%b1adir_bebida.php";
+        Log.d("nombre_restaurante_en_agregar", "nombre_restaurante: " + nombreRestaurante);
 
-        // Obtener los valores de los campos del formulario
         String nombreBebida = editTextNomBebida.getText().toString().trim();
         String descripcion = editTextDescripcion.getText().toString().trim();
         String precio = editTextPrecio.getText().toString().trim();
         String restauranteIdString = String.valueOf(restauranteId);
 
-        // Verificar que todos los campos estén llenos
         if (nombreBebida.isEmpty() || descripcion.isEmpty() || precio.isEmpty()) {
             Toast.makeText(this, "Por favor, rellena todos los campos del formulario", Toast.LENGTH_SHORT).show();
-            return; // No se envía la solicitud si falta algún campo
+            return;
         }
 
-        // Verificar que se haya seleccionado una imagen
         if (imagenBebida.getDrawable() == null) {
             Toast.makeText(this, "Por favor, selecciona una imagen", Toast.LENGTH_SHORT).show();
-            return; // No se envía la solicitud si no hay imagen seleccionada
+            return;
         }
 
+        guardarImagenEnServidor(nombreBebida, descripcion, precio, restauranteIdString, nombreRestaurante);
+    }
+
+    public void guardarImagenEnServidor(String nombreBebida, String descripcion, String precio, String restauranteIdString,String nombreRestaurante) {
+        Bitmap imageBitmap = ((BitmapDrawable) imagenBebida.getDrawable()).getBitmap();
+        String imageBase64 = convertImageToBase64(imageBitmap);
+
+        JSONObject bebidaData = new JSONObject();
         try {
-            // Crear un objeto JSON para enviar al servidor
-            JSONObject bebidaData = new JSONObject();
-            bebidaData.put("nom_bebida", nombreBebida);
+            bebidaData.put("nombre", nombreBebida);
             bebidaData.put("descripcion", descripcion);
             bebidaData.put("precio", precio);
+            bebidaData.put("restaurante_nombre", nombreRestaurante);
             bebidaData.put("restaurante_id", restauranteIdString);
-
-            // Obtener la imagen como Bitmap (por ejemplo, desde un ImageView)
-            Bitmap imageBitmap = ((BitmapDrawable) imagenBebida.getDrawable()).getBitmap();
-
-            // Convertir la imagen a Base64
-            String imageBase64 = convertImageToBase64(imageBitmap);
-
-            // Agregar la imagen al objeto JSON
             bebidaData.put("imagen", imageBase64);
-
-            // Crear una solicitud HTTP POST con Volley
-            RequestQueue requestQueue = Volley.newRequestQueue(this);
-
-            JsonObjectRequest request = new JsonObjectRequest(
-                    Request.Method.POST,
-                    modeloURL,
-                    bebidaData,
-                    response -> {
-                        // Maneja la respuesta del servidor aquí
-                        Toast.makeText(this, "¡Bebida agregada con éxito!", Toast.LENGTH_SHORT).show();
-                        Log.d("MiApp", "Respuesta del servidor: " + response.toString());
-
-                        // Puedes realizar otras acciones, como volver a la actividad anterior o limpiar los campos del formulario.
-
-                        // En el éxito al agregar el plato, llama al método onPlatoAdded
-                        onBebidaAdded();
-
-
-                    },
-                    error -> {
-                        // Maneja errores de la solicitud aquí
-                        Toast.makeText(this, "Error al agregar la bebida", Toast.LENGTH_SHORT).show();
-                        Log.d("erroralenviar", "error: " + error);
-                    }
-            );
-
-            // Agregar la solicitud a la cola
-            requestQueue.add(request);
         } catch (JSONException e) {
             e.printStackTrace();
+            return;
+        }
+
+        Log.d("log_anadir_bebidadata", "platoData: " + bebidaData);
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST,
+                modeloURL,
+                bebidaData,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String responseData = response.toString();
+                            Log.d("log_anadir_ResponseData", "Response data: " + responseData); // Agregar registro de depuración
+                            if (isJSONValid(responseData)) {
+                                handleServerResponse(responseData); // Llamar a la función para manejar la respuesta del servidor
+                            } else {
+                                // La respuesta del servidor no es un JSON válido
+                                Toast.makeText(agregar_bebidas.this, "Error: Respuesta del servidor no válida", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            // Manejar el error si la respuesta no es un objeto JSON válido
+                            Toast.makeText(agregar_bebidas.this, "Error: Respuesta del servidor no válida", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                },
+                // Manejar el error de la solicitud
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        String errorMessage = "Error al agregar el plato: " + error.getMessage();
+                        Toast.makeText(agregar_bebidas.this, errorMessage, Toast.LENGTH_SHORT).show();
+                        Log.e("log_anadir_Error", errorMessage, error);
+
+                        // Imprimir toda la respuesta del servidor en el Logcat
+                        if (error.networkResponse != null) {
+                            Log.e("log_anadir_Error_serv", "Respuesta del servidor: " + new String(error.networkResponse.data));
+                        } else {
+                            Log.e("log_anadir_Error_serv", "No se recibió respuesta del servidor");
+                        }
+
+                        // Verificar si hay un mensaje de error en la respuesta del servidor
+                        if (error.networkResponse != null && error.networkResponse.data != null) {
+                            try {
+                                JSONObject errorJson = new JSONObject(new String(error.networkResponse.data));
+                                String serverErrorMessage = errorJson.optString("error");
+                                if (!TextUtils.isEmpty(serverErrorMessage)) {
+                                    // Mostrar el mensaje de error del servidor
+                                    Toast.makeText(agregar_bebidas.this, serverErrorMessage, Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+
+        );
+        requestQueue.add(request);
+    }
+
+    private boolean isJSONValid(String json) {
+        try {
+            new JSONObject(json);
+            return true;
+        } catch (JSONException e) {
+            return false;
+        }
+    }
+
+    private void handleServerResponse(String responseData) {
+        try {
+            JSONObject response = new JSONObject(responseData);
+            String message = response.getString("message");
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            onBebidaAdded();
+            finish();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error: Respuesta del servidor no válida", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -276,6 +304,4 @@ public class agregar_bebidas extends AppCompatActivity  implements onBebidaAdded
         byte[] imageBytes = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(imageBytes, Base64.DEFAULT);
     }
-
-
 }
