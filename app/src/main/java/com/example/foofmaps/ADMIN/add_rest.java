@@ -36,12 +36,12 @@ import java.util.Map;
 public class add_rest extends Fragment {
 
     private EditText usernameEditText;
-    private EditText emailEditText;
     private EditText pass1EditText;
-    private EditText pass2EditText;
+    private EditText tematicaEditText;
     private EditText nomRestEditText;
     private EditText celularEditText;
     private EditText ubicacionEditText;
+    private EditText celularRestEditText;
     private ImageView imagen_rest;
     private Button registrarDueñoButton;
     private Button registrarRestauranteButton;
@@ -60,15 +60,17 @@ public class add_rest extends Fragment {
 
         // Inicializar vistas
         usernameEditText = rootView.findViewById(R.id.username);
-        emailEditText = rootView.findViewById(R.id.email);
-        pass1EditText = rootView.findViewById(R.id.pass1);
-        pass2EditText = rootView.findViewById(R.id.pass2);
-        nomRestEditText = rootView.findViewById(R.id.nom_rest);
         celularEditText = rootView.findViewById(R.id.celular);
+        pass1EditText = rootView.findViewById(R.id.password);
+        nomRestEditText = rootView.findViewById(R.id.nom_rest);
+        celularRestEditText = rootView.findViewById(R.id.celularRest);
         ubicacionEditText = rootView.findViewById(R.id.ubicacion);
+        tematicaEditText = rootView.findViewById(R.id.tematica);
         imagen_rest = rootView.findViewById(R.id.imagen);
         registrarDueñoButton = rootView.findViewById(R.id.registrarDueñoButton);
         registrarRestauranteButton = rootView.findViewById(R.id.registrarRestauranteButton);
+
+
 
         // Manejar el clic en la imagen para mostrar el diálogo de selección
         imagen_rest.setOnClickListener(new View.OnClickListener() {
@@ -83,9 +85,14 @@ public class add_rest extends Fragment {
             public void onClick(View v) {
                 // Obtener datos de los campos
                 String username = usernameEditText.getText().toString();
-                String email = emailEditText.getText().toString();
-                String pass1 = pass1EditText.getText().toString();
-                String pass2 = pass2EditText.getText().toString();
+                String celular = celularEditText.getText().toString();
+                String password = pass1EditText.getText().toString();
+                Log.d("add_rest_user", usernameEditText.getText().toString());
+                Log.d("add_rest_cel", celularEditText.getText().toString());
+                Log.d("add_rest_pass", pass1EditText.getText().toString());
+                Log.d("add_rest_nom", nomRestEditText.getText().toString());
+                Log.d("add_rest_celRest", celularRestEditText.getText().toString());
+                Log.d("add_rest_ubic", ubicacionEditText.getText().toString());
 
                 // Crear una cola de solicitudes Volley
                 RequestQueue queue = Volley.newRequestQueue(requireActivity());
@@ -93,6 +100,7 @@ public class add_rest extends Fragment {
                 // Crear una solicitud de cadena (POST)
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.MODELO_URL + "reg_dueno.php",
                         new Response.Listener<String>() {
+
                             @Override
                             public void onResponse(String response) {
                                 // Procesar la respuesta del servidor (éxito)
@@ -111,12 +119,12 @@ public class add_rest extends Fragment {
                         // Agregar los parámetros del formulario
                         Map<String, String> params = new HashMap<>();
                         params.put("username", username);
-                        params.put("email", email);
-                        params.put("pass1", pass1);
-                        params.put("pass2", pass2);
+                        params.put("celular", celular);
+                        params.put("passwordD", password);
                         return params;
                     }
                 };
+                Log.d("add_rest_url", Config.MODELO_URL + "reg_dueno.php");
 
                 // Agregar la solicitud a la cola
                 queue.add(stringRequest);
@@ -130,7 +138,9 @@ public class add_rest extends Fragment {
                 // Obtener datos del segundo formulario
                 String nomRest = nomRestEditText.getText().toString();
                 String celular = celularEditText.getText().toString();
+                String celularRest = celularRestEditText.getText().toString();
                 String ubicacion = ubicacionEditText.getText().toString();
+                String tematica = tematicaEditText.getText().toString();
 
                 // Convertir la imagen a Base64
                 String imageBase64 = bitmapToBase64(imageBitmap);
@@ -160,10 +170,12 @@ public class add_rest extends Fragment {
                         // Agregar los parámetros del formulario del restaurante
                         Map<String, String> params = new HashMap<>();
                         params.put("username", usernameEditText.getText().toString());
-                        params.put("email", emailEditText.getText().toString());
+                        params.put("password", pass1EditText.getText().toString());
                         params.put("nom_rest", nomRest);
                         params.put("celular", celular);
+                        params.put("celularRest", celularRest);
                         params.put("ubicacion", ubicacion);
+                        params.put("tematica", tematica);
                         params.put("imagen", imageBase64); // Agregar la imagen en Base64
                         Log.d("PARAMSagregar_rest", params.toString());
                         return params;
@@ -174,12 +186,6 @@ public class add_rest extends Fragment {
                 queue.add(stringRequest);
             }
         });
-
-
-
-
-
-
         return rootView;
     }
 
