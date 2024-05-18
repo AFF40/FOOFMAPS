@@ -37,7 +37,8 @@ public class Vista_administrador extends AppCompatActivity {
 
                 // Verifica el elemento seleccionado
                 if (item.getItemId() == R.id.registro_admin) {
-                    fragment = new add_rest();
+                    fragment = new add_rest(id_usuario);
+
                 } else if (item.getItemId() == R.id.ajustes_admin) {
                     fragment = new ajustes_admin();
                 }
@@ -53,8 +54,9 @@ public class Vista_administrador extends AppCompatActivity {
             }
         });
 
-        // Establece el fragmento "add_rest" como el fragmento inicial
-        Fragment initialFragment = new add_rest();
+        // Establece el fragmento "add_rest" como el fragmento inicial y enviar el id_usuario
+        Fragment initialFragment = new add_rest(id_usuario);
+        Log.d("Log_VistaAdministrador_idenv", "ID Usuario: " + id_usuario);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container_admin, initialFragment)
                 .commit();

@@ -1,8 +1,11 @@
 package com.example.foofmaps.ADMIN;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -50,8 +53,9 @@ public class add_rest extends Fragment {
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int REQUEST_IMAGE_CAPTURE = 2;
 
-    public add_rest() {
+    public add_rest(int id_usuario) {
         // Constructor
+        Log.d("Log_add_rest", "ID Usuario: " + id_usuario);
     }
 
     @Override
@@ -69,8 +73,6 @@ public class add_rest extends Fragment {
         imagen_rest = rootView.findViewById(R.id.imagen);
         registrarDueñoButton = rootView.findViewById(R.id.registrarDueñoButton);
         registrarRestauranteButton = rootView.findViewById(R.id.registrarRestauranteButton);
-
-
 
         // Manejar el clic en la imagen para mostrar el diálogo de selección
         imagen_rest.setOnClickListener(new View.OnClickListener() {
@@ -145,6 +147,10 @@ public class add_rest extends Fragment {
                 // Convertir la imagen a Base64
                 String imageBase64 = bitmapToBase64(imageBitmap);
 
+                // Obtener el id_usuario de las SharedPreferences
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyPrefs", MODE_PRIVATE);
+                int id_usuario = sharedPreferences.getInt("id_usuario", -1);
+
                 // Crear una cola de solicitudes Volley
                 RequestQueue queue = Volley.newRequestQueue(getActivity());
 
@@ -154,8 +160,8 @@ public class add_rest extends Fragment {
                             @Override
                             public void onResponse(String response) {
                                 // Procesar la respuesta del servidor (éxito)
-                                showToast( response);
-                                Log.d("respuesta31", response);
+                                showToast(response);
+                                Log.d("RESPUESTA_SERVIDOR", response); // Agregar esta línea para ver la respuesta del servidor en el logcat
                             }
                         },
                         new Response.ErrorListener() {
@@ -176,16 +182,19 @@ public class add_rest extends Fragment {
                         params.put("celularRest", celularRest);
                         params.put("ubicacion", ubicacion);
                         params.put("tematica", tematica);
+                        params.put("id_admin", String.valueOf(id_usuario)); // Agregar el id_usuario
                         params.put("imagen", imageBase64); // Agregar la imagen en Base64
+
                         Log.d("PARAMSagregar_rest", params.toString());
                         return params;
                     }
                 };
 
-                // Agregar la solicitud a la cola
+// Agregar la solicitud a la cola
                 queue.add(stringRequest);
             }
         });
+
         return rootView;
     }
 
@@ -198,11 +207,11 @@ public class add_rest extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int item) {
                 if (item == 0) {
-                    // Cargar desde Galería
+// Cargar desde Galería
                     Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     startActivityForResult(intent, PICK_IMAGE_REQUEST);
                 } else if (item == 1) {
-                    // Cargar mediante la Cámara
+// Cargar mediante la Cámara
                     Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
                         startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
@@ -218,20 +227,20 @@ public class add_rest extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == getActivity().RESULT_OK && data != null) {
-            // Procesar la imagen seleccionada desde la galería
+// Procesar la imagen seleccionada desde la galería
             Uri selectedImageUri = data.getData();
             try {
                 imageBitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImageUri);
-                // Asignar la imagen al ImageView
+// Asignar la imagen al ImageView
                 imagen_rest.setImageBitmap(imageBitmap);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
-            // Procesar la imagen capturada desde la cámara
+// Procesar la imagen capturada desde la cámara
             Bundle extras = data.getExtras();
             imageBitmap = (Bitmap) extras.get("data");
-            // Asignar la imagen al ImageView
+// Asignar la imagen al ImageView
             imagen_rest.setImageBitmap(imageBitmap);
         }
     }
