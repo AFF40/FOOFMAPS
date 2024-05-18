@@ -13,6 +13,7 @@ public class LoginRequest extends StringRequest {
 
     //conexion con el archivo php
     private static final String controladorURL = Config.CONTROLADOR_URL+"controladorLogin.php";
+
     private final Map<String,String>params;
     public LoginRequest(String username, String password,  Response.Listener<String> listener){
         super(Method.POST, controladorURL,listener,null);
@@ -28,4 +29,5 @@ public class LoginRequest extends StringRequest {
     public Map<String, String> getParams() {
         return params;
     }
+
 }

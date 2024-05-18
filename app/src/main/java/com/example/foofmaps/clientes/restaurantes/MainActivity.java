@@ -72,8 +72,16 @@ public class MainActivity extends AppCompatActivity {
                 obtenerIdRestDesdeBaseDeDatos();
                 return; // Evita que la actividad se cierre antes de obtener el id_rest
             case 3:
-                // Usuario con rol 3, redirige a Vista_administrador
+                // Usuario con rol 3, redirige a Vista_administrador y pasa el id_usuario
                 intent = new Intent(MainActivity.this, Vista_administrador.class);
+
+                // Obtener el id_usuario de SharedPreferences
+                SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+                int id_usuario = sharedPreferences.getInt("id_usuario", -1);
+
+                // Agregar el id_usuario como un extra en el intent
+                intent.putExtra("id_usuario", id_usuario);
+                Log.d("id_usuario_admin", String.valueOf(id_usuario));
                 break;
             default:
                 // Cerrar sesión si el rol no es válido
@@ -112,18 +120,21 @@ public class MainActivity extends AppCompatActivity {
                                 // Registro exitoso, manejar el resultado aquí
                                 Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT).show();
 
-                                // Obtener el rol del usuario
+                                // Obtener el rol y el id del usuario
                                 int rol = jsonResponse.getInt("id_rol");
+                                int id_usuario = jsonResponse.getInt("id_usuario"); // Obtener el id_usuario del JSON
 
-                                // Guardar el rol del usuario en SharedPreferences
+                                // Guardar el rol y el id del usuario en SharedPreferences
                                 SharedPreferences.Editor editor = getSharedPreferences("MyPrefs", MODE_PRIVATE).edit();
                                 editor.putBoolean("isLoggedIn", true);
                                 editor.putInt("userRole", rol); // Guarda el rol del usuario
+                                editor.putInt("id_usuario", id_usuario); // Guarda el id_usuario del usuario
                                 editor.apply();
 
                                 // Redirigir según el rol
                                 redirectAccordingToRole(rol);
-                            } else {
+                            }
+                            else {
                                 // Error en el registro, mostrar un mensaje al usuario
                                 Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT).show();
                             }

@@ -1,6 +1,7 @@
 package com.example.foofmaps.ADMIN;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,12 @@ public class Vista_administrador extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vista_administrador);
+
+        // Obtener el id_usuario del Intent
+        int id_usuario = getIntent().getIntExtra("id_usuario", -1);
+
+        // Usar el id_usuario según tus necesidades
+        Log.d("Log_VistaAdministrador", "ID Usuario: " + id_usuario);
 
         // Obtén una referencia al BottomNavigationView
         bottomNavigationView = findViewById(R.id.platosybebidas);
