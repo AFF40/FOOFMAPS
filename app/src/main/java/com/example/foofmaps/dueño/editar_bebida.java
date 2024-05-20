@@ -77,12 +77,13 @@ public class editar_bebida extends AppCompatActivity {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                     int id_bebida = jsonObject.getInt("id_bebida");
-                    String nombre_bebida = jsonObject.getString("nom_bebida");
+                    String nombre_bebida = jsonObject.getString("nombre");
                     String descripcion_bebida = jsonObject.getString("descripcion");
                     double precio_bebida = jsonObject.getDouble("precio");
                     String imagen_bebida = jsonObject.getString("imagen");
                     int disponible_bebida = jsonObject.getInt("disponible");
 
+                    // Crea los items Bebida y agrégalo a la lista
                     Bebida bebida = new Bebida(id_bebida, nombre_bebida, descripcion_bebida, precio_bebida, imagen_bebida, disponible_bebida);
                     bebidas.add(bebida);
                 }
@@ -105,7 +106,7 @@ public class editar_bebida extends AppCompatActivity {
                         // Aquí abres el nuevo Activity y pasas los datos del bebida
                         Intent intent = new Intent(editar_bebida.this, Editarestabebida.class);
                         intent.putExtra("id_bebida", bebida.getId());
-                        intent.putExtra("nom_bebida", bebida.getNombre());
+                        intent.putExtra("nombre", bebida.getNombre());
                         intent.putExtra("descripcion", bebida.getDescripcion());
                         intent.putExtra("precio", bebida.getPrecio());
                         intent.putExtra("imagen", bebida.getImagen());
