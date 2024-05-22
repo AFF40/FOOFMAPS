@@ -28,14 +28,16 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.InputStream;
 
 public class Editaresteplato extends AppCompatActivity {
 
@@ -54,44 +56,77 @@ public class Editaresteplato extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editaresteplato);
 
-        Intent intent = getIntent();
-        int platoId = intent.getIntExtra("id_comida", 0);
-        String nombre_plato = intent.getStringExtra("nombre_plato");
-        String descripcion_plato = intent.getStringExtra("descripcion_plato");
-        double precio_plato = intent.getDoubleExtra("precio_plato", 0);
-        byte[] imagen_plato = intent.getByteArrayExtra("imagen_plato");
+        // Recibir el Bundle con los datos
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            int platoId = bundle.getInt("id_comida");
+            String nombre_plato = bundle.getString("nombre_plato");
+            String descripcion_plato = bundle.getString("descripcion_plato");
+            double precio_plato = bundle.getDouble("precio_plato");
+            String imagen_plato = bundle.getString("imagen_plato");
+            int id_rest = bundle.getInt("restaurante_id");
+            String nombreRestaurante = bundle.getString("nombre_restaurante");
 
-        // Obtener referencias a los elementos de la vista
-        nom_plato = findViewById(R.id.nom_plato);
-        descripcion = findViewById(R.id.desc_plato);
-        precio = findViewById(R.id.precio);
-        imagen= findViewById(R.id.imageViewPlato);
-        btnGuardar=findViewById(R.id.btnGuardar);
+            Log.d("Log_editaresteplato", "plato_id: " + platoId);
+            Log.d("Log_editaresteplato", "nombre_plato: " + nombre_plato);
+            Log.d("Log_editaresteplato", "descripcion_plato: " + descripcion_plato);
+            Log.d("Log_editaresteplato", "precio_plato: " + precio_plato);
+            Log.d("Log_editaresteplato", "imagen_plato: " + imagen_plato);
+            Log.d("Log_editaresteplato", "restaurante_id: " + id_rest);
+            Log.d("Log_editaresteplato", "nombre_restaurante: " + nombreRestaurante);
 
-        // Asignar los valores a los elementos de la vista
-        nom_plato.setText(nombre_plato);
-        descripcion.setText(descripcion_plato);
-        precio.setText("" + precio_plato);
+            // Obtener referencias a los elementos de la vista
+            nom_plato = findViewById(R.id.nom_plato);
+            descripcion = findViewById(R.id.desc_plato);
+            precio = findViewById(R.id.precio);
+            imagen = findViewById(R.id.imageViewPlato);
+            btnGuardar = findViewById(R.id.btnGuardar);
 
-        // Si tienes la imagen en formato byte[], puedes convertirla a un Bitmap y establecerla en el ImageView
-        if (imagen_plato != null) {
-            Bitmap bitmap = BitmapFactory.decodeByteArray(imagen_plato, 0, imagen_plato.length);
-            imagen.setImageBitmap(bitmap);
+            // Asignar los valores a los elementos de la vista
+            nom_plato.setText(nombre_plato);
+            descripcion.setText(descripcion_plato);
+            precio.setText("" + precio_plato);
+
+            // Cargar la imagen desde la URL
+            if (imagen_plato != null && !imagen_plato.isEmpty()) {
+                loadImageFromUrl(imagen_plato);
+            }
+
+            // Configura un listener de clics para el ImageView para mostrar el diálogo de selección de imagen
+            imagen.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showImageSelectionDialog();
+                }
+            });
+
+            btnGuardar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    enviarDatosAlServidor(platoId);
+                }
+            });
         }
+    }
 
-        // Configura un listener de clics para el ImageView para mostrar el diálogo de selección de imagen
-        imagen.setOnClickListener(new View.OnClickListener() {
+    private void loadImageFromUrl(String imageUrl) {
+        new Thread(new Runnable() {
             @Override
-            public void onClick(View v) {
-                showImageSelectionDialog();
+            public void run() {
+                try {
+                    InputStream in = new java.net.URL(imageUrl).openStream();
+                    Bitmap bitmap = BitmapFactory.decodeStream(in);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            imagen.setImageBitmap(bitmap);
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        });
-        btnGuardar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                enviarDatosAlServidor( platoId);
-            }
-        });
+        }).start();
     }
 
     private void showImageSelectionDialog() {
@@ -150,9 +185,10 @@ public class Editaresteplato extends AppCompatActivity {
             imagen.setImageBitmap(imageBitmap);
         }
     }
+
     private void enviarDatosAlServidor(int platoId) {
         // URL del archivo PHP en tu servidor
-        String modeloURL = Config.MODELO_URL +"update_plato.php";
+        String modeloURL = Config.MODELO_URL + "update_plato.php";
 
         // Obtener los valores de los campos del formulario
         String nombrePlato = nom_plato.getText().toString().trim();
@@ -174,66 +210,56 @@ public class Editaresteplato extends AppCompatActivity {
         // Convertir la imagen en una representación de bytes (Base64)
         String imagenBase64 = convertImageToBase64(((BitmapDrawable) imagen.getDrawable()).getBitmap());
 
-        // Crear una solicitud POST utilizando Volley (puedes usar otras bibliotecas también)
+        // Crear un objeto JSON con los datos del plato
+        JSONObject platoData = new JSONObject();
+        try {
+            platoData.put("plato_id", platoId);
+            platoData.put("nombre_plato", nombrePlato);
+            platoData.put("descripcion_plato", descripcionPlato);
+            platoData.put("precio_plato", precioPlato);
+            platoData.put("imagen_plato", imagenBase64);
+            platoData.put("nombre_restaurante", "NombreDelRestaurante"); // Cambiar a la lógica adecuada para obtener el nombre del restaurante
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error al crear datos JSON", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Crear una solicitud POST utilizando Volley (JsonObjectRequest)
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, modeloURL,
-                new Response.Listener<String>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, modeloURL, platoData,
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(String response) {
-                        // Después de realizar la actualización con éxito
-                        if (response.equals("Actualización exitosa")) {
-                            Toast.makeText(Editaresteplato.this, "Datos actualizados con éxito", Toast.LENGTH_SHORT).show();
-
-                            // Crear un intent para pasar los datos actualizados
-                            Intent intent = new Intent();
-                            intent.putExtra("plato_id", platoId);
-                            intent.putExtra("nombre_plato", nombrePlato);
-                            intent.putExtra("descripcion_plato", descripcionPlato);
-                            intent.putExtra("precio_plato", Double.parseDouble(precioPlato));
-
-                            // Puedes también enviar la imagen actualizada si es necesario
-                            // intent.putExtra("imagen_plato", imagenBase64);
-
-                            setResult(RESULT_OK, intent); // Establecer el resultado OK
-                            finish(); // Cierra la actividad actual
-                        }
-                        else {
-                            Toast.makeText(Editaresteplato.this, "Error al actualizar datos", Toast.LENGTH_SHORT).show();
+                    public void onResponse(JSONObject response) {
+                        try {
+                            if (response.getBoolean("success")) {
+                                Toast.makeText(Editaresteplato.this, "Datos actualizados con éxito", Toast.LENGTH_SHORT).show();
+                            } else {
+                                String errorMessage = response.getString("error_message");
+                                Toast.makeText(Editaresteplato.this, "Error al actualizar los datos: " + errorMessage, Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(Editaresteplato.this, "Error al procesar la respuesta del servidor", Toast.LENGTH_SHORT).show();
                         }
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Manejar errores de la solicitud
-                        Toast.makeText(Editaresteplato.this, "Error al enviar datos", Toast.LENGTH_SHORT).show();
-                    }
-                }) {
+                }, new Response.ErrorListener() {
             @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("plato_id", String.valueOf(platoId)); // Agregar plato_id
-                params.put("nombre_plato", nombrePlato);
-                params.put("descripcion_plato", descripcionPlato);
-                params.put("precio_plato", precioPlato);
-                params.put("imagen", imagenBase64);
-                Log.d("imagenenviadaalupdate", "imagen: " +imagenBase64 );
-                Log.d("imagenenviadaalupdate", "plato_id: " +platoId );
-                Log.d("imagenenviadaalupdate", "nombre_plato: " +nombrePlato );
-                Log.d("imagenenviadaalupdate", "descripcion_plato: " +descripcionPlato );
-                Log.d("imagenenviadaalupdate", "precio_plato: " +precioPlato );
-                return params;
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(Editaresteplato.this, "Error en la solicitud: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        };
+        });
 
-        // Agregar la solicitud a la cola
-        requestQueue.add(stringRequest);
+        // Añadir la solicitud a la cola
+        requestQueue.add(jsonObjectRequest);
     }
 
-    private String convertImageToBase64(Bitmap imageBitmap) {
+    private String convertImageToBase64(Bitmap bitmap) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-        byte[] imageBytes = byteArrayOutputStream.toByteArray();
-        return Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
+        return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
+
+
 }

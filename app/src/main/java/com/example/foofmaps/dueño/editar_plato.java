@@ -25,23 +25,25 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
 public class editar_plato extends AppCompatActivity {
-    // ...
     private RecyclerView recyclerView;
     private PlatoAdapter adapter;
+    private boolean isFromSpecificActivity = true;
 
-    boolean isFromSpecificActivity = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editar_plato);
 
+        // Recuperar el id y nombre del restaurante
+        int restauranteId = getIntent().getIntExtra("restaurante_id", 0);
+        String nombreRestaurante = getIntent().getStringExtra("nombre_restaurante");
+        Log.d("log_editarplato_restaurante_id_recibido", String.valueOf(restauranteId));
+        Log.d("log_editarplato_nombre_restaurante_recibido", nombreRestaurante);
 
         recyclerView = findViewById(R.id.recylerEditarPlatos); // Reemplaza con tu ID de RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        // Obtener el restauranteId de la actividad anterior (ajusta según cómo lo estés pasando)
-        int restauranteId = getIntent().getIntExtra("restaurante_id", 0);
 
         // Llama a la tarea asincrónica para obtener los datos
         new FetchPlatosTask().execute(restauranteId);
@@ -55,9 +57,9 @@ public class editar_plato extends AppCompatActivity {
 
             try {
                 // Construye la URL
-                String modeloURL = Config.MODELO_URL+"getPlatos.php?restaurante_id=" + restauranteId;
+                String modeloURL = Config.MODELO_URL + "getPlatos.php?restaurante_id=" + restauranteId;
                 URL url = new URL(modeloURL);
-                Log.d("urledit", "apiUrl: " +modeloURL );
+                Log.d("urledit", "apiUrl: " + modeloURL);
 
                 // Realiza la solicitud HTTP
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -83,7 +85,7 @@ public class editar_plato extends AppCompatActivity {
                     String imagen_plato = jsonObject.getString("imagen");
                     int disponible_plato = jsonObject.getInt("disponible");
 
-                    Plato plato = new Plato(id_comida, nombre_plato, descripcion_plato, precio_plato, imagen_plato, disponible_plato);
+                    Plato plato = new Plato(id_comida, nombre_plato, descripcion_plato, precio_plato, imagen_plato, disponible_plato,0,null);
                     platos.add(plato);
                 }
 
@@ -98,36 +100,54 @@ public class editar_plato extends AppCompatActivity {
         protected void onPostExecute(List<Plato> platos) {
             super.onPostExecute(platos);
             if (adapter == null) {
-                adapter = new PlatoAdapter(platos, isFromSpecificActivity);
+                //recuperar el id del restaurante
+                int restauranteId = getIntent().getIntExtra("restaurante_id", 0);
+                String nombreRestaurante = getIntent().getStringExtra("nombre_restaurante");
+                adapter = new PlatoAdapter(platos, isFromSpecificActivity,restauranteId,nombreRestaurante);
+                Log.d("log_editarplato_aladapter", String.valueOf(restauranteId));
+                Log.d("log_editarplato_aladapter", nombreRestaurante);
+                // En el listener del botón para cada elemento de la lista
                 adapter.setOnPlatoClickListener(new PlatoAdapter.OnPlatoClickListener() {
                     @Override
                     public void onPlatoClick(Plato plato) {
-                        // Aquí abres el nuevo Activity y pasas los datos del plato
+                        // Obtener los datos del restaurante correspondientes al plato seleccionado
+                        int restauranteId = getIntent().getIntExtra("restaurante_id", 0);
+                        String nombreRestaurante = getIntent().getStringExtra("nombre_restaurante");
+
+                        // Crear el intent para abrir la actividad Editaresteplato
                         Intent intent = new Intent(editar_plato.this, Editaresteplato.class);
-                        intent.putExtra("id_plato", plato.getId());
-                        intent.putExtra("nombre", plato.getNombre());
-                        intent.putExtra("descripcion", plato.getDescripcion());
-                        intent.putExtra("precio", plato.getPrecio());
-                        intent.putExtra("imagen", plato.getImagen());
+
+                        // Agregar los datos del plato al intent
+                        intent.putExtra("id_comida", plato.getId());
+                        intent.putExtra("nombre_plato", plato.getNombre());
+                        intent.putExtra("descripcion_plato", plato.getDescripcion());
+                        intent.putExtra("precio_plato", plato.getPrecio());
+                        intent.putExtra("imagen_plato", plato.getImagen());
+                        intent.putExtra("disponible_plato", plato.getDisponible());
+
+                        // Agregar los datos del restaurante al intent
+                        intent.putExtra("restaurante_id", restauranteId);
+                        intent.putExtra("nombre_restaurante", nombreRestaurante);
+
+                        // Iniciar la actividad Editaresteplato
                         startActivity(intent);
 
+                        // Logs de todos los datos
+                        Log.d("log_editarplato_id_comida", String.valueOf(plato.getId()));
+                        Log.d("log_editarplato_nombre_plato", plato.getNombre());
+                        Log.d("log_editarplato_descripcion_plato", plato.getDescripcion());
+                        Log.d("log_editarplato_precio_plato", String.valueOf(plato.getPrecio()));
+                        Log.d("log_editarplato_imagen_plato", plato.getImagen());
+                        Log.d("log_editarplato_disponible_plato", String.valueOf(plato.getDisponible()));
+                        Log.d("log_editarplato_restaurante_id_enviado", String.valueOf(restauranteId));
+                        Log.d("log_editarplato_nombre_restaurante_enviado", nombreRestaurante);
                     }
                 });
-                adapter.setOnUpdatePlatoClickListener(new PlatoAdapter.OnUpdatePlatoClickListener() {
-                    @Override
-                    public void onUpdatePlatoClick(Plato plato) {
 
-                    }
-                });
                 recyclerView.setAdapter(adapter);
             } else {
-                // Si ya existe un adaptador, actualiza la lista de platos
                 adapter.notifyDataSetChanged();
             }
-
-
         }
-
-
     }
 }

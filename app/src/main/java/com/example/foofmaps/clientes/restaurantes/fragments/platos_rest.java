@@ -75,7 +75,7 @@ public class platos_rest extends Fragment {
 
             // Configurar el RecyclerView con la lista de platos
             RecyclerView recyclerViewPlatos = requireView().findViewById(R.id.recyclerViewPlatos);
-            PlatoAdapter platoAdapter = new PlatoAdapter(platos,false);
+            PlatoAdapter platoAdapter = new PlatoAdapter(platos,false,0,null);
             recyclerViewPlatos.setLayoutManager(new LinearLayoutManager(requireContext()));
             recyclerViewPlatos.setAdapter(platoAdapter);
         }
@@ -106,7 +106,7 @@ public class platos_rest extends Fragment {
                 Log.d("PLATO_DEBUG", "imagen: " + imagen);
                 Log.d("PLATO_DEBUG", "Platos: " + platos.toString());
 
-                Plato plato = new Plato(id_plato, nombre, descripcion, precio, imagen, disponible);
+                Plato plato = new Plato(id_plato, nombre, descripcion, precio, imagen, disponible,0,null);
                 platos.add(plato);
                 Log.d("PLATO_DEBUG", "Plato: " + plato.toString());
             }

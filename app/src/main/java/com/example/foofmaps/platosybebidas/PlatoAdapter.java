@@ -32,10 +32,14 @@ import java.util.List;
 public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> {
     private List<Plato> platos;
     private boolean isFromSpecificActivity;
+    private int restauranteId;
+    private String nombreRestaurante;
 
-    public PlatoAdapter(List<Plato> platos, boolean isFromSpecificActivity) {
+    public PlatoAdapter(List<Plato> platos, boolean isFromSpecificActivity, int restauranteId, String nombreRestaurante) {
         this.platos = platos;
         this.isFromSpecificActivity = isFromSpecificActivity;
+        this.restauranteId = restauranteId;
+        this.nombreRestaurante = nombreRestaurante;
     }
 
     @NonNull
@@ -65,6 +69,9 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
         //convertir el localhost a la ip de la maquina
         plato.setImagen(plato.getImagen().replace("http://localhost", ip));
         Log.d("platoimagen", String.valueOf(plato.getImagen()));
+        // Establecer el id y el nombre del restaurante en el objeto Plato
+        plato.setRestaurante_id(restauranteId);
+        plato.setNombre_restaurante(nombreRestaurante);
         // Cargar la imagen con Glide
         Glide.with(holder.itemView.getContext())
                 .load(plato.getImagen())
@@ -85,21 +92,17 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
                     Context context = v.getContext();
                     Intent intent = new Intent(context, Editaresteplato.class);
 
-                    // Agrega los datos del plato como extras en el Intent
+                    // Agrega los datos del plato y del restaurante como extras en el Intent
                     intent.putExtra("id_comida", plato.getId());
                     intent.putExtra("nombre_plato", plato.getNombre());
                     intent.putExtra("descripcion_plato", plato.getDescripcion());
                     intent.putExtra("precio_plato", plato.getPrecio());
                     intent.putExtra("imagen_plato", plato.getImagen());
-                    Log.d("platoimagen", String.valueOf(plato.getImagen()));
-                    Log.d("platoimagen", String.valueOf(plato.getNombre()));
-                    Log.d("platoimagen", String.valueOf(plato.getDescripcion()));
-                    Log.d("platoimagen", String.valueOf(plato.getPrecio()));
-                    Log.d("platoimagen", String.valueOf(plato.getId()));
+                    intent.putExtra("restaurante_id", plato.getRestaurante_id());
+                    intent.putExtra("nombre_restaurante", plato.getNombre_restaurante());
 
                     // Inicia la nueva Activity editar este plato
                     context.startActivity(intent);
-
                 }
             });
 

@@ -74,10 +74,13 @@ public class dueno_platos extends Fragment {public static dueno_platos newInstan
             public void onClick(View v) {
                 // Obtén el restaurante_id
                 int restauranteId = getArguments().getInt("restaurante_id", -1);
+                String nombreRestaurante = getArguments().getString("nombre_restaurante");
                 // Abre la segunda actividad cuando se hace clic en "Editar plato"
                 Intent intent = new Intent(requireContext(), editar_plato.class);
                 intent.putExtra("restaurante_id", restauranteId);
-                Log.d("dueno_plato_enviado_intent", "restaurante_id: " + restauranteId);
+                intent.putExtra("nombre_restaurante", nombreRestaurante);
+                Log.d("Log_duenoplato_idrest", "restaurante_id" + restauranteId);
+                Log.d("Log_duenoplato_nomrest", "nombre_restaurante" + nombreRestaurante);
                 startActivity(intent);
             }
         });
@@ -131,7 +134,7 @@ public class dueno_platos extends Fragment {public static dueno_platos newInstan
         protected void onPostExecute(List<Plato> platos) {
             // Configurar el RecyclerView con la lista de platos
             RecyclerView recyclerViewPlatos = getView().findViewById(R.id.viewPlatos);
-            PlatoAdapter platoAdapter = new PlatoAdapter(platos,false);
+            PlatoAdapter platoAdapter = new PlatoAdapter(platos,false,0,null);
             recyclerViewPlatos.setLayoutManager(new LinearLayoutManager(requireContext()));
             recyclerViewPlatos.setAdapter(platoAdapter);
         }
@@ -153,7 +156,7 @@ public class dueno_platos extends Fragment {public static dueno_platos newInstan
                 String imagen = platoJson.getString("imagen");
 
                 // Crear un objeto Plato con los datos
-                Plato plato = new Plato(id_comida, nombre, descripcion, precio, imagen, disponible );
+                Plato plato = new Plato(id_comida, nombre, descripcion, precio, imagen, disponible,0,null );
                 platos.add(plato);
             }
         } catch (JSONException e) {

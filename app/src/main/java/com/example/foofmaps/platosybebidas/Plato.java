@@ -9,14 +9,18 @@ public class Plato {
     private double precio;
     private String imagen;
     private int disponible;
+    private int restaurante_id;
+    private String nombre_restaurante;
 
-    public Plato(int id_comida, String nombre, String descripcion, double precio, String imagen, int disponible) {
+    public Plato(int id_comida, String nombre, String descripcion, double precio, String imagen, int disponible, int restaurante_id, String nombre_restaurante) {
         this.id = id_comida;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
         this.imagen = imagen;
         this.disponible = disponible;
+        this.restaurante_id = restaurante_id;
+        this.nombre_restaurante = nombre_restaurante;
         Log.d("PLATO_DEBUGaa", "nombre: " + nombre);
     }
 
@@ -41,6 +45,12 @@ public class Plato {
     public int getDisponible() {
         return disponible;
     }
+    public int getRestaurante_id() {
+        return restaurante_id;
+    }
+    public String getNombre_restaurante() {
+        return nombre_restaurante;
+    }
 
     public void setDisponible(int disponible) {
         this.disponible = disponible;
@@ -56,6 +66,12 @@ public class Plato {
     }
     public void setImagen(String imagen) {
         this.imagen = imagen;
+    }
+    public void setRestaurante_id(int restaurante_id) {
+        this.restaurante_id = restaurante_id;
+    }
+    public void setNombre_restaurante(String nombre_restaurante) {
+        this.nombre_restaurante = nombre_restaurante;
     }
 
 
