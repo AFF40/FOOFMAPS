@@ -1,12 +1,13 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:orientation="vertical"
     android:background="@color/white"
-    android:layout_marginBottom="50dp"
-    >
+    android:layout_marginBottom="50dp">
+
     <TextView
         android:layout_width="160dp"
         android:layout_height="wrap_content"
@@ -14,49 +15,47 @@
         android:textAlignment="center"
         android:textSize="20dp"
         android:layout_gravity="center"
-        android:layout_marginBottom="50dp"
-        ></TextView>
+        android:layout_marginBottom="50dp"/>
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="10dp"
-    android:layout_marginEnd="20dp"
-    android:layout_marginStart="20dp"
-    android:layout_gravity="center"
-    android:background="@drawable/item_border"> <!-- Utilizamos un recurso de dibujable para el borde -->
-
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp"
+        android:layout_gravity="center"
+        android:padding="10dp"
+        android:background="@drawable/item_border">
 
-        >
-        <!-- ImageView para la imagen del plato -->
         <ImageView
             android:id="@+id/imageViewPlato"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:background="@drawable/item_border"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/text_container"
+            app:layout_constraintVertical_bias="0.5" />
 
         <LinearLayout
+            android:id="@+id/text_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="15dp">
+            android:layout_marginEnd="15dp"
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imageViewPlato"
+            app:layout_constraintEnd_toStartOf="@+id/price_container">
 
-            <!-- TextView para la descripción del plato -->
             <EditText
                 android:id="@+id/nom_plato"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="nombre del plato"
                 android:textColor="@color/black"
-                android:textSize="16sp"
-                />
+                android:textSize="16sp" />
+
             <EditText
                 android:id="@+id/desc_plato"
                 android:layout_width="match_parent"
@@ -64,46 +63,38 @@
                 android:text="descripcion plato"
                 android:textColor="@color/black"
                 android:textSize="16sp"
-                android:paddingTop="10dp"
-                />
-
-
+                android:paddingTop="10dp" />
         </LinearLayout>
 
-        <!-- Botón para agregar el plato al carrito -->
-        <!-- TextView para el precio del plato -->
-
         <LinearLayout
+            android:id="@+id/price_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            >
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/text_container">
+
             <ImageView
                 android:id="@+id/icon_disponible"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_gravity="center"
-                android:paddingBottom="0dp"
-                android:layout_marginBottom="30dp"
-                />
-
+                android:layout_marginBottom="30dp" />
 
             <EditText
                 android:id="@+id/precio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0.00"
-                android:inputType="number"
-                android:textColor="@color/black"
-                android:textSize="16sp"
                 android:layout_gravity="bottom"
                 android:background="@drawable/item_border"
                 android:padding="5dp"
-                />
+                android:text="$0.00"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
         </LinearLayout>
-
-    </LinearLayout>
-</LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
         android:id="@+id/btnGuardar"
@@ -111,6 +102,5 @@
         android:layout_height="wrap_content"
         android:text="Guardar"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        ></Button>
+        android:layout_marginTop="20dp"/>
 </LinearLayout>

@@ -86,6 +86,8 @@ public class dueno_platos extends Fragment {public static dueno_platos newInstan
         });
 
 
+
+
         // Configura un OnClickListener para el botón "Actualizar lista de platos"
         btnActualizarlista.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,13 +102,21 @@ public class dueno_platos extends Fragment {public static dueno_platos newInstan
         new dueno_platos.GetPlatosTask().execute(restauranteId);
         return view;
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Actualiza la lista de platos
+        actualizarListaPlatos();
+    }
+
 
     // Método para actualizar la lista de platos
     private void actualizarListaPlatos() {
         // Realiza la carga de platos nuevamente
         int restauranteId = getArguments().getInt("restaurante_id", -1);
-        new dueno_platos.GetPlatosTask().execute(restauranteId);
+        new GetPlatosTask().execute(restauranteId);
     }
+
 
     private class GetPlatosTask extends AsyncTask<Integer, Void, List<Plato>> {
         @Override
