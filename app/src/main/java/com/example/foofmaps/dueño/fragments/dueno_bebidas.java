@@ -95,6 +95,14 @@ public class dueno_bebidas extends Fragment {
         new GetBebidasTask().execute(restauranteId);
         return view;
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Actualiza la lista de platos
+        actualizarListaBebidas();
+    }
+
+
 
 
     // Método para actualizar la lista de bebidas

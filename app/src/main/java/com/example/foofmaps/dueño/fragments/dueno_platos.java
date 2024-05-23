@@ -85,9 +85,6 @@ public class dueno_platos extends Fragment {public static dueno_platos newInstan
             }
         });
 
-
-
-
         // Configura un OnClickListener para el botón "Actualizar lista de platos"
         btnActualizarlista.setOnClickListener(new View.OnClickListener() {
             @Override

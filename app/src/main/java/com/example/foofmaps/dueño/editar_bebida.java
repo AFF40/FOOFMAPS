@@ -55,6 +55,17 @@ public class editar_bebida extends AppCompatActivity {
         // Llama a la tarea asincrónica para obtener los datos
         new FetchBebidasTask().execute(restauranteId);
     }
+    //actualizar la lista de bebidas al regresar a la actividad
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        //limpiar la lista de platos
+        adapter = null;
+        //recuperar el id del restaurante
+        int restauranteId = getIntent().getIntExtra("restaurante_id", 0);
+        // Llama a la tarea asincrónica para obtener los datos
+        new FetchBebidasTask().execute(restauranteId);
+    }
 
     private class FetchBebidasTask extends AsyncTask<Integer, Void, List<Bebida>> {
         @Override
