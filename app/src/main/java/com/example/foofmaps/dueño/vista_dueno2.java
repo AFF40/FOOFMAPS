@@ -97,6 +97,8 @@ public class vista_dueno2 extends AppCompatActivity {
                         Bundle bundleBebidas = new Bundle();
                         bundleBebidas.putInt("restaurante_id", id_rest);
                         bundleBebidas.putString("nombre_restaurante", nombreRestaurante); // Agrega esta línea
+                        Log.d("id_rest_enviado_a_bebidasF", String.valueOf(id_rest));
+                        Log.d("nombre_rest_enviado_a_bebidasF", nombreRestaurante);
                         bebidas_Fragment.setArguments(bundleBebidas);
                         loadFragment(bebidas_Fragment);
                         return true;

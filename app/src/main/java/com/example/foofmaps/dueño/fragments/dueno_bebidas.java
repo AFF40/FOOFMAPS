@@ -43,8 +43,12 @@ public class dueno_bebidas extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dueno_bebidas, container, false);
         int restauranteId = getArguments().getInt("restaurante_id", -1);
+        String nombreRestaurante = getArguments().getString("nombre_restaurante"); // Recuperar el nombre del restaurante
+
         Log.d("dueno_bebidas_id_recibido", "restaurante_id: " + restauranteId);
-        // Ahora puedes utilizar restauranteId directamente para obtener la lista de bebidas
+        Log.d("dueno_bebidas_nombre_recibido", "nombre_restaurante: " + nombreRestaurante);
+
+        // Ahora puedes utilizar restauranteId y nombreRestaurante directamente para obtener la lista de bebidas
         new GetBebidasTask().execute(restauranteId);
 
         // Obtén una referencia a los botones
@@ -56,10 +60,6 @@ public class dueno_bebidas extends Fragment {
         btnAñadirBebida.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Obtén el restaurante_id
-                int restauranteId = getArguments().getInt("restaurante_id", -1);
-                String nombreRestaurante = getArguments().getString("nombre_restaurante");
-
                 // Abre la actividad de agregar bebida
                 Intent intent = new Intent(requireContext(), agregar_bebidas.class);
                 intent.putExtra("restaurante_id", restauranteId);
@@ -74,11 +74,10 @@ public class dueno_bebidas extends Fragment {
         btnEditarBebida.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Obtén el restaurante_id
-                int restauranteId = getArguments().getInt("restaurante_id", -1);
                 // Abre la actividad de editar bebida
                 Intent intent = new Intent(requireContext(), editar_bebida.class);
                 intent.putExtra("restaurante_id", restauranteId);
+                intent.putExtra("nombre_restaurante", nombreRestaurante); // Enviar el nombre del restaurante
                 startActivity(intent);
             }
         });
@@ -93,10 +92,10 @@ public class dueno_bebidas extends Fragment {
         });
 
         // Realiza la carga inicial de bebidas
-        int restauranteIdArg = getArguments().getInt("restaurante_id", -1);
-        new GetBebidasTask().execute(restauranteIdArg);
+        new GetBebidasTask().execute(restauranteId);
         return view;
     }
+
 
     // Método para actualizar la lista de bebidas
     private void actualizarListaBebidas() {
@@ -130,7 +129,7 @@ public class dueno_bebidas extends Fragment {
         protected void onPostExecute(List<Bebida> bebidas) {
             // Configurar el RecyclerView con la lista de bebidas
             RecyclerView recyclerViewBebidas = getView().findViewById(R.id.viewbebidas);
-            BebidaAdapter bebidaAdapter = new BebidaAdapter(bebidas, false);
+            BebidaAdapter bebidaAdapter = new BebidaAdapter(bebidas, false,0,null);
             recyclerViewBebidas.setLayoutManager(new LinearLayoutManager(requireContext()));
             recyclerViewBebidas.setAdapter(bebidaAdapter);
         }
@@ -153,7 +152,7 @@ public class dueno_bebidas extends Fragment {
                 String imagen = bebidaJson.getString("imagen");
 
                 // Crear un objeto Bebida con los datos
-                Bebida bebida = new Bebida(id_bebida, nombre, descripcion, precio, imagen, disponible);
+                Bebida bebida = new Bebida(id_bebida, nombre, descripcion, precio, imagen, disponible, 0, null);
                 bebidas.add(bebida);
             }
         } catch (JSONException e) {

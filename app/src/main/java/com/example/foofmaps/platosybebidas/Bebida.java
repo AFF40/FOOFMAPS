@@ -9,14 +9,18 @@ public class Bebida {
     private double precio;
     private String imagen; // Cambia el tipo de imagen a byte[]
     private int disponible;
+    private int restaurante_id;
+    private String nombre_restaurante;
 
-    public Bebida(int id_bebida,String nombre, String descripcion, double precio, String imagen, int disponible) {
+    public Bebida(int id_bebida,String nombre, String descripcion, double precio, String imagen, int disponible, int restaurante_id, String nombre_restaurante) {
         this.id_bebida = id_bebida;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
         this.imagen = imagen;
         this.disponible = disponible;
+        this.restaurante_id = restaurante_id;
+        this.nombre_restaurante = nombre_restaurante;
         Log.d("PLATO_DEBUGaa", "nombre: " + nombre);
     }
 
@@ -41,6 +45,12 @@ public class Bebida {
     public int getDisponible() {
         return disponible;
     }
+    public int getRestaurante_id() {
+        return restaurante_id;
+    }
+    public String getNombre_restaurante() {
+        return nombre_restaurante;
+    }
 
     public void setDisponible(int disponible) {
         this.disponible = disponible;
@@ -57,5 +67,12 @@ public class Bebida {
     public void setImagen(String imagen) {
         this.imagen = imagen;
     }
+    public void setRestaurante_id(int restaurante_id) {
+        this.restaurante_id = restaurante_id;
+    }
+    public void setNombre_restaurante(String nombre_restaurante) {
+        this.nombre_restaurante = nombre_restaurante;
+    }
+
 }
 

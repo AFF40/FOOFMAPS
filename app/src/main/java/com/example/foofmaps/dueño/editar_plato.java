@@ -33,6 +33,7 @@ public class editar_plato extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("log_editarplato_estado", "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editar_plato);
 
@@ -48,6 +49,20 @@ public class editar_plato extends AppCompatActivity {
         // Llama a la tarea asincrónica para obtener los datos
         new FetchPlatosTask().execute(restauranteId);
     }
+
+
+    //actualizar la lista de platos al regresar a la actividad
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        //limpiar la lista de platos
+        adapter = null;
+        //recuperar el id del restaurante
+        int restauranteId = getIntent().getIntExtra("restaurante_id", 0);
+        // Llama a la tarea asincrónica para obtener los datos
+        new FetchPlatosTask().execute(restauranteId);
+    }
+
 
     private class FetchPlatosTask extends AsyncTask<Integer, Void, List<Plato>> {
         @Override

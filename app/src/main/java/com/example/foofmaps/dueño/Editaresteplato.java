@@ -187,9 +187,7 @@ public class Editaresteplato extends AppCompatActivity {
     }
 
     private void enviarDatosAlServidor(int platoId) {
-        // URL del archivo PHP en tu servidor
         String modeloURL = Config.MODELO_URL + "update_plato.php";
-
         // Obtener los valores de los campos del formulario
         String nombrePlato = nom_plato.getText().toString().trim();
         String descripcionPlato = descripcion.getText().toString().trim();
@@ -234,6 +232,7 @@ public class Editaresteplato extends AppCompatActivity {
                         try {
                             if (response.getBoolean("success")) {
                                 Toast.makeText(Editaresteplato.this, "Datos actualizados con éxito", Toast.LENGTH_SHORT).show();
+                                finish();
                             } else {
                                 String errorMessage = response.getString("error_message");
                                 Toast.makeText(Editaresteplato.this, "Error al actualizar los datos: " + errorMessage, Toast.LENGTH_SHORT).show();
@@ -260,6 +259,7 @@ public class Editaresteplato extends AppCompatActivity {
         byte[] byteArray = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
+
 
 
 }

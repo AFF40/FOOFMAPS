@@ -31,11 +31,14 @@ import java.util.List;
 
 public class BebidaAdapter extends RecyclerView.Adapter<BebidaAdapter.ViewHolder> {
     private List<Bebida> bebidas;
-    boolean isFromSpecificActivity;
-
-    public BebidaAdapter(List<Bebida> bebidas,boolean isFromSpecificActivity) {
+    private boolean isFromSpecificActivity;
+    private int restauranteId;
+    private String nombreRestaurante;
+    public BebidaAdapter(List<Bebida> bebidas,boolean isFromSpecificActivity, int restauranteId, String nombreRestaurante) {
         this.bebidas = bebidas;
         this.isFromSpecificActivity = isFromSpecificActivity;
+        this.restauranteId = restauranteId;
+        this.nombreRestaurante = nombreRestaurante;
     }
 
     @NonNull
@@ -52,9 +55,8 @@ public class BebidaAdapter extends RecyclerView.Adapter<BebidaAdapter.ViewHolder
 
         return new BebidaAdapter.ViewHolder(view);
     }
-
     @Override
-    public void onBindViewHolder(@NonNull BebidaAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         Bebida bebida = bebidas.get(holder.getAdapterPosition());
 
         // Configuración de la vista con los datos del bebida
@@ -62,9 +64,13 @@ public class BebidaAdapter extends RecyclerView.Adapter<BebidaAdapter.ViewHolder
         holder.descripcionTextView.setText(bebida.getDescripcion());
         holder.precioTextView.setText(String.valueOf(bebida.getPrecio() + " Bs."));
         String ip = Config.ip;
+
         //convertir el localhost a la ip de la maquina
         bebida.setImagen(bebida.getImagen().replace("http://localhost", ip));
-        Log.d("platoimagen", String.valueOf(bebida.getImagen()));
+        Log.d("bebidaimagen", String.valueOf(bebida.getImagen()));
+        // Establecer el id y el nombre del restaurante en el objeto bebida
+        bebida.setRestaurante_id(restauranteId);
+        bebida.setNombre_restaurante(nombreRestaurante);
         // Cargar la imagen con Glide
         Glide.with(holder.itemView.getContext())
                 .load(bebida.getImagen())
@@ -84,21 +90,17 @@ public class BebidaAdapter extends RecyclerView.Adapter<BebidaAdapter.ViewHolder
                     Context context = v.getContext();
                     Intent intent = new Intent(context, Editarestabebida.class);
 
-                    // Agrega los datos del bebida como extras en el Intent
-                    intent.putExtra("id_comida", bebida.getId());
-                    intent.putExtra("nombre_bebida", bebida.getNombre());
-                    intent.putExtra("descripcion_bebida", bebida.getDescripcion());
-                    intent.putExtra("precio_bebida", bebida.getPrecio());
-                    intent.putExtra("imagen_bebida", bebida.getImagen());
-                    Log.d("bebidaimagen", String.valueOf(bebida.getImagen()));
-                    Log.d("bebidaimagen", String.valueOf(bebida.getNombre()));
-                    Log.d("bebidaimagen", String.valueOf(bebida.getDescripcion()));
-                    Log.d("bebidaimagen", String.valueOf(bebida.getPrecio()));
-                    Log.d("bebidaimagen", String.valueOf(bebida.getId()));
+                    // Agrega los datos de la bebida como extras en el Intent
+                    intent.putExtra("id_bebida", bebida.getId());
+                    intent.putExtra("nombre", bebida.getNombre());
+                    intent.putExtra("descripcion", bebida.getDescripcion());
+                    intent.putExtra("precio", bebida.getPrecio());
+                    intent.putExtra("imagen", bebida.getImagen());
+                    intent.putExtra("restaurante_id", bebida.getRestaurante_id());
+                    intent.putExtra("nombre_restaurante", bebida.getNombre_restaurante());
 
-                    // Inicia la nueva Activity editar este bebida
+                    // Inicia la nueva Activity para editar esta bebida
                     context.startActivity(intent);
-
                 }
             });
 

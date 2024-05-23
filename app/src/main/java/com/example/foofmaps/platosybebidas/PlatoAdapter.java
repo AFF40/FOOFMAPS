@@ -34,7 +34,6 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
     private boolean isFromSpecificActivity;
     private int restauranteId;
     private String nombreRestaurante;
-
     public PlatoAdapter(List<Plato> platos, boolean isFromSpecificActivity, int restauranteId, String nombreRestaurante) {
         this.platos = platos;
         this.isFromSpecificActivity = isFromSpecificActivity;
@@ -76,7 +75,6 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
         Glide.with(holder.itemView.getContext())
                 .load(plato.getImagen())
                 .into(holder.imagenImageView);
-
         if (plato.getDisponible() == 1) {
             holder.ic.setImageResource(R.drawable.en_stock);
         } else {

@@ -68,7 +68,7 @@ public class bebidas_rest extends Fragment {
         protected void onPostExecute(List<Bebida> bebidas) {
             // Configurar el RecyclerView con la lista de platos
             RecyclerView recyclerViewBeidas = requireView().findViewById(R.id.recyclerViewBebidas);
-            BebidaAdapter bebidaAdapter = new BebidaAdapter(bebidas,false);
+            BebidaAdapter bebidaAdapter = new BebidaAdapter(bebidas,false,0, null);
             recyclerViewBeidas.setLayoutManager(new LinearLayoutManager(requireContext()));
             recyclerViewBeidas.setAdapter(bebidaAdapter);
         }
@@ -99,7 +99,7 @@ public class bebidas_rest extends Fragment {
                 Log.d("PLATO_DEBUG", "imagen: " + imagen);
                 Log.d("PLATO_DEBUG", "Platos: " + bebidas.toString());
 
-                Bebida bebida = new Bebida(id_bebida, nombre, descripcion, precio, imagen, disponible);
+                Bebida bebida = new Bebida(id_bebida, nombre, descripcion, precio, imagen, disponible,0,null);
                 bebidas.add(bebida);
                 Log.d("PLATO_DEBUG", "Plato: " + bebida.toString());
             }
