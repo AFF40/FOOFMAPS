@@ -3,4 +3,5 @@
         android:width="2dp"
         android:color="#000000" /> <!-- Ancho y color del borde negro -->
     <corners android:radius="8dp" /> <!-- Radio de las esquinas, ajusta según sea necesario -->
+
 </shape>

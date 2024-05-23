@@ -1,102 +1,94 @@
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:padding="10dp"
-    android:layout_marginEnd="20dp"
-    android:layout_marginStart="20dp"
+    android:layout_marginHorizontal="@dimen/horizontal_margin"
     android:layout_marginTop="20dp"
-    android:background="@drawable/item_border"
-    >
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
-    <LinearLayout
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        >
+    android:background="@drawable/item_border">
+
+    <!-- Botones de acción -->
     <TextView
         android:id="@+id/boton_editar_plato"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="editar este plato"
-        android:textSize="17dp"
-        android:layout_marginBottom="0dp"
+        android:text="editar "
+        android:textSize="17sp"
         android:background="@drawable/item_border"
         android:backgroundTint="@color/black"
         android:textColor="@color/rojo"
-        android:gravity="start"
-        android:paddingHorizontal="15dp"
+        android:gravity="center"
+        android:paddingHorizontal="10dp"
+        app:layout_constraintEnd_toStartOf="@+id/btn_cambiar_disponibilidad"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.3"/>
 
-        />
-    </LinearLayout>
-    <LinearLayout
+    <TextView
+        android:id="@+id/btn_cambiar_disponibilidad"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="0dp"
-        >
-        <TextView
-            android:id="@+id/btn_cambiar_disponibilidad"
-            android:layout_width="140dp"
-            android:layout_height="wrap_content"
-            android:text="cambiar disponibilidad"
-            android:textSize="17dp"
-            android:layout_marginBottom="0dp"
-            android:background="@drawable/item_border"
-            android:backgroundTint="@color/black"
-            android:textColor="@color/rojo"
-            android:gravity="center"
-            android:paddingHorizontal="15dp"
+        android:text="cambiar disponibilidad"
+        android:textSize="17sp"
+        android:background="@drawable/item_border"
+        android:backgroundTint="@color/black"
+        android:textColor="@color/rojo"
+        android:gravity="center"
+        android:paddingHorizontal="10dp"
+        app:layout_constraintEnd_toStartOf="@+id/boton_eliminar_plato"
+        app:layout_constraintStart_toEndOf="@+id/boton_editar_plato"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.4"/>
 
-
-            />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:gravity="end"
-
-        >
     <TextView
         android:id="@+id/boton_eliminar_plato"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="eliminar plato"
-        android:textSize="16dp"
-        android:gravity="center"
+        android:text="eliminar"
+        android:textSize="17sp"
         android:background="@drawable/item_border"
         android:backgroundTint="@color/black"
         android:textColor="@color/rojo"
-android:paddingStart="0dp"
-        >
-    </TextView>
-    </LinearLayout>
-</LinearLayout>
-    <LinearLayout
+        android:gravity="center"
+        android:paddingHorizontal="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn_cambiar_disponibilidad"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.3"/>
+
+    <!-- Contenido principal -->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5dp"
         android:layout_marginTop="5dp"
-        android:background="@drawable/item_border">
+        android:background="@drawable/item_border"
+        app:layout_constraintTop_toBottomOf="@id/boton_editar_plato">
 
         <ImageView
             android:id="@+id/imageViewPlato"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:background="@drawable/item_border"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/text_container"
+            app:layout_constraintVertical_bias="0.5" />
 
         <LinearLayout
+            android:id="@+id/text_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="15dp">
+            android:layout_marginEnd="15dp"
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imageViewPlato"
+            app:layout_constraintEnd_toStartOf="@+id/price_container">
 
             <TextView
                 android:id="@+id/nom_plato"
@@ -105,6 +97,7 @@ android:paddingStart="0dp"
                 android:text="nombre del plato"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
+
             <TextView
                 android:id="@+id/desc_plato"
                 android:layout_width="match_parent"
@@ -116,16 +109,20 @@ android:paddingStart="0dp"
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/price_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/text_container">
 
             <ImageView
                 android:id="@+id/icon_disponible"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_gravity="center"
-                android:paddingBottom="0dp"
                 android:layout_marginBottom="30dp" />
 
             <TextView
@@ -139,5 +136,5 @@ android:paddingStart="0dp"
                 android:background="@drawable/item_border"
                 android:padding="5dp" />
         </LinearLayout>
-    </LinearLayout>
-</LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
