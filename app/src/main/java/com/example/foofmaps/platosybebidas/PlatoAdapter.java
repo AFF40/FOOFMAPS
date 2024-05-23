@@ -126,11 +126,11 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
                             notifyItemChanged(position);
                         }
 
-                        Log.d("esteplatodisponible", String.valueOf(plato.getDisponible()));
+                        Log.d("log_platoadapter_plato", String.valueOf(plato.getDisponible()));
 
                         // Crea la URL para cambiar el estado del plato
                         String modeloURL = Config.MODELO_URL + "cambiar_estado_plato.php?id_comida=" + plato.getId();
-                        Log.d("url", "serverUrldeesteplato: " + modeloURL);
+                        Log.d("log_platoadapter_url", "serverUrldeesteplato: " + modeloURL);
 
                         // Crea una cola de solicitudes Volley
                         RequestQueue requestQueue = Volley.newRequestQueue(view.getContext());
@@ -145,12 +145,13 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
                                     notifyDataSetChanged(); // Notifica al adaptador que los datos han cambiado
 
                                 }
+
                             }
                         }, new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
                                 // Maneja los errores de la solicitud
-                                Log.e("Error", "Error en la solicitud HTTP: " + error.getMessage());
+                                Log.e("log_platoadapter", "Error en la solicitud HTTP: " + error.getMessage());
                             }
                         });
                         // Agrega la solicitud a la cola de solicitudes
@@ -158,6 +159,7 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
                     }
                 }
             });
+
 
             holder.button3.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -265,7 +267,6 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
         this.onPlatoClickListener = listener;
     }
 
-    // Botón para cambiar disponibilidad
     private OnUpdatePlatoClickListener onUpdatePlatoClickListener;
 
     public interface OnUpdatePlatoClickListener {

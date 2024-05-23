@@ -33,7 +33,6 @@ public class editar_plato extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("log_editarplato_estado", "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editar_plato);
 
@@ -46,15 +45,20 @@ public class editar_plato extends AppCompatActivity {
         recyclerView = findViewById(R.id.recylerEditarPlatos); // Reemplaza con tu ID de RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+
+
+
+
         // Llama a la tarea asincrónica para obtener los datos
         new FetchPlatosTask().execute(restauranteId);
     }
 
 
+
     //actualizar la lista de platos al regresar a la actividad
     @Override
-    protected void onRestart() {
-        super.onRestart();
+    protected void onResume() {
+        super.onResume();
         //limpiar la lista de platos
         adapter = null;
         //recuperar el id del restaurante
@@ -65,6 +69,7 @@ public class editar_plato extends AppCompatActivity {
 
 
     private class FetchPlatosTask extends AsyncTask<Integer, Void, List<Plato>> {
+
         @Override
         protected List<Plato> doInBackground(Integer... params) {
             int restauranteId = params[0];
@@ -118,10 +123,14 @@ public class editar_plato extends AppCompatActivity {
                 //recuperar el id del restaurante
                 int restauranteId = getIntent().getIntExtra("restaurante_id", 0);
                 String nombreRestaurante = getIntent().getStringExtra("nombre_restaurante");
-                adapter = new PlatoAdapter(platos, isFromSpecificActivity,restauranteId,nombreRestaurante);
+                // Crear adaptador solo si es nulo
+                adapter = new PlatoAdapter(platos, isFromSpecificActivity, restauranteId, nombreRestaurante);
+
                 Log.d("log_editarplato_aladapter", String.valueOf(restauranteId));
                 Log.d("log_editarplato_aladapter", nombreRestaurante);
                 // En el listener del botón para cada elemento de la lista
+                // Aquí es donde debes configurar el listener
+
                 adapter.setOnPlatoClickListener(new PlatoAdapter.OnPlatoClickListener() {
                     @Override
                     public void onPlatoClick(Plato plato) {
@@ -157,11 +166,16 @@ public class editar_plato extends AppCompatActivity {
                         Log.d("log_editarplato_restaurante_id_enviado", String.valueOf(restauranteId));
                         Log.d("log_editarplato_nombre_restaurante_enviado", nombreRestaurante);
                     }
-                });
+                });adapter.setOnUpdatePlatoClickListener(new PlatoAdapter.OnUpdatePlatoClickListener() {
+                    @Override
+                    public void onUpdatePlatoClick(Plato plato) {
 
+                    }
+                });
                 recyclerView.setAdapter(adapter);
+
             } else {
-                adapter.notifyDataSetChanged();
+                adapter.setPlatos(platos);
             }
         }
     }
