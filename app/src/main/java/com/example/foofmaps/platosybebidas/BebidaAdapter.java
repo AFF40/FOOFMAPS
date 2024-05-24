@@ -126,11 +126,11 @@ public class BebidaAdapter extends RecyclerView.Adapter<BebidaAdapter.ViewHolder
                             notifyItemChanged(position);
                         }
 
-                        Log.d("estabebidadisponible", String.valueOf(bebida.getDisponible()));
+                        Log.d("log_bebidaadapter", String.valueOf(bebida.getDisponible()));
 
                         // Crea la URL para cambiar el estado del bebida
                         String modeloURL = Config.MODELO_URL + "cambiar_estado_bebida.php?id_bebida=" + bebida.getId();
-                        Log.d("url", "serverUrldeestabebida: " + modeloURL);
+                        Log.d("log_bebidaadapter", "serverUrldeestabebida: " + modeloURL);
 
                         // Crea una cola de solicitudes Volley
                         RequestQueue requestQueue = Volley.newRequestQueue(view.getContext());
@@ -138,8 +138,7 @@ public class BebidaAdapter extends RecyclerView.Adapter<BebidaAdapter.ViewHolder
                         StringRequest stringRequest = new StringRequest(Request.Method.GET, modeloURL, new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
-                                // Maneja la respuesta del servidor si es necesario
-                                // Aquí puedes actualizar el estado de bebida según la respuesta del servidor si es necesario
+
                                 if (response.equals("success")) {
                                     bebida.setDisponible(1 - bebida.getDisponible()); // Cambia el estado
                                     notifyDataSetChanged(); // Notifica al adaptador que los datos han cambiado
@@ -150,7 +149,7 @@ public class BebidaAdapter extends RecyclerView.Adapter<BebidaAdapter.ViewHolder
                             @Override
                             public void onErrorResponse(VolleyError error) {
                                 // Maneja los errores de la solicitud
-                                Log.e("Error", "Error en la solicitud HTTP: " + error.getMessage());
+                                Log.e("log_bebidaadapter", "Error en la solicitud HTTP: " + error.getMessage());
                             }
                         });
                         // Agrega la solicitud a la cola de solicitudes

@@ -4,16 +4,20 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
 import com.example.foofmaps.platosybebidas.Bebida;
 import com.example.foofmaps.platosybebidas.BebidaAdapter;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -34,20 +38,6 @@ public class editar_bebida extends AppCompatActivity {
 
         // Recuperar el id y nombre del restaurante
         int restauranteId = getIntent().getIntExtra("restaurante_id", 0);
-        String nombreRestaurante = getIntent().getStringExtra("nombre_restaurante");
-
-        // Verificar que los datos no sean nulos antes de usarlos
-        if (restauranteId != 0) {
-            Log.d("log_editarbebida_restaurante_id_recibido", String.valueOf(restauranteId));
-        } else {
-            Log.d("log_editarbebida_restaurante_id_recibido", "restauranteId es 0 o no válido");
-        }
-
-        if (nombreRestaurante != null) {
-            Log.d("log_editarbebida_nombre_restaurante_recibido", nombreRestaurante);
-        } else {
-            Log.d("log_editarbebida_nombre_restaurante_recibido", "nombreRestaurante es nulo");
-        }
 
         recyclerView = findViewById(R.id.recyclerEditBebidas); // Reemplaza con tu ID de RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -57,8 +47,8 @@ public class editar_bebida extends AppCompatActivity {
     }
     //actualizar la lista de bebidas al regresar a la actividad
     @Override
-    protected void onRestart() {
-        super.onRestart();
+    protected void onResume() {
+        super.onResume();
         //limpiar la lista de platos
         adapter = null;
         //recuperar el id del restaurante
@@ -103,7 +93,6 @@ public class editar_bebida extends AppCompatActivity {
                     String imagen_bebida = jsonObject.getString("imagen");
                     int disponible_bebida = jsonObject.getInt("disponible");
 
-                    // Crea los items Bebida y agrégalo a la lista
                     Bebida bebida = new Bebida(id_bebida, nombre_bebida, descripcion_bebida, precio_bebida, imagen_bebida, disponible_bebida, 0, null);
                     bebidas.add(bebida);
                 }
@@ -161,11 +150,16 @@ public class editar_bebida extends AppCompatActivity {
                         Log.d("log_editarbebida_restaurante_id", String.valueOf(restauranteId));
                         Log.d("log_editarbebida_nombre_restaurante", nombreRestaurante);
                     }
+                });adapter.setOnUpdateBebidaClickListener(new BebidaAdapter.OnUpdateBebidaClickListener() {
+                    @Override
+                    public void onUpdateBebidaClick(Bebida bebida) {
+
+                    }
                 });
 
                 recyclerView.setAdapter(adapter);
             } else {
-                adapter.notifyDataSetChanged();
+                adapter.setBebidas(bebidas);
             }
         }
     }

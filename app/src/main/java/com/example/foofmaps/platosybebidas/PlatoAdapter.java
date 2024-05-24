@@ -138,14 +138,11 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
                         StringRequest stringRequest = new StringRequest(Request.Method.GET, modeloURL, new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
-                                // Maneja la respuesta del servidor si es necesario
-                                // Aquí puedes actualizar el estado de plato según la respuesta del servidor si es necesario
                                 if (response.equals("success")) {
                                     plato.setDisponible(1 - plato.getDisponible()); // Cambia el estado
                                     notifyDataSetChanged(); // Notifica al adaptador que los datos han cambiado
 
                                 }
-
                             }
                         }, new Response.ErrorListener() {
                             @Override

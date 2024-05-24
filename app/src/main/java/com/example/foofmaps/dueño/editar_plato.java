@@ -38,23 +38,13 @@ public class editar_plato extends AppCompatActivity {
 
         // Recuperar el id y nombre del restaurante
         int restauranteId = getIntent().getIntExtra("restaurante_id", 0);
-        String nombreRestaurante = getIntent().getStringExtra("nombre_restaurante");
-        Log.d("log_editarplato_restaurante_id_recibido", String.valueOf(restauranteId));
-        Log.d("log_editarplato_nombre_restaurante_recibido", nombreRestaurante);
 
         recyclerView = findViewById(R.id.recylerEditarPlatos); // Reemplaza con tu ID de RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-
-
-
-
         // Llama a la tarea asincrónica para obtener los datos
         new FetchPlatosTask().execute(restauranteId);
     }
-
-
-
     //actualizar la lista de platos al regresar a la actividad
     @Override
     protected void onResume() {
@@ -67,9 +57,7 @@ public class editar_plato extends AppCompatActivity {
         new FetchPlatosTask().execute(restauranteId);
     }
 
-
     private class FetchPlatosTask extends AsyncTask<Integer, Void, List<Plato>> {
-
         @Override
         protected List<Plato> doInBackground(Integer... params) {
             int restauranteId = params[0];
@@ -123,13 +111,9 @@ public class editar_plato extends AppCompatActivity {
                 //recuperar el id del restaurante
                 int restauranteId = getIntent().getIntExtra("restaurante_id", 0);
                 String nombreRestaurante = getIntent().getStringExtra("nombre_restaurante");
-                // Crear adaptador solo si es nulo
                 adapter = new PlatoAdapter(platos, isFromSpecificActivity, restauranteId, nombreRestaurante);
-
                 Log.d("log_editarplato_aladapter", String.valueOf(restauranteId));
                 Log.d("log_editarplato_aladapter", nombreRestaurante);
-                // En el listener del botón para cada elemento de la lista
-                // Aquí es donde debes configurar el listener
 
                 adapter.setOnPlatoClickListener(new PlatoAdapter.OnPlatoClickListener() {
                     @Override
