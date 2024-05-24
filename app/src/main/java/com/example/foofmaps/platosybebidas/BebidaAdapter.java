@@ -176,7 +176,7 @@ public class BebidaAdapter extends RecyclerView.Adapter<BebidaAdapter.ViewHolder
                             removeBebida(bebida);
                             // Crea la URL para eliminar el bebida
                             String eliminarBebidaURL = Config.MODELO_URL + "eliminar_bebida.php?id_bebida=" + bebida.getId();
-
+                            Log.d("log_bebidaadapter", "serverUrleliminarestabebida: " + eliminarBebidaURL);
                             RequestQueue requestQueue = Volley.newRequestQueue(view.getContext());
 
                             StringRequest eliminarBebidaRequest = new StringRequest(Request.Method.GET, eliminarBebidaURL, new Response.Listener<String>() {
@@ -187,8 +187,7 @@ public class BebidaAdapter extends RecyclerView.Adapter<BebidaAdapter.ViewHolder
                                         Toast.makeText(view.getContext(), "Eliminación exitosa", Toast.LENGTH_SHORT).show();
 
                                     } else {
-                                        // La eliminación falló, maneja el caso de error si es necesario
-                                        // Puedes considerar restaurar el bebida en caso de error en la eliminación
+                                        Log.d("log_bebidaadapter", "Error al eliminar la bebida");
                                     }
                                 }
                             }, new Response.ErrorListener() {

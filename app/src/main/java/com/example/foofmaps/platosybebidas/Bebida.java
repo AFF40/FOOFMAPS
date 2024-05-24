@@ -3,17 +3,17 @@ package com.example.foofmaps.platosybebidas;
 import android.util.Log;
 
 public class Bebida {
-    private int id_bebida;
+    private int id;
     private String nombre;
     private String descripcion;
     private double precio;
-    private String imagen; // Cambia el tipo de imagen a byte[]
+    private String imagen;
     private int disponible;
     private int restaurante_id;
     private String nombre_restaurante;
 
     public Bebida(int id_bebida,String nombre, String descripcion, double precio, String imagen, int disponible, int restaurante_id, String nombre_restaurante) {
-        this.id_bebida = id_bebida;
+        this.id = id_bebida;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
@@ -25,20 +25,17 @@ public class Bebida {
     }
 
     public int getId() {
-        return id_bebida;
+        return id;
     }
     public String getNombre() {
         return nombre;
     }
-
     public String getDescripcion() {
         return descripcion;
     }
-
     public double getPrecio() {
         return precio;
     }
-
     public String getImagen() { // Cambia el tipo de retorno a byte[]
         return imagen;
     }
@@ -51,7 +48,6 @@ public class Bebida {
     public String getNombre_restaurante() {
         return nombre_restaurante;
     }
-
     public void setDisponible(int disponible) {
         this.disponible = disponible;
     }
@@ -75,4 +71,3 @@ public class Bebida {
     }
 
 }
-

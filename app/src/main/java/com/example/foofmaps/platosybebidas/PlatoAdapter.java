@@ -175,7 +175,7 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
                             removePlato(plato);
                             // Crea la URL para eliminar el plato
                             String eliminarPlatoURL = Config.MODELO_URL + "eliminar_plato.php?id_comida=" + plato.getId();
-
+                            Log.d("log_platoadapter_eliminar", "serverUrldeesteplato: " + eliminarPlatoURL);
                             RequestQueue requestQueue = Volley.newRequestQueue(view.getContext());
 
                             StringRequest eliminarPlatoRequest = new StringRequest(Request.Method.GET, eliminarPlatoURL, new Response.Listener<String>() {
@@ -186,8 +186,7 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
                                         Toast.makeText(view.getContext(), "Eliminación exitosa", Toast.LENGTH_SHORT).show();
 
                                     } else {
-                                        // La eliminación falló, maneja el caso de error si es necesario
-                                        // Puedes considerar restaurar el plato en caso de error en la eliminación
+                                        Log.d("log_platoadapter_eliminar", "Error al eliminar el plato");
                                     }
                                 }
                             }, new Response.ErrorListener() {

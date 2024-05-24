@@ -30,15 +30,12 @@ public class Plato {
     public String getNombre() {
         return nombre;
     }
-
     public String getDescripcion() {
         return descripcion;
     }
-
     public double getPrecio() {
         return precio;
     }
-
     public String getImagen() { // Cambia el tipo de retorno a byte[]
         return imagen;
     }
@@ -51,7 +48,6 @@ public class Plato {
     public String getNombre_restaurante() {
         return nombre_restaurante;
     }
-
     public void setDisponible(int disponible) {
         this.disponible = disponible;
     }
@@ -74,6 +70,4 @@ public class Plato {
         this.nombre_restaurante = nombre_restaurante;
     }
 
-
 }
-
