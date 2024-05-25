@@ -37,7 +37,7 @@
         android:inputType="text" >
     </EditText>
     <EditText
-        android:id="@+id/ed_email"
+        android:id="@+id/ed_celular"
         android:drawableStart="@drawable/baseline_email_24"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
         android:layout_marginTop="30dp"
         android:paddingStart="5sp"
         android:background="@drawable/bordeform"
-        android:hint=" Email"
+        android:hint="Celular"
         android:minHeight="48dp"
         android:textColor="@color/black"
         android:textColorHint="@color/black"
