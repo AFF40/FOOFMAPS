@@ -42,7 +42,7 @@ public class BebidasViewModel extends ViewModel {
 
             try {
                 // Realizar una solicitud HTTP para obtener los datos JSON de la API
-                String modeloURL = Config.MODELO_URL + "getBebidas.php?restaurante_id=" + idRestaurante;
+                String modeloURL = Config.MODELO_URL + "listarBebidas.php?restaurante_id=" + idRestaurante;
                 String jsonResponse = HttpUtils.get(modeloURL);
                 Log.d("modeloURL", modeloURL);
 
@@ -66,7 +66,7 @@ public class BebidasViewModel extends ViewModel {
             JSONArray jsonArray = new JSONArray(json);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject bebidaJson = jsonArray.getJSONObject(i);
-                int id_bebida = bebidaJson.getInt("id_bebida");
+                int id_bebida = bebidaJson.getInt("id_producto");
                 String nombre = bebidaJson.getString("nombre");
                 String descripcion = bebidaJson.getString("descripcion");
                 float precio = (float) bebidaJson.getDouble("precio");

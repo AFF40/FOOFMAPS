@@ -42,7 +42,7 @@ public class PlatosViewModel extends ViewModel {
 
             try {
                 // Realizar una solicitud HTTP para obtener los datos JSON de la API
-                String modeloURL = Config.MODELO_URL + "getPlatos.php?restaurante_id=" + idRestaurante;
+                String modeloURL = Config.MODELO_URL + "listarPlatos.php?restaurante_id=" + idRestaurante;
                 String jsonResponse = HttpUtils.get(modeloURL);
                 Log.d("urledit", "apiUrl: " + modeloURL);
                 Log.d("API Response", jsonResponse);
@@ -67,7 +67,7 @@ public class PlatosViewModel extends ViewModel {
             JSONArray jsonArray = new JSONArray(json);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject platoJson = jsonArray.getJSONObject(i);
-                int id_plato = platoJson.getInt("id_plato");
+                int id_plato = platoJson.getInt("id_producto");
                 String nombre = platoJson.getString("nombre");
                 String descripcion = platoJson.getString("descripcion");
                 float precio = (float) platoJson.getDouble("precio");
