@@ -159,8 +159,11 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
 
 
             holder.button3.setOnClickListener(new View.OnClickListener() {
+
                 @Override
                 public void onClick(View view) {
+                    //Log del plato a eliminar
+                    Log.d("log_platoadapter_eliminar", "platoaeliminar: " + plato.getId());
                     AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                     builder.setTitle("Eliminar plato");
                     builder.setMessage("¿Está seguro de que desea eliminar este plato?");
