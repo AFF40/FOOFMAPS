@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         // Obtener el valor de sesión y el rol de SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
             // Usuario no ha iniciado sesión, mostrar pantalla de inicio de sesión
             initializeLoginScreen();
         }
+
     }
 
     private void redirectAccordingToRole(int userRole) {
