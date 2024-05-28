@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnLogin.setOnClickListener(v -> {
+            onPause(); // Pausa la actividad mientras se realiza la solicitud
             // Asigna el valor de ed_username a la variable username
             username = ed_username.getText().toString();
             final String pass1 = ed_password.getText().toString();
@@ -137,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
                             else {
                                 // Error en el registro, mostrar un mensaje al usuario
                                 Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT).show();
+                                onResume();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -181,6 +183,23 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         queue.add(stringRequest);
+    }
+    //pausar la actividad
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // no permitir que el usuario pueda interactuar con la actividad mientras se realiza la solicitud
+        btnLogin.setEnabled(false);
+        btnRegistrar.setEnabled(false);
+    }
+
+    //reanudar la actividad
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // permitir que el usuario pueda interactuar con la actividad
+        btnLogin.setEnabled(true);
+        btnRegistrar.setEnabled(true);
     }
 
     private void logout() {
