@@ -65,7 +65,7 @@ public class editar_bebida extends AppCompatActivity {
 
             try {
                 // Construye la URL
-                String modeloURL = Config.MODELO_URL + "getBebidas.php?restaurante_id=" + restauranteId;
+                String modeloURL = Config.MODELO_URL + "listarBebidas.php?restaurante_id=" + restauranteId;
                 URL url = new URL(modeloURL);
                 Log.d("urledit", "apiUrl: " + modeloURL);
 
@@ -86,7 +86,7 @@ public class editar_bebida extends AppCompatActivity {
                 JSONArray jsonArray = new JSONArray(result.toString());
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    int id_bebida = jsonObject.getInt("id_bebida");
+                    int id_bebida = jsonObject.getInt("id_producto");
                     String nombre_bebida = jsonObject.getString("nombre");
                     String descripcion_bebida = jsonObject.getString("descripcion");
                     double precio_bebida = jsonObject.getDouble("precio");

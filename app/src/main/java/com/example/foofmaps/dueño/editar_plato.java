@@ -65,7 +65,7 @@ public class editar_plato extends AppCompatActivity {
 
             try {
                 // Construye la URL
-                String modeloURL = Config.MODELO_URL + "getPlatos.php?restaurante_id=" + restauranteId;
+                String modeloURL = Config.MODELO_URL + "listarPlatos.php?restaurante_id=" + restauranteId;
                 URL url = new URL(modeloURL);
                 Log.d("urledit", "apiUrl: " + modeloURL);
 
@@ -86,7 +86,7 @@ public class editar_plato extends AppCompatActivity {
                 JSONArray jsonArray = new JSONArray(result.toString());
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    int id_comida = jsonObject.getInt("id_plato");
+                    int id_comida = jsonObject.getInt("id_producto");
                     String nombre_plato = jsonObject.getString("nombre");
                     String descripcion_plato = jsonObject.getString("descripcion");
                     double precio_plato = jsonObject.getDouble("precio");
