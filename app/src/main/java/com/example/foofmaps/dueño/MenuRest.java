@@ -15,6 +15,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
+import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
 import com.example.foofmaps.clientes.restaurantes.fragments.bebidas_rest;
 import com.example.foofmaps.clientes.restaurantes.fragments.platos_rest;
@@ -38,7 +39,9 @@ public class MenuRest extends AppCompatActivity {
         int celular = intent.getIntExtra("restaurant_phone", 0);
         String imagen = intent.getStringExtra("restaurant_image");
         //convertir el localhost a la ip de la maquina
-        imagen = imagen.replace("http://localhost", "http://192.168.100.5");
+        if (Config.ip.equals("http://192.168.100.5")) {
+            imagen = imagen.replace("http://localhost", "http://192.168.100.5");
+        }
         Log.d("RESTAURANT_ID", String.valueOf(restaurante_id));
         Log.d("RESTAURANT_NAME", nom_rest);
         Log.d("RESTAURANT_CELULAR", String.valueOf(celular));

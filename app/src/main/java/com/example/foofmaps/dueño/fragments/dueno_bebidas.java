@@ -120,7 +120,7 @@ public class dueno_bebidas extends Fragment {
 
             try {
                 // Realizar una solicitud HTTP para obtener los datos JSON de la API
-                String modeloURL = Config.MODELO_URL + "getBebidas.php?restaurante_id=" + idRestaurante;
+                String modeloURL = Config.MODELO_URL + "listarBebidas.php?restaurante_id=" + idRestaurante;
                 Log.d("dueno_bebidas_url", "apiUrl: " + modeloURL);
                 String jsonResponse = HttpUtils.get(modeloURL);
                 Log.d("dueno_bebidas_JSON_RESPONSE", jsonResponse);
@@ -150,7 +150,7 @@ public class dueno_bebidas extends Fragment {
             JSONArray jsonArray = new JSONArray(json);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject bebidaJson = jsonArray.getJSONObject(i);
-                int id_bebida = bebidaJson.getInt("id_bebida");
+                int id_bebida = bebidaJson.getInt("id_producto");
                 String nombre = bebidaJson.getString("nombre");
                 String descripcion = bebidaJson.getString("descripcion");
                 float precio = (float) bebidaJson.getDouble("precio");

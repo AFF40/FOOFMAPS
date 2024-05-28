@@ -123,7 +123,7 @@ public class dueno_platos extends Fragment {public static dueno_platos newInstan
 
             try {
                 // Realizar una solicitud HTTP para obtener los datos JSON de la API
-                String modeloURL = Config.MODELO_URL+"getPlatos.php?restaurante_id=" + idRestaurante;
+                String modeloURL = Config.MODELO_URL+"listarPlatos.php?restaurante_id=" + idRestaurante;
                 Log.d("dueno_plato_url", "apiUrl: " + modeloURL);
                 String jsonResponse = HttpUtils.get(modeloURL);
                 Log.d("dueno_plato_JSON_RESPONSEs", jsonResponse);
@@ -154,7 +154,7 @@ public class dueno_platos extends Fragment {public static dueno_platos newInstan
             JSONArray jsonArray = new JSONArray(json);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject platoJson = jsonArray.getJSONObject(i);
-                int id_comida = platoJson.getInt("id_plato");
+                int id_comida = platoJson.getInt("id_producto");
                 String nombre = platoJson.getString("nombre");
                 String descripcion = platoJson.getString("descripcion");
                 float precio = (float) platoJson.getDouble("precio");
