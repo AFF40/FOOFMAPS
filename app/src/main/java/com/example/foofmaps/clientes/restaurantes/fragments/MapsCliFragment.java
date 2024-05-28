@@ -144,6 +144,8 @@ public class MapsCliFragment extends Fragment implements OnMapReadyCallback {
     public void onResume() {
         super.onResume();
         getActivity().registerReceiver(gpsSwitchStateReceiver, new IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION));
+        // volver a cargar los marcadores al reanudar la actividad
+        fetchLocationsFromDatabase();
     }
 
     @Override
