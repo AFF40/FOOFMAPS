@@ -32,6 +32,8 @@ public class registro extends AppCompatActivity {
         btnRegistrar = findViewById(R.id.btn_registrar);
 
         btnRegistrar.setOnClickListener(v -> {
+
+            onPause();
             // Obtener los valores ingresados por el usuario
             String username = ed_username.getText().toString();
             String celular = ed_celular.getText().toString();
@@ -57,6 +59,7 @@ public class registro extends AppCompatActivity {
                             } else {
                                 // Error en el registro, mostrar un mensaje al usuario
                                 Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT).show();
+                                onResume();
                                 Log.e("info",mensaje);
                             }
                         } catch (JSONException e) {
@@ -67,5 +70,19 @@ public class registro extends AppCompatActivity {
             RequestQueue queue = Volley.newRequestQueue(registro.this);
             queue.add(registerRequest);
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Pausa la actividad mientras se realiza la solicitud
+        btnRegistrar.setEnabled(false);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Habilita el botón de registro
+        btnRegistrar.setEnabled(true);
     }
 }
