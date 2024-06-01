@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnLogin.setOnClickListener(v -> {
-            onPause(); // Pausa la actividad mientras se realiza la solicitud
+            onPause();
             // Asigna el valor de ed_username a la variable username
             username = ed_username.getText().toString();
             final String pass1 = ed_password.getText().toString();

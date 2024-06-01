@@ -12,12 +12,14 @@ import java.util.Map;
 public class LoginRequest extends StringRequest {
 
     //conexion con el archivo php
-    private static final String controladorURL = Config.CONTROLADOR_URL+"controladorLogin.php";
+    //private static final String controladorURL = Config.API_URL+"/login";
 
+    private static final String controladorURL = Config.CONTROLADOR_URL+"/controladorLogin.php";
 
     private final Map<String,String>params;
     public LoginRequest(String username, String password,  Response.Listener<String> listener){
         super(Method.POST, controladorURL,listener,null);
+        Log.d("controladorURL",controladorURL);
         params=new HashMap<>();
         Log.e("info",username);
         Log.d("info",password);

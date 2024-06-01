@@ -119,9 +119,6 @@ public class agregar_platos extends AppCompatActivity implements onPlatoAddedLis
             public void afterTextChanged(Editable editable) {}
         });
 
-        editTextNomPlato = findViewById(R.id.editTextNomPlato);
-        editTextDescripcion = findViewById(R.id.editTextDescripcion);
-        editTextPrecio = findViewById(R.id.editTextPrecio);
         btnSelectImage = findViewById(R.id.btnSelectImage);
         btnSelectCamara = findViewById(R.id.btnselectcamara);
         imagenPlato = findViewById(R.id.imagenPlato);
@@ -174,14 +171,12 @@ public class agregar_platos extends AppCompatActivity implements onPlatoAddedLis
         Intent intent = getIntent();
         int restauranteId = intent.getIntExtra("restaurante_id", -1);
         String nombreRestaurante = intent.getStringExtra("nombre_restaurante");
-        Log.d ("log_anadir_nombre_rest", "Nombre del restaurante: " + nombreRestaurante);
+        Log.d("log_anadir_nombre_rest", "Nombre del restaurante: " + nombreRestaurante);
         Log.d("log_anadir_url", "url: " + modeloURL);
 
         String nombrePlato = editTextNomPlato.getText().toString().trim();
         String descripcionPlato = editTextDescripcion.getText().toString().trim();
         String precioPlato = editTextPrecio.getText().toString().trim();
-        //enviar el nombre del restaurante como string
-
         String restauranteIdString = String.valueOf(restauranteId);
 
         if (nombrePlato.isEmpty() || descripcionPlato.isEmpty() || precioPlato.isEmpty()) {
@@ -194,7 +189,19 @@ public class agregar_platos extends AppCompatActivity implements onPlatoAddedLis
             return;
         }
 
+        // Deshabilitar los botones y campos de texto al enviar el formulario
+        setFormEnabled(false);
+
         guardarImagenEnServidor(nombrePlato, descripcionPlato, precioPlato, restauranteIdString, nombreRestaurante);
+    }
+
+    private void setFormEnabled(boolean enabled) {
+        btnEnviar.setEnabled(enabled);
+        btnSelectImage.setEnabled(enabled);
+        btnSelectCamara.setEnabled(enabled);
+        editTextNomPlato.setEnabled(enabled);
+        editTextDescripcion.setEnabled(enabled);
+        editTextPrecio.setEnabled(enabled);
     }
 
     public void guardarImagenEnServidor(String nombrePlato, String descripcionPlato, String precioPlato, String restauranteIdString, String nombreRestaurante) {
@@ -210,6 +217,7 @@ public class agregar_platos extends AppCompatActivity implements onPlatoAddedLis
             platoData.put("imagen", imageBase64);
         } catch (JSONException e) {
             e.printStackTrace();
+            setFormEnabled(true); // Rehabilitar el formulario en caso de error
             return;
         }
 
@@ -238,12 +246,14 @@ public class agregar_platos extends AppCompatActivity implements onPlatoAddedLis
                             // Manejar el error si la respuesta no es un objeto JSON válido
                             Toast.makeText(agregar_platos.this, "Error: Respuesta del servidor no válida", Toast.LENGTH_SHORT).show();
                         }
+                        setFormEnabled(true); // Rehabilitar el formulario después de recibir la respuesta
                     }
                 },
                 // Manejar el error de la solicitud
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        setFormEnabled(true); // Rehabilitar el formulario en caso de error
                         String errorMessage = "Error al agregar el plato: " + error.getMessage();
                         Toast.makeText(agregar_platos.this, errorMessage, Toast.LENGTH_SHORT).show();
                         Log.e("log_anadir_Error", errorMessage, error);
@@ -306,5 +316,4 @@ public class agregar_platos extends AppCompatActivity implements onPlatoAddedLis
         byte[] imageBytes = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(imageBytes, Base64.DEFAULT);
     }
-
 }
