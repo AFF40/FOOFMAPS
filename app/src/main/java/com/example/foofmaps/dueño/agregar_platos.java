@@ -34,6 +34,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -42,6 +43,10 @@ import java.io.IOException;
 
 public class agregar_platos extends AppCompatActivity implements onPlatoAddedListener {
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 1001;
+    private static final int STORAGE_PERMISSION_REQUEST_CODE = 1002;
+    private static final int PICK_IMAGE_REQUEST = 1;
+    private static final int CAMERA_REQUEST = 2;
+
     private EditText editTextNomPlato;
     private EditText editTextDescripcion;
     private EditText editTextPrecio;
@@ -53,10 +58,8 @@ public class agregar_platos extends AppCompatActivity implements onPlatoAddedLis
     private TextView nomPlato;
     private TextView descripcion_plato;
     private TextView precio_plato;
-    private static final int PICK_IMAGE_REQUEST = 1;
-    private static final int CAMERA_REQUEST = 2;
-    private static final String modeloURL = Config.MODELO_URL + "a%c3%b1adir_plato.php";
 
+    private static final String modeloURL = Config.MODELO_URL + "a%c3%b1adir_plato.php";
 
     @Override
     public void onPlatoAdded() {
@@ -69,10 +72,6 @@ public class agregar_platos extends AppCompatActivity implements onPlatoAddedLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_agregar_platos);
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
-        }
 
         editTextNomPlato = findViewById(R.id.editTextNomPlato);
         nomPlato = findViewById(R.id.nom_plato);
@@ -124,27 +123,66 @@ public class agregar_platos extends AppCompatActivity implements onPlatoAddedLis
         imagenPlato = findViewById(R.id.imagenPlato);
         btnEnviar = findViewById(R.id.btnEnviarFormulario);
 
-        btnSelectImage.setOnClickListener(view -> {
+        btnSelectImage.setOnClickListener(view -> openGallery());
+        btnSelectCamara.setOnClickListener(view -> openCamera());
+        btnEnviar.setOnClickListener(view -> enviarFormulario(view));
+    }
+
+    private void checkAndRequestPermissions(String permission, int requestCode) {
+        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
+        } else {
+            // Permission already granted
+            if (requestCode == STORAGE_PERMISSION_REQUEST_CODE) {
+                openGallery();
+            } else if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
+                openCamera();
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openCamera();
+            } else {
+                Toast.makeText(this, "Permiso de cámara denegado", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        if (requestCode == STORAGE_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openGallery();
+            } else {
+                Toast.makeText(this, "Permiso de almacenamiento denegado", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void openGallery() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+            checkAndRequestPermissions(Manifest.permission.READ_MEDIA_IMAGES, STORAGE_PERMISSION_REQUEST_CODE);
+        } else {
             Intent abrir_galeria = new Intent(Intent.ACTION_PICK);
             abrir_galeria.setType("image/*");
             startActivityForResult(abrir_galeria, PICK_IMAGE_REQUEST);
-        });
+        }
+    }
 
-        btnSelectCamara.setOnClickListener(view -> {
+    private void openCamera() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            checkAndRequestPermissions(Manifest.permission.CAMERA, CAMERA_PERMISSION_REQUEST_CODE);
+        } else {
             Intent abrircamara = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (abrircamara.resolveActivity(getPackageManager()) != null) {
                 startActivityForResult(abrircamara, CAMERA_REQUEST);
             } else {
                 Toast.makeText(this, "No se encontró una aplicación de cámara en el dispositivo", Toast.LENGTH_SHORT).show();
             }
-        });
-
-        btnEnviar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                enviarFormulario(view);
-            }
-        });
+        }
     }
 
     @Override
@@ -160,6 +198,7 @@ public class agregar_platos extends AppCompatActivity implements onPlatoAddedLis
                 e.printStackTrace();
             }
         }
+
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             imageBitmap = (Bitmap) extras.get("data");
@@ -177,20 +216,16 @@ public class agregar_platos extends AppCompatActivity implements onPlatoAddedLis
         String nombrePlato = editTextNomPlato.getText().toString().trim();
         String descripcionPlato = editTextDescripcion.getText().toString().trim();
         String precioPlato = editTextPrecio.getText().toString().trim();
-        String restauranteIdString = String.valueOf(restauranteId);
 
-        if (nombrePlato.isEmpty() || descripcionPlato.isEmpty() || precioPlato.isEmpty()) {
-            Toast.makeText(this, "Por favor, rellena todos los campos del formulario", Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(nombrePlato) || TextUtils.isEmpty(descripcionPlato) || TextUtils.isEmpty(precioPlato) || imageBitmap == null) {
+            Toast.makeText(this, "Por favor, complete todos los campos y seleccione una imagen", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if (imageBitmap == null) {
-            Toast.makeText(this, "Por favor, selecciona una imagen", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Deshabilitar los botones y campos de texto al enviar el formulario
         setFormEnabled(false);
+
+        String restauranteIdString = String.valueOf(restauranteId);
+        Log.d("log_anadir_restaurante", "Restaurante ID: " + restauranteIdString);
 
         guardarImagenEnServidor(nombrePlato, descripcionPlato, precioPlato, restauranteIdString, nombreRestaurante);
     }
@@ -205,115 +240,91 @@ public class agregar_platos extends AppCompatActivity implements onPlatoAddedLis
     }
 
     public void guardarImagenEnServidor(String nombrePlato, String descripcionPlato, String precioPlato, String restauranteIdString, String nombreRestaurante) {
-        String imageBase64 = convertImageToBase64(imageBitmap);
-
-        JSONObject platoData = new JSONObject();
+        String imagenBase64 = convertImageToBase64(imageBitmap);
         try {
-            platoData.put("nombre", nombrePlato);
-            platoData.put("descripcion", descripcionPlato);
-            platoData.put("precio", precioPlato);
-            platoData.put("restaurante_id", restauranteIdString);
-            platoData.put("restaurante_nombre", nombreRestaurante);
-            platoData.put("imagen", imageBase64);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            setFormEnabled(true); // Rehabilitar el formulario en caso de error
-            return;
-        }
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("nombre", nombrePlato);
+            jsonObject.put("descripcion", descripcionPlato);
+            jsonObject.put("precio", precioPlato);
+            jsonObject.put("restaurante_id", restauranteIdString);
+            jsonObject.put("nombre_restaurante", nombreRestaurante);
+            jsonObject.put("imagen", imagenBase64);
 
-        Log.d("log_anadir_platodata", "platoData: " + platoData);
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-
-        JsonObjectRequest request = new JsonObjectRequest(
-                Request.Method.POST,
-                modeloURL,
-                platoData,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            String responseData = response.toString();
-                            Log.d("log_anadir_ResponseData", "Response data: " + responseData); // Agregar registro de depuración
-                            if (isJSONValid(responseData)) {
-                                handleServerResponse(responseData); // Llamar a la función para manejar la respuesta del servidor
-                            } else {
-                                // La respuesta del servidor no es un JSON válido
+            RequestQueue requestQueue = Volley.newRequestQueue(this);
+            JsonObjectRequest request = new JsonObjectRequest(
+                    Request.Method.POST,
+                    modeloURL,
+                    jsonObject,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                String responseData = response.toString();
+                                Log.d("log_anadir_ResponseData", "Response data: " + responseData); // Agregar registro de depuración
+                                if (isJSONValid(responseData)) {
+                                    handleServerResponse(responseData); // Llamar a la función para manejar la respuesta del servidor
+                                } else {
+                                    Toast.makeText(agregar_platos.this, "Error: Respuesta del servidor no válida", Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
                                 Toast.makeText(agregar_platos.this, "Error: Respuesta del servidor no válida", Toast.LENGTH_SHORT).show();
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            // Manejar el error si la respuesta no es un objeto JSON válido
-                            Toast.makeText(agregar_platos.this, "Error: Respuesta del servidor no válida", Toast.LENGTH_SHORT).show();
+                            setFormEnabled(true); // Rehabilitar el formulario después de recibir la respuesta
                         }
-                        setFormEnabled(true); // Rehabilitar el formulario después de recibir la respuesta
-                    }
-                },
-                // Manejar el error de la solicitud
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        setFormEnabled(true); // Rehabilitar el formulario en caso de error
-                        String errorMessage = "Error al agregar el plato: " + error.getMessage();
-                        Toast.makeText(agregar_platos.this, errorMessage, Toast.LENGTH_SHORT).show();
-                        Log.e("log_anadir_Error", errorMessage, error);
-
-                        // Imprimir toda la respuesta del servidor en el Logcat
-                        if (error.networkResponse != null) {
-                            Log.e("log_anadir_Error_serv", "Respuesta del servidor: " + new String(error.networkResponse.data));
-                        } else {
-                            Log.e("log_anadir_Error_serv", "No se recibió respuesta del servidor");
-                        }
-
-                        // Verificar si hay un mensaje de error en la respuesta del servidor
-                        if (error.networkResponse != null && error.networkResponse.data != null) {
-                            try {
-                                JSONObject errorJson = new JSONObject(new String(error.networkResponse.data));
-                                String serverErrorMessage = errorJson.optString("error");
-                                if (!TextUtils.isEmpty(serverErrorMessage)) {
-                                    // Mostrar el mensaje de error del servidor
-                                    Toast.makeText(agregar_platos.this, serverErrorMessage, Toast.LENGTH_SHORT).show();
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            setFormEnabled(true); // Rehabilitar el formulario en caso de error
+                            Toast.makeText(agregar_platos.this, "Error al enviar datos al servidor", Toast.LENGTH_SHORT).show();
+                            Log.e("Volley Error", error.toString());
                         }
                     }
-                }
+            );
 
-        );
-        requestQueue.add(request);
-    }
-
-    // Función para verificar si una cadena es un JSON válido
-    private boolean isJSONValid(String json) {
-        try {
-            new JSONObject(json);
-            return true;
-        } catch (JSONException e) {
-            return false;
-        }
-    }
-
-    // Función para manejar la respuesta del servidor
-    private void handleServerResponse(String responseData) {
-        try {
-            JSONObject response = new JSONObject(responseData);
-            String message = response.getString("message");
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-            onPlatoAdded();
-            finish();
+            requestQueue.add(request);
         } catch (JSONException e) {
             e.printStackTrace();
-            // Manejar el error si la respuesta no tiene el formato esperado
-            Toast.makeText(this, "Error: Respuesta del servidor no válida", Toast.LENGTH_SHORT).show();
+            setFormEnabled(true); // Rehabilitar el formulario en caso de excepción
         }
     }
 
-    public String convertImageToBase64(Bitmap imageBitmap) {
+    private String convertImageToBase64(Bitmap bitmap) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-        byte[] imageBytes = byteArrayOutputStream.toByteArray();
-        return Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
+        return Base64.encodeToString(byteArray, Base64.DEFAULT);
+    }
+
+    private boolean isJSONValid(String test) {
+        try {
+            new JSONObject(test);
+        } catch (JSONException ex) {
+            try {
+                new JSONArray(test);
+            } catch (JSONException ex1) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void handleServerResponse(String responseData) {
+        // Maneja la respuesta del servidor aquí
+        try {
+            JSONObject response = new JSONObject(responseData);
+            boolean success = response.getBoolean("success");
+            if (success) {
+                Toast.makeText(this, "Plato añadido con éxito", Toast.LENGTH_SHORT).show();
+                onPlatoAdded();
+            } else {
+                String errorMessage = response.getString("message");
+                Toast.makeText(this, "Error: " + errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error al procesar la respuesta del servidor", Toast.LENGTH_SHORT).show();
+        }
     }
 }
