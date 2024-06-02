@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -27,6 +28,7 @@ public class SettingsDuenoFragment extends Fragment {
         TextView textViewWhatsApp = view.findViewById(R.id.btnWhatsApp);
         TextView textViewLogout = view.findViewById(R.id.btnLogout);
         TextView textViewCambiarRol = view.findViewById(R.id.btn_cambiar_rol);
+        Switch switchSesion = view.findViewById(R.id.switch_sesion);
         //setear el texto del boton
         textViewCambiarRol.setText("Cambiar a Modo Cliente");
         // Obtener el id del restaurante
@@ -63,6 +65,46 @@ public class SettingsDuenoFragment extends Fragment {
             }
         });
 
+        Log.d("sharedprefs_settings_mansesion", String.valueOf(requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE).getBoolean("mantenersesion", true)));
+        if (requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE).getBoolean("mantenersesion", true)) {
+            switchSesion.setChecked(true);
+            //cambiar el color del boton del switch a verde
+            switchSesion.getThumbDrawable().setTint(getResources().getColor(R.color.verde));
+            Log.d("switch_sesion", "true");
+        }
+        else {
+            switchSesion.setChecked(false);
+            //cambiar el color del switch a rojo
+            switchSesion.getThumbDrawable().setTint(getResources().getColor(R.color.rojo));
+            Log.d("switch_sesion", "false");
+        }
+        switchSesion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (switchSesion.isChecked()) {
+                    // cambiar valor de shared preferences
+                    SharedPreferences sharedPreferences = requireActivity().getSharedPreferences
+                            ("MyPrefs", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putBoolean("mantenersesion", true);
+                    editor.apply();
+
+                    // Cambiar el color del thumb a verde
+                    switchSesion.getThumbDrawable().setTint(getResources().getColor(R.color.verde));
+                } else {
+                    // cambiar valor de shared preferences
+                    SharedPreferences sharedPreferences = requireActivity().getSharedPreferences
+                            ("MyPrefs", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putBoolean("mantenersesion", false);
+                    editor.apply();
+
+                    // Cambiar el color del thumb a rojo
+                    switchSesion.getThumbDrawable().setTint(getResources().getColor(R.color.rojo));
+                }
+            }
+        });
+
         textViewLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,6 +134,9 @@ public class SettingsDuenoFragment extends Fragment {
                 ("MyPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean("isLoggedIn", false);
+        editor.putInt("userRole", -1);
+        editor.putInt("restaurante_id", -1);
+
         editor.apply();
 
         // Redirigir a la actividad de inicio de sesión

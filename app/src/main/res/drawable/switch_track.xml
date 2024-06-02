@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/switchTrackColor" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+    <item android:id="@android:id/progress">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/switchThumbColor" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+</layer-list>
+

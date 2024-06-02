@@ -51,6 +51,7 @@ public class vista_dueno2 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps2);
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        boolean mantenersesion = sharedPreferences.getBoolean("mantenersesion", true);
         int id_restS = sharedPreferences.getInt("restaurante_id", -1);
         int id_rest = getIntent().getIntExtra("restaurante_id", -1);
         // Si el id del restaurante no se encuentra en sharedPreferences, setea el id del intent
