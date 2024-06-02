@@ -1,5 +1,6 @@
 package com.example.foofmaps.dueño;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -49,8 +50,14 @@ public class vista_dueno2 extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps2);
-
+        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        int id_restS = sharedPreferences.getInt("restaurante_id", -1);
         int id_rest = getIntent().getIntExtra("restaurante_id", -1);
+        // Si el id del restaurante no se encuentra en sharedPreferences, setea el id del intent
+        if (id_rest != -1) {
+            id_restS = id_rest;
+        }
+
         Log.d("id_rest_en_vistadueno", String.valueOf(id_rest));
 
         mapsDueFragment = new MapsDueFragment();

@@ -45,10 +45,26 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
         int userRole = sharedPreferences.getInt("userRole", -1); // Obtiene el rol del usuario desde SharedPreferences
+        int id_rest = sharedPreferences.getInt("restaurante_id", -1); // Obtiene el id_usuario del usuario desde SharedPreferences
+        boolean mantenersesion = sharedPreferences.getBoolean("mantenersesion", false);
+        Log.d("sharedpref_islogged", String.valueOf(isLoggedIn));
+        Log.d("sharedpref_userRole", String.valueOf(userRole));
+        Log.d("sharedpref_id_rest", String.valueOf(id_rest));
 
-        if (isLoggedIn && userRole != -1) {
+        if (isLoggedIn && userRole != -1 && id_rest != -1) {
             // Usuario ya ha iniciado sesión, redirigir según su rol
-            if (userRole == 2) {
+            // Si el usuario es dueño y ha marcado la casilla de mantener sesión, redirigir a vista_dueno2
+            if (userRole == 2 && mantenersesion) {
+                // Usuario con rol 2, redirige a vista_dueno2
+                Intent intent = new Intent(MainActivity.this, vista_dueno2.class);
+                intent.putExtra("restaurante_id", id_rest);
+                Log.d("restaurante_id_enviado_a_vista", String.valueOf(id_rest));
+                startActivity(intent);
+                finish(); // Finaliza la actividad actual
+            } else{
+                logout();
+            }
+            if (userRole == 3) {
                 // Realizar la consulta para obtener id_rest desde la base de datos
                 logout();
             }
@@ -70,8 +86,18 @@ public class MainActivity extends AppCompatActivity {
                 intent = new Intent(MainActivity.this, MapsCliActivity.class);
                 break;
             case 2:
-                // Realizar la consulta para obtener id_rest desde la base de datos
-                obtenerIdRestDesdeBaseDeDatos();
+                //si en el sharedpreferences no se encuentra el id_rest, obtenerlo desde la base de datos
+                int id_rest = getSharedPreferences("MyPrefs", MODE_PRIVATE).getInt("id_rest", -1);
+                if (id_rest == -1) {
+                    Log.d("id_restred", String.valueOf(id_rest));
+                    obtenerIdRestDesdeBaseDeDatos();
+                    return;
+                }else {
+                    // Usuario con rol 2, redirige a vista_dueno2 y pasa el id_rest
+                    intent = new Intent(MainActivity.this, vista_dueno2.class);
+                    intent.putExtra("restaurante_id", id_rest);
+                    Log.d("restaurante_id_enviado_a_vista", String.valueOf(id_rest));
+                }
                 return; // Evita que la actividad se cierre antes de obtener el id_rest
             case 3:
                 // Usuario con rol 3, redirige a Vista_administrador y pasa el id_usuario
@@ -85,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("id_usuario", id_usuario);
                 Log.d("id_usuario_admin", String.valueOf(id_usuario));
                 break;
+
             default:
                 // Cerrar sesión si el rol no es válido
                 logout();
@@ -163,6 +190,10 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject jsonResponse = new JSONObject(response);
                 Log.d("response_id_rest", jsonResponse.toString());
                 int id_rest = jsonResponse.getInt("id_rest");
+                //guardar el id_rest en SharedPreferences
+                SharedPreferences.Editor editor = getSharedPreferences("MyPrefs", MODE_PRIVATE).edit();
+                editor.putInt("restaurante_id", id_rest);
+                editor.apply();
                 Log.d("restaurante_id_rec", String.valueOf(id_rest));
                 // Se ha obtenido el restaurante_id, redirige a vista_dueno
                 Intent intent_login_dueño = new Intent(MainActivity.this, vista_dueno2.class);
