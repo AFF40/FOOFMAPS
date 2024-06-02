@@ -59,7 +59,7 @@ public class Editaresteplato extends AppCompatActivity {
         // Recibir el Bundle con los datos
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            int platoId = bundle.getInt("id_comida");
+            int platoId = bundle.getInt("id_producto");
             String nombre_plato = bundle.getString("nombre_plato");
             String descripcion_plato = bundle.getString("descripcion_plato");
             double precio_plato = bundle.getDouble("precio_plato");

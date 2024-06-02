@@ -95,7 +95,6 @@ public class dueno_platos extends Fragment {public static dueno_platos newInstan
         });
 
         // Realiza la carga inicial de platos
-        int restaurante_id = getArguments().getInt("restaurante_id", -1);
         new dueno_platos.GetPlatosTask().execute(restauranteId);
         return view;
     }

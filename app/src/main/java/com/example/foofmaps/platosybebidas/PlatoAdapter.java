@@ -91,7 +91,7 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
                     Intent intent = new Intent(context, Editaresteplato.class);
 
                     // Agrega los datos del plato y del restaurante como extras en el Intent
-                    intent.putExtra("id_comida", plato.getId());
+                    intent.putExtra("id_producto", plato.getId());
                     intent.putExtra("nombre_plato", plato.getNombre());
                     intent.putExtra("descripcion_plato", plato.getDescripcion());
                     intent.putExtra("precio_plato", plato.getPrecio());
