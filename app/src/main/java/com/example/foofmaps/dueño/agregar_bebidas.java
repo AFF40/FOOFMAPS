@@ -58,10 +58,9 @@ public class agregar_bebidas extends AppCompatActivity implements onBebidaAddedL
 
     @Override
     public void onBebidaAdded() {
-        // Notifica al fragment dueno_menu que se ha agregado una bebida
         Intent intent = new Intent();
         setResult(Activity.RESULT_OK, intent);
-        finish(); // Cierra la actividad actual
+        finish();
     }
 
     @Override
@@ -69,13 +68,10 @@ public class agregar_bebidas extends AppCompatActivity implements onBebidaAddedL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_agregar_bebidas);
 
-        // Verifica si el permiso de la cámara está otorgado
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            // Si no se otorgó el permiso, solicítalo al usuario
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
         }
 
-        // Vincula las vistas desde el diseño XML
         editTextNomBebida = findViewById(R.id.editTextNomBebida);
         nomBebida = findViewById(R.id.nom_bebida);
         editTextNomBebida.addTextChangedListener(new TextWatcher() {
@@ -121,9 +117,6 @@ public class agregar_bebidas extends AppCompatActivity implements onBebidaAddedL
             public void afterTextChanged(Editable editable) {}
         });
 
-        editTextNomBebida = findViewById(R.id.editTextNomBebida);
-        editTextDescripcion = findViewById(R.id.editTextDescripcionBebida);
-        editTextPrecio = findViewById(R.id.editTextPrecioBebida);
         btnSelectImage = findViewById(R.id.btnSelectImage);
         btnSelectCamara = findViewById(R.id.btnselectcamara);
         imagenBebida = findViewById(R.id.imagenBebida);
@@ -200,7 +193,6 @@ public class agregar_bebidas extends AppCompatActivity implements onBebidaAddedL
     public void guardarImagenEnServidor(String nombreBebida, String descripcion, String precio, String restauranteIdString,String nombreRestaurante) {
         Bitmap imageBitmap = ((BitmapDrawable) imagenBebida.getDrawable()).getBitmap();
         String imageBase64 = convertImageToBase64(imageBitmap);
-
         JSONObject bebidaData = new JSONObject();
         try {
             bebidaData.put("nombre", nombreBebida);
@@ -227,42 +219,36 @@ public class agregar_bebidas extends AppCompatActivity implements onBebidaAddedL
                     public void onResponse(JSONObject response) {
                         try {
                             String responseData = response.toString();
-                            Log.d("log_anadir_ResponseData", "Response data: " + responseData); // Agregar registro de depuración
+                            Log.d("log_anadir_ResponseData", "Response data: " + responseData);
                             if (isJSONValid(responseData)) {
-                                handleServerResponse(responseData); // Llamar a la función para manejar la respuesta del servidor
+                                handleServerResponse(responseData);
                             } else {
-                                // La respuesta del servidor no es un JSON válido
                                 Toast.makeText(agregar_bebidas.this, "Error: Respuesta del servidor no válida", Toast.LENGTH_SHORT).show();
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
-                            // Manejar el error si la respuesta no es un objeto JSON válido
                             Toast.makeText(agregar_bebidas.this, "Error: Respuesta del servidor no válida", Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
-                // Manejar el error de la solicitud
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        String errorMessage = "Error al agregar el plato: " + error.getMessage();
+                        String errorMessage = "Error al agregar la bebida: " + error.getMessage();
                         Toast.makeText(agregar_bebidas.this, errorMessage, Toast.LENGTH_SHORT).show();
                         Log.e("log_anadir_Error", errorMessage, error);
 
-                        // Imprimir toda la respuesta del servidor en el Logcat
                         if (error.networkResponse != null) {
                             Log.e("log_anadir_Error_serv", "Respuesta del servidor: " + new String(error.networkResponse.data));
                         } else {
                             Log.e("log_anadir_Error_serv", "No se recibió respuesta del servidor");
                         }
 
-                        // Verificar si hay un mensaje de error en la respuesta del servidor
                         if (error.networkResponse != null && error.networkResponse.data != null) {
                             try {
                                 JSONObject errorJson = new JSONObject(new String(error.networkResponse.data));
                                 String serverErrorMessage = errorJson.optString("error");
                                 if (!TextUtils.isEmpty(serverErrorMessage)) {
-                                    // Mostrar el mensaje de error del servidor
                                     Toast.makeText(agregar_bebidas.this, serverErrorMessage, Toast.LENGTH_SHORT).show();
                                 }
                             } catch (JSONException e) {
@@ -305,3 +291,4 @@ public class agregar_bebidas extends AppCompatActivity implements onBebidaAddedL
         return Base64.encodeToString(imageBytes, Base64.DEFAULT);
     }
 }
+

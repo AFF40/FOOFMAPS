@@ -91,7 +91,7 @@ public class BebidaAdapter extends RecyclerView.Adapter<BebidaAdapter.ViewHolder
                     Intent intent = new Intent(context, Editarestabebida.class);
 
                     // Agrega los datos de la bebida como extras en el Intent
-                    intent.putExtra("id_bebida", bebida.getId());
+                    intent.putExtra("id_producto", bebida.getId());
                     intent.putExtra("nombre", bebida.getNombre());
                     intent.putExtra("descripcion", bebida.getDescripcion());
                     intent.putExtra("precio", bebida.getPrecio());
