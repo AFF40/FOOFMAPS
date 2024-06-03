@@ -51,6 +51,8 @@ public class Editarestabebida extends AppCompatActivity {
     private EditText precio;
     private ImageView imagen;
     private Button btnGuardar;
+    private String nombreRestaurante;
+    private int id_rest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,13 +62,13 @@ public class Editarestabebida extends AppCompatActivity {
         // Recibir el Bundle con los datos
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            int bebidaId = bundle.getInt("id_bebida");
-            String nombre_bebida = bundle.getString("nombre");
-            String descripcion_bebida = bundle.getString("descripcion");
-            double precio_bebida = bundle.getDouble("precio");
-            String imagen_bebida = bundle.getString("imagen");
-            int id_rest = bundle.getInt("restaurante_id");
-            String nombreRestaurante = bundle.getString("nombre_restaurante");
+            int bebidaId = bundle.getInt("id_mebeb");
+            String nombre_bebida = bundle.getString("nombre_bebida");
+            String descripcion_bebida = bundle.getString("descripcion_bebida");
+            double precio_bebida = bundle.getDouble("precio_bebida");
+            String imagen_bebida = bundle.getString("imagen_bebida");
+            id_rest = bundle.getInt("restaurante_id");
+            nombreRestaurante = bundle.getString("nombre_restaurante");
 
             Log.d("Log_editarestabebida", "bebida_id: " + bebidaId);
             Log.d("Log_editarestabebida", "nombre_bebida: " + nombre_bebida);
@@ -146,7 +148,7 @@ public class Editarestabebida extends AppCompatActivity {
         builder.setNegativeButton("Tomar una foto", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                requestCameraPermission();
+                captureImageFromCamera();
             }
         });
 
@@ -154,31 +156,20 @@ public class Editarestabebida extends AppCompatActivity {
     }
 
     private void selectImageFromGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+        Intent abrirGaleria = new Intent(Intent.ACTION_PICK);
+        abrirGaleria.setType("image/*");
+        startActivityForResult(abrirGaleria, PICK_IMAGE_REQUEST);
     }
 
-    private void requestCameraPermission() {
+    private void captureImageFromCamera() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
         } else {
-            takePhoto();
-        }
-    }
-
-    private void takePhoto() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, CAMERA_REQUEST);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults); // Llama al método de la clase base
-        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                takePhoto();
+            Intent abrirCamara = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (abrirCamara.resolveActivity(getPackageManager()) != null) {
+                startActivityForResult(abrirCamara, CAMERA_REQUEST);
             } else {
-                Toast.makeText(this, "Permiso de cámara denegado", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "No se encontró una aplicación de cámara en el dispositivo", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -191,7 +182,7 @@ public class Editarestabebida extends AppCompatActivity {
             Uri selectedImageUri = data.getData();
             imagen.setImageURI(selectedImageUri);
         }
-        if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK && data != null) {
+        if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             imagen.setImageBitmap(imageBitmap);
@@ -223,53 +214,68 @@ public class Editarestabebida extends AppCompatActivity {
         // Crear un objeto JSON con los datos de la bebida
         JSONObject bebidaData = new JSONObject();
         try {
-            bebidaData.put("bebida_id", bebidaId);
+            bebidaData.put("id_mebeb", bebidaId);
             bebidaData.put("nombre_bebida", nombreBebida);
             bebidaData.put("descripcion_bebida", descripcionBebida);
             bebidaData.put("precio_bebida", precioBebida);
             bebidaData.put("imagen_bebida", imagenBase64);
-            bebidaData.put("nombre_restaurante", "NombreDelRestaurante"); // Cambiar a la lógica adecuada para obtener el nombre del restaurante
+            bebidaData.put("nombre_restaurante", nombreRestaurante); // Usar el nombre del restaurante recibido
+            bebidaData.put("restaurante_id", id_rest); // Usar el ID del restaurante recibido
+            Log.d("Log_editarestabebida", "bebidaData: " + bebidaData);
         } catch (JSONException e) {
             e.printStackTrace();
-            Toast.makeText(this, "Error al crear datos JSON", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error al crear los datos de la bebida", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Crear una solicitud POST utilizando Volley (JsonObjectRequest)
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, modeloURL, bebidaData,
+        // Enviar los datos al servidor mediante una solicitud POST
+        RequestQueue queue = Volley.newRequestQueue(this);
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, modeloURL, bebidaData,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            if (response.getBoolean("success")) {
-                                Toast.makeText(Editarestabebida.this, "Datos actualizados con éxito", Toast.LENGTH_SHORT).show();
-                                //regresar a la actividad anterior
-                                finish();
+                            boolean success = response.getBoolean("success");
+                            if (success) {
+                                Toast.makeText(Editarestabebida.this, "Bebida actualizada exitosamente", Toast.LENGTH_SHORT).show();
+                                finish(); // Finalizar la actividad y regresar a la anterior
                             } else {
-                                String errorMessage = response.getString("error_message");
-                                Toast.makeText(Editarestabebida.this, "Error al actualizar los datos: " + errorMessage, Toast.LENGTH_SHORT).show();
+                                String message = response.getString("message");
+                                Toast.makeText(Editarestabebida.this, message, Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Toast.makeText(Editarestabebida.this, "Error al procesar la respuesta del servidor", Toast.LENGTH_SHORT).show();
                         }
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(Editarestabebida.this, "Error en la solicitud: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                        Toast.makeText(Editarestabebida.this, "Error al comunicarse con el servidor", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
-        // Añadir la solicitud a la cola
-        requestQueue.add(jsonObjectRequest);
+        queue.add(request);
     }
 
     private String convertImageToBase64(Bitmap bitmap) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-        byte[] byteArray = byteArrayOutputStream.toByteArray();
-        return Base64.encodeToString(byteArray, Base64.DEFAULT);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+        byte[] imageBytes = outputStream.toByteArray();
+        return Base64.encodeToString(imageBytes, Base64.DEFAULT);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                captureImageFromCamera();
+            } else {
+                Toast.makeText(this, "Permiso de cámara denegado", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

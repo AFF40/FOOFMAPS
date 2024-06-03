@@ -150,7 +150,7 @@ public class dueno_bebidas extends Fragment {
             JSONArray jsonArray = new JSONArray(json);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject bebidaJson = jsonArray.getJSONObject(i);
-                int id_bebida = bebidaJson.getInt("id_producto");
+                int id_bebida = bebidaJson.getInt("id_mebeb");
                 String nombre = bebidaJson.getString("nombre");
                 String descripcion = bebidaJson.getString("descripcion");
                 float precio = (float) bebidaJson.getDouble("precio");

@@ -91,13 +91,21 @@ public class BebidaAdapter extends RecyclerView.Adapter<BebidaAdapter.ViewHolder
                     Intent intent = new Intent(context, Editarestabebida.class);
 
                     // Agrega los datos de la bebida como extras en el Intent
-                    intent.putExtra("id_producto", bebida.getId());
-                    intent.putExtra("nombre", bebida.getNombre());
-                    intent.putExtra("descripcion", bebida.getDescripcion());
-                    intent.putExtra("precio", bebida.getPrecio());
-                    intent.putExtra("imagen", bebida.getImagen());
+                    intent.putExtra("id_mebeb", bebida.getId());
+                    intent.putExtra("nombre_bebida", bebida.getNombre());
+                    intent.putExtra("descripcion_bebida", bebida.getDescripcion());
+                    intent.putExtra("precio_bebida", bebida.getPrecio());
+                    intent.putExtra("imagen_bebida", bebida.getImagen());
                     intent.putExtra("restaurante_id", bebida.getRestaurante_id());
                     intent.putExtra("nombre_restaurante", bebida.getNombre_restaurante());
+                    Log.d("log_bebidaadapter", "id_bebida: " + bebida.getId());
+                    Log.d("log_bebidaadapter", "nombre_bebida: " + bebida.getNombre());
+                    Log.d("log_bebidaadapter", "descripcion_bebida: " + bebida.getDescripcion());
+                    Log.d("log_bebidaadapter", "precio_bebida: " + bebida.getPrecio());
+                    Log.d("log_bebidaadapter", "restaurante_id: " + bebida.getRestaurante_id());
+                    Log.d("log_bebidaadapter", "nombre_restaurante: " + bebida.getNombre_restaurante());
+                    Log.d("log_bebidaadapter", "imagen_bebida: " + bebida.getImagen());
+
 
                     // Inicia la nueva Activity para editar esta bebida
                     context.startActivity(intent);
@@ -138,7 +146,6 @@ public class BebidaAdapter extends RecyclerView.Adapter<BebidaAdapter.ViewHolder
                         StringRequest stringRequest = new StringRequest(Request.Method.GET, modeloURL, new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
-
                                 if (response.equals("success")) {
                                     bebida.setDisponible(1 - bebida.getDisponible()); // Cambia el estado
                                     notifyDataSetChanged(); // Notifica al adaptador que los datos han cambiado

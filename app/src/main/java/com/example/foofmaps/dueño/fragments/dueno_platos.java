@@ -28,7 +28,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class dueno_platos extends Fragment {public static dueno_platos newInstance(int restauranteId) {
+public class dueno_platos extends Fragment {
+    public static dueno_platos newInstance(int restauranteId) {
     dueno_platos fragment = new dueno_platos();
     Bundle args = new Bundle();
     args.putInt("restaurante_id", restauranteId);
@@ -153,7 +154,7 @@ public class dueno_platos extends Fragment {public static dueno_platos newInstan
             JSONArray jsonArray = new JSONArray(json);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject platoJson = jsonArray.getJSONObject(i);
-                int id_comida = platoJson.getInt("id_producto");
+                int id_comida = platoJson.getInt("id_meplat");
                 String nombre = platoJson.getString("nombre");
                 String descripcion = platoJson.getString("descripcion");
                 float precio = (float) platoJson.getDouble("precio");

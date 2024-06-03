@@ -50,6 +50,8 @@ public class Editaresteplato extends AppCompatActivity {
     private EditText precio;
     private ImageView imagen;
     private Button btnGuardar;
+    private String nombreRestaurante;
+private int id_rest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,21 +61,21 @@ public class Editaresteplato extends AppCompatActivity {
         // Recibir el Bundle con los datos
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            int platoId = bundle.getInt("id_producto");
+            int platoId = bundle.getInt("id_meplat");
             String nombre_plato = bundle.getString("nombre_plato");
             String descripcion_plato = bundle.getString("descripcion_plato");
             double precio_plato = bundle.getDouble("precio_plato");
             String imagen_plato = bundle.getString("imagen_plato");
-            int id_rest = bundle.getInt("restaurante_id");
-            String nombreRestaurante = bundle.getString("nombre_restaurante");
+            id_rest = bundle.getInt("restaurante_id");
+            nombreRestaurante = bundle.getString("nombre_restaurante");  // Asignar el nombre del restaurante
 
-            Log.d("Log_editaresteplato", "plato_id: " + platoId);
-            Log.d("Log_editaresteplato", "nombre_plato: " + nombre_plato);
-            Log.d("Log_editaresteplato", "descripcion_plato: " + descripcion_plato);
-            Log.d("Log_editaresteplato", "precio_plato: " + precio_plato);
-            Log.d("Log_editaresteplato", "imagen_plato: " + imagen_plato);
-            Log.d("Log_editaresteplato", "restaurante_id: " + id_rest);
-            Log.d("Log_editaresteplato", "nombre_restaurante: " + nombreRestaurante);
+            Log.d("Log_editaresteplato_rec", "plato_id: " + platoId);
+            Log.d("Log_editaresteplato_rec", "nombre_plato: " + nombre_plato);
+            Log.d("Log_editaresteplato_rec", "descripcion_plato: " + descripcion_plato);
+            Log.d("Log_editaresteplato_rec", "precio_plato: " + precio_plato);
+            Log.d("Log_editaresteplato_rec", "restaurante_id: " + id_rest);
+            Log.d("Log_editaresteplato_rec", "nombre_restaurante: " + nombreRestaurante);
+            Log.d("Log_editaresteplato_rec", "imagen_plato: " + imagen_plato);
 
             // Obtener referencias a los elementos de la vista
             nom_plato = findViewById(R.id.nom_plato);
@@ -207,16 +209,19 @@ public class Editaresteplato extends AppCompatActivity {
 
         // Convertir la imagen en una representación de bytes (Base64)
         String imagenBase64 = convertImageToBase64(((BitmapDrawable) imagen.getDrawable()).getBitmap());
-
         // Crear un objeto JSON con los datos del plato
         JSONObject platoData = new JSONObject();
         try {
-            platoData.put("plato_id", platoId);
+
+            platoData.put("id_meplat", platoId);
             platoData.put("nombre_plato", nombrePlato);
             platoData.put("descripcion_plato", descripcionPlato);
             platoData.put("precio_plato", precioPlato);
             platoData.put("imagen_plato", imagenBase64);
-            platoData.put("nombre_restaurante", "NombreDelRestaurante"); // Cambiar a la lógica adecuada para obtener el nombre del restaurante
+            platoData.put("nombre_restaurante",nombreRestaurante ); // Cambiar a la lógica adecuada para obtener el nombre del restaurante
+            platoData.put("restaurante_id", id_rest); // Cambiar a la lógica adecuada para obtener el ID del restaurante
+            Log.d("Log_editaresteplato", "platoData: " + platoData);
+
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(this, "Error al crear datos JSON", Toast.LENGTH_SHORT).show();

@@ -91,13 +91,20 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
                     Intent intent = new Intent(context, Editaresteplato.class);
 
                     // Agrega los datos del plato y del restaurante como extras en el Intent
-                    intent.putExtra("id_producto", plato.getId());
+                    intent.putExtra("id_meplat", plato.getId());
                     intent.putExtra("nombre_plato", plato.getNombre());
                     intent.putExtra("descripcion_plato", plato.getDescripcion());
                     intent.putExtra("precio_plato", plato.getPrecio());
                     intent.putExtra("imagen_plato", plato.getImagen());
                     intent.putExtra("restaurante_id", plato.getRestaurante_id());
                     intent.putExtra("nombre_restaurante", plato.getNombre_restaurante());
+                    Log.d("log_platoadapter", "id_meplat: " + plato.getId());
+                    Log.d("log_platoadapter", "nombre_plato: " + plato.getNombre());
+                    Log.d("log_platoadapter", "descripcion_plato: " + plato.getDescripcion());
+                    Log.d("log_platoadapter", "precio_plato: " + plato.getPrecio());
+                    Log.d("log_platoadapter", "restaurante_id: " + plato.getRestaurante_id());
+                    Log.d("log_platoadapter", "nombre_restaurante: " + plato.getNombre_restaurante());
+                    Log.d("log_platoadapter", "imagen_plato: " + plato.getImagen());
 
                     // Inicia la nueva Activity editar este plato
                     context.startActivity(intent);
@@ -189,7 +196,7 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
                                         Toast.makeText(view.getContext(), "Eliminación exitosa", Toast.LENGTH_SHORT).show();
 
                                     } else {
-                                        Log.d("log_platoadapter_eliminar", "Error al eliminar el plato");
+                                        Log.d("log_platoadapter_eliminar", "Error al eliminar el plato" + response);
                                     }
                                 }
                             }, new Response.ErrorListener() {
@@ -225,7 +232,7 @@ public class PlatoAdapter extends RecyclerView.Adapter<PlatoAdapter.ViewHolder> 
         public TextView precioTextView;
         public ImageView imagenImageView;
         public ImageView ic;
-        public TextView disponibleTextView;
+
         public View button;
         public View button2;
         public View button3;

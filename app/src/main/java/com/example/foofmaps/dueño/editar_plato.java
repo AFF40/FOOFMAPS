@@ -86,7 +86,7 @@ public class editar_plato extends AppCompatActivity {
                 JSONArray jsonArray = new JSONArray(result.toString());
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    int id_comida = jsonObject.getInt("id_producto");
+                    int id_comida = jsonObject.getInt("id_meplat");
                     String nombre_plato = jsonObject.getString("nombre");
                     String descripcion_plato = jsonObject.getString("descripcion");
                     double precio_plato = jsonObject.getDouble("precio");
@@ -126,7 +126,7 @@ public class editar_plato extends AppCompatActivity {
                         Intent intent = new Intent(editar_plato.this, Editaresteplato.class);
 
                         // Agregar los datos del plato al intent
-                        intent.putExtra("id_producto", plato.getId());
+                        intent.putExtra("id_meplat", plato.getId());
                         intent.putExtra("nombre_plato", plato.getNombre());
                         intent.putExtra("descripcion_plato", plato.getDescripcion());
                         intent.putExtra("precio_plato", plato.getPrecio());
