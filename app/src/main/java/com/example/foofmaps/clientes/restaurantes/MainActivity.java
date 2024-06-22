@@ -46,7 +46,10 @@ public class MainActivity extends AppCompatActivity {
         boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
         int userRole = sharedPreferences.getInt("userRole", -1); // Obtiene el rol del usuario desde SharedPreferences
         int id_rest = sharedPreferences.getInt("restaurante_id", -1); // Obtiene el id_usuario del usuario desde SharedPreferences
+        // Obtener el valor de mantener sesión
         boolean mantenersesion = sharedPreferences.getBoolean("mantenersesion", false);
+        // log de mantenimiento de sesión
+        Log.d("sharedpref_estado", String.valueOf(mantenersesion));
         Log.d("sharedpref_islogged", String.valueOf(isLoggedIn));
         Log.d("sharedpref_userRole", String.valueOf(userRole));
         Log.d("sharedpref_id_rest", String.valueOf(id_rest));
@@ -62,6 +65,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish(); // Finaliza la actividad actual
             } else{
+                //toast para mostrar que se ha cerrado la sesión
+                Toast.makeText(getApplicationContext(), "Se ha cerrado la sesión", Toast.LENGTH_SHORT).show();
+                Log.d("log_session_estado", String.valueOf(mantenersesion));
+                Log.d("log_id_rest_estado", String.valueOf(id_rest));
                 logout();
             }
             if (userRole == 3) {

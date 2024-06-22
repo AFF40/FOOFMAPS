@@ -51,7 +51,10 @@ public class vista_dueno2 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps2);
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-        boolean mantenersesion = sharedPreferences.getBoolean("mantenersesion", true);
+        //cambiar el estado del booleano a true
+        SharedPreferences.Editor mantenersesion = sharedPreferences.edit();
+        mantenersesion.putBoolean("mantenersesion", true);
+        mantenersesion.apply();
         int id_restS = sharedPreferences.getInt("restaurante_id", -1);
         int id_rest = getIntent().getIntExtra("restaurante_id", -1);
         // Si el id del restaurante no se encuentra en sharedPreferences, setea el id del intent
@@ -60,6 +63,7 @@ public class vista_dueno2 extends AppCompatActivity {
         }
 
         Log.d("id_rest_en_vistadueno", String.valueOf(id_rest));
+        Log.d("mantener_sesion_estado", String.valueOf(sharedPreferences.getBoolean("mantenersesion", false)));
 
         mapsDueFragment = new MapsDueFragment();
         settingsDuenoFragment = new SettingsDuenoFragment();

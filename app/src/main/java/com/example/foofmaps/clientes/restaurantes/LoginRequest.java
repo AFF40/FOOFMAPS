@@ -14,7 +14,7 @@ public class LoginRequest extends StringRequest {
     //conexion con el archivo php
     //private static final String controladorURL = Config.API_URL+"/login";
 
-    private static final String controladorURL = Config.CONTROLADOR_URL+"/controladorLogin.php";
+    private static final String controladorURL = Config.CONTROLADOR_URL+"controladorLogin.php";
 
     private final Map<String,String>params;
     public LoginRequest(String username, String password,  Response.Listener<String> listener){

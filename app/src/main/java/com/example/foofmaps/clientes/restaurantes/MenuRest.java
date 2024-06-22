@@ -44,7 +44,7 @@ public class MenuRest extends AppCompatActivity {
 
         Log.d("imagenmenurest", imagen);
         if (Config.ip.equals("http://192.168.100.5")) {
-            imagen = imagen.replace("http://localhost", "http://192.168.100.5");
+            imagen = imagen.replace("http://localhost", Config.ip);
         }
 
         bannertop = findViewById(R.id.bannertop);
