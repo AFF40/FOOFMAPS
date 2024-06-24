@@ -51,7 +51,7 @@ public class Editaresteplato extends AppCompatActivity {
     private ImageView imagen;
     private Button btnGuardar;
     private String nombreRestaurante;
-private int id_rest;
+    private int id_rest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -212,14 +212,14 @@ private int id_rest;
         // Crear un objeto JSON con los datos del plato
         JSONObject platoData = new JSONObject();
         try {
-
-            platoData.put("id_meplat", platoId);
+            platoData.put("id_meplat", platoId); // Asegúrate de que esté utilizando "id_meplat" en lugar de "id_producto"
             platoData.put("nombre_plato", nombrePlato);
             platoData.put("descripcion_plato", descripcionPlato);
             platoData.put("precio_plato", precioPlato);
             platoData.put("imagen_plato", imagenBase64);
-            platoData.put("nombre_restaurante",nombreRestaurante ); // Cambiar a la lógica adecuada para obtener el nombre del restaurante
-            platoData.put("restaurante_id", id_rest); // Cambiar a la lógica adecuada para obtener el ID del restaurante
+            platoData.put("nombre_restaurante", nombreRestaurante);
+            platoData.put("restaurante_id", id_rest);
+
             Log.d("Log_editaresteplato", "platoData: " + platoData);
 
         } catch (JSONException e) {
@@ -235,6 +235,7 @@ private int id_rest;
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
+                            Log.d("Log_editaresteplato", "Response: " + response);
                             if (response.getBoolean("success")) {
                                 Toast.makeText(Editaresteplato.this, "Datos actualizados con éxito", Toast.LENGTH_SHORT).show();
                                 finish();
@@ -250,8 +251,11 @@ private int id_rest;
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(Editaresteplato.this, "Error en la solicitud: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                // Imprimir el mensaje de error en Logcat
+                Log.e("Log_editaresteplato_error", "Error: " + error.getMessage());
+                Toast.makeText(Editaresteplato.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
+
         });
 
         // Añadir la solicitud a la cola
@@ -264,7 +268,4 @@ private int id_rest;
         byte[] byteArray = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
-
-
-
 }

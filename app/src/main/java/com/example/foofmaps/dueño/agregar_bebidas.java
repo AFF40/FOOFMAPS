@@ -54,7 +54,7 @@ public class agregar_bebidas extends AppCompatActivity implements onBebidaAddedL
     private TextView precio_bebida;
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int CAMERA_REQUEST = 2;
-    private static final String modeloURL = Config.MODELO_URL + "a%c3%b1adir_bebida.php";
+    private static final String modeloURL = Config.MODELO_URL + "agregar_bebida.php";
 
     @Override
     public void onBebidaAdded() {

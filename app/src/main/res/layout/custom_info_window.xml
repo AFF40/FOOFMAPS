@@ -9,12 +9,14 @@
         android:id="@+id/marker_image"
         android:layout_width="60dp"
         android:layout_height="60dp"
+        android:src="@drawable/icono_rest"
         android:layout_gravity="center"
          />
     <TextView
         android:id="@+id/marker_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="nom_rest"
         android:textAppearance="?android:textAppearanceMedium"
         android:layout_gravity="center" />
 

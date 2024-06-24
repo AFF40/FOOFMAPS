@@ -8,12 +8,6 @@
     android:icon="@drawable/iconomaps"
     android:title="@string/map" />
 
-<item
-    android:id="@+id/search"
-    android:icon="@drawable/searchicon"
-    android:title="@string/buscar"
-
-    />
 
 <item
     android:id="@+id/ajustes"

@@ -1,5 +1,6 @@
-package com.example.foofmaps.clientes.restaurantes;// MainActivity.java
+package com.example.foofmaps.clientes.restaurantes;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.foofmaps.ADMIN.Vista_administrador;
@@ -32,100 +34,102 @@ public class MainActivity extends AppCompatActivity {
     Button btnLogin;
     TextView btnRegistrar;
 
-    // Agrega una variable de instancia para username
-    private String username;
+    private String username; // Variable para almacenar el nombre de usuario
+    private ProgressDialog progressDialog; // Cuadro de diálogo para mostrar el progreso
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Inicializar el cuadro de diálogo de progreso
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Iniciando sesión...");
+        progressDialog.setCancelable(false);
 
         // Obtener el valor de sesión y el rol de SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
         int userRole = sharedPreferences.getInt("userRole", -1); // Obtiene el rol del usuario desde SharedPreferences
-        int id_rest = sharedPreferences.getInt("restaurante_id", -1); // Obtiene el id_usuario del usuario desde SharedPreferences
-        // Obtener el valor de mantener sesión
-        boolean mantenersesion = sharedPreferences.getBoolean("mantenersesion", false);
-        // log de mantenimiento de sesión
+        int id_rest = sharedPreferences.getInt("restaurante_id", -1); // Obtiene el id_rest del usuario desde SharedPreferences
+        boolean mantenersesion = sharedPreferences.getBoolean("mantenersesion", false); // Obtiene el valor de mantener sesión
+
+        // Log para el estado de mantenimiento de sesión
         Log.d("sharedpref_estado", String.valueOf(mantenersesion));
         Log.d("sharedpref_islogged", String.valueOf(isLoggedIn));
         Log.d("sharedpref_userRole", String.valueOf(userRole));
         Log.d("sharedpref_id_rest", String.valueOf(id_rest));
 
         if (isLoggedIn && userRole != -1 && id_rest != -1) {
+
             // Usuario ya ha iniciado sesión, redirigir según su rol
-            // Si el usuario es dueño y ha marcado la casilla de mantener sesión, redirigir a vista_dueno2
             if (userRole == 2 && mantenersesion) {
-                // Usuario con rol 2, redirige a vista_dueno2
+                // Usuario con rol 2 y mantener sesión activado, redirige a vista_dueno2
                 Intent intent = new Intent(MainActivity.this, vista_dueno2.class);
                 intent.putExtra("restaurante_id", id_rest);
-                Log.d("restaurante_id_enviado_a_vista", String.valueOf(id_rest));
                 startActivity(intent);
                 finish(); // Finaliza la actividad actual
-            } else{
-                //toast para mostrar que se ha cerrado la sesión
+            } else {
+                // Cualquier otro caso (por ejemplo, si el usuario no tiene sesión activa), cerrar sesión
                 Toast.makeText(getApplicationContext(), "Se ha cerrado la sesión", Toast.LENGTH_SHORT).show();
-                Log.d("log_session_estado", String.valueOf(mantenersesion));
-                Log.d("log_id_rest_estado", String.valueOf(id_rest));
-                logout();
-            }
-            if (userRole == 3) {
-                // Realizar la consulta para obtener id_rest desde la base de datos
                 logout();
             }
 
+            if (userRole == 3) {
+                // Realizar la consulta para obtener id_rest desde la base de datos si es usuario con rol 3
+                obtenerIdRestDesdeBaseDeDatos();
+            }
+
+            // Redirigir según el rol del usuario
             redirectAccordingToRole(userRole);
             Log.d("userRole", String.valueOf(userRole));
         } else {
             // Usuario no ha iniciado sesión, mostrar pantalla de inicio de sesión
             initializeLoginScreen();
         }
-
+        if (userRole == 1 ){
+            Intent intent = new Intent(MainActivity.this, MapsCliActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
     private void redirectAccordingToRole(int userRole) {
         Intent intent;
         switch (userRole) {
             case 1:
-                // Usuario con rol 1, redirige a MapsActivity
+                // Usuario con rol 1, redirige a MapsCliActivity
                 intent = new Intent(MainActivity.this, MapsCliActivity.class);
                 break;
             case 2:
-                //si en el sharedpreferences no se encuentra el id_rest, obtenerlo desde la base de datos
-                int id_rest = getSharedPreferences("MyPrefs", MODE_PRIVATE).getInt("id_rest", -1);
-                if (id_rest == -1) {
-                    Log.d("id_restred", String.valueOf(id_rest));
-                    obtenerIdRestDesdeBaseDeDatos();
-                    return;
-                }else {
-                    // Usuario con rol 2, redirige a vista_dueno2 y pasa el id_rest
+                // Usuario con rol 2 y con id_rest obtenido, redirige a vista_dueno2
+                int id_rest = getSharedPreferences("MyPrefs", MODE_PRIVATE).getInt("restaurante_id", -1);
+                if (id_rest != -1) {
                     intent = new Intent(MainActivity.this, vista_dueno2.class);
                     intent.putExtra("restaurante_id", id_rest);
                     Log.d("restaurante_id_enviado_a_vista", String.valueOf(id_rest));
+                } else {
+                    // Si no se encuentra id_rest en SharedPreferences, obtenerlo desde la base de datos
+                    obtenerIdRestDesdeBaseDeDatos();
+                    return; // Evita que la actividad se cierre antes de obtener el id_rest
                 }
-                return; // Evita que la actividad se cierre antes de obtener el id_rest
+                break;
             case 3:
-                // Usuario con rol 3, redirige a Vista_administrador y pasa el id_usuario
+                // Usuario con rol 3, redirige a Vista_administrador
                 intent = new Intent(MainActivity.this, Vista_administrador.class);
-
                 // Obtener el id_usuario de SharedPreferences
-                SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-                int id_usuario = sharedPreferences.getInt("id_usuario", -1);
-
-                // Agregar el id_usuario como un extra en el intent
+                int id_usuario = getSharedPreferences("MyPrefs", MODE_PRIVATE).getInt("id_usuario", -1);
+                // Agregar el id_usuario como extra en el intent
                 intent.putExtra("id_usuario", id_usuario);
                 Log.d("id_usuario_admin", String.valueOf(id_usuario));
                 break;
-
             default:
                 // Cerrar sesión si el rol no es válido
                 logout();
                 return;
         }
         startActivity(intent);
-        finish(); // Finaliza la actividad actual para que no se pueda volver atrás desde aquí
+        finish(); // Finaliza la actividad actual para evitar que el usuario regrese presionando Atrás
     }
 
     private void initializeLoginScreen() {
@@ -140,44 +144,49 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnLogin.setOnClickListener(v -> {
-            onPause();
-            // Asigna el valor de ed_username a la variable username
+            // Asignar el valor de ed_username a la variable username
             username = ed_username.getText().toString();
             final String pass1 = ed_password.getText().toString();
 
+            // Mostrar el cuadro de diálogo de progreso
+            progressDialog.show();
+
             // Realizar la solicitud al servidor
             LoginRequest loginRequest = new LoginRequest(username, pass1,
-                    response -> {
-                        try {
-                            JSONObject jsonResponse = new JSONObject(response);
-                            int exito = jsonResponse.getInt("exito");
-                            String mensaje = jsonResponse.getString("msg");
-                            Log.e("info_login", jsonResponse.toString());
-                            if (exito == 1) {
-                                // Registro exitoso, manejar el resultado aquí
-                                Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT).show();
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            // Ocultar el cuadro de diálogo de progreso
+                            progressDialog.dismiss();
+                            try {
+                                JSONObject jsonResponse = new JSONObject(response);
+                                int exito = jsonResponse.getInt("exito");
+                                String mensaje = jsonResponse.getString("msg");
+                                Log.e("info_login", jsonResponse.toString());
+                                if (exito == 1) {
+                                    // Registro exitoso, manejar el resultado aquí
+                                    Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT).show();
 
-                                // Obtener el rol y el id del usuario
-                                int rol = jsonResponse.getInt("id_rol");
-                                int id_usuario = jsonResponse.getInt("id_usuario"); // Obtener el id_usuario del JSON
+                                    // Obtener el rol y el id del usuario
+                                    int rol = jsonResponse.getInt("id_rol");
+                                    int id_usuario = jsonResponse.getInt("id_usuario");
 
-                                // Guardar el rol y el id del usuario en SharedPreferences
-                                SharedPreferences.Editor editor = getSharedPreferences("MyPrefs", MODE_PRIVATE).edit();
-                                editor.putBoolean("isLoggedIn", true);
-                                editor.putInt("userRole", rol); // Guarda el rol del usuario
-                                editor.putInt("id_usuario", id_usuario); // Guarda el id_usuario del usuario
-                                editor.apply();
+                                    // Guardar el rol y el id del usuario en SharedPreferences
+                                    SharedPreferences.Editor editor = getSharedPreferences("MyPrefs", MODE_PRIVATE).edit();
+                                    editor.putBoolean("isLoggedIn", true);
+                                    editor.putInt("userRole", rol);
+                                    editor.putInt("id_usuario", id_usuario);
+                                    editor.apply();
 
-                                // Redirigir según el rol
-                                redirectAccordingToRole(rol);
+                                    // Redirigir según el rol
+                                    redirectAccordingToRole(rol);
+                                } else {
+                                    // Error en el registro, mostrar mensaje de error
+                                    Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                            else {
-                                // Error en el registro, mostrar un mensaje al usuario
-                                Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT).show();
-                                onResume();
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
                     });
             RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
@@ -185,65 +194,69 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // Modificamos la función para que obtenga el restaurante_id de forma asíncrona
+    // Método para obtener el id_rest desde la base de datos
     private void obtenerIdRestDesdeBaseDeDatos() {
-        String modeloURL = Config.MODELO_URL+"/consultar_id_rest.php";
+        String modeloURL = Config.MODELO_URL + "/consultar_id_rest.php";
         Log.d("urledit", "apiUrl: " + modeloURL);
 
         RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, modeloURL, response -> {
-            Log.d("usuarioenviado", username);
-            try {
-                JSONObject jsonResponse = new JSONObject(response);
-                Log.d("response_id_rest", jsonResponse.toString());
-                int id_rest = jsonResponse.getInt("id_rest");
-                //guardar el id_rest en SharedPreferences
-                SharedPreferences.Editor editor = getSharedPreferences("MyPrefs", MODE_PRIVATE).edit();
-                editor.putInt("restaurante_id", id_rest);
-                editor.apply();
-                Log.d("restaurante_id_rec", String.valueOf(id_rest));
-                // Se ha obtenido el restaurante_id, redirige a vista_dueno
-                Intent intent_login_dueño = new Intent(MainActivity.this, vista_dueno2.class);
-                intent_login_dueño.putExtra("restaurante_id", id_rest);
-                Log.d("restaurante_id_enviado", String.valueOf(id_rest));
-                startActivity(intent_login_dueño);
-                finish(); // Finaliza la actividad actual
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }, error -> {
-            // Manejar errores de la solicitud
-            error.printStackTrace();
-        }) {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, modeloURL,
+                response -> {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+                        Log.d("response_id_rest", jsonResponse.toString());
+                        int id_rest = jsonResponse.getInt("id_rest");
+
+                        // Guardar id_rest en SharedPreferences
+                        SharedPreferences.Editor editor = getSharedPreferences("MyPrefs", MODE_PRIVATE).edit();
+                        editor.putInt("restaurante_id", id_rest);
+                        editor.apply();
+                        Log.d("restaurante_id_rec", String.valueOf(id_rest));
+
+                        // Redirigir a vista_dueno2 y pasar id_rest como extra
+                        Intent intent_login_dueño = new Intent(MainActivity.this, vista_dueno2.class);
+                        intent_login_dueño.putExtra("restaurante_id", id_rest);
+                        Log.d("restaurante_id_enviado", String.valueOf(id_rest));
+                        startActivity(intent_login_dueño);
+                        finish(); // Finaliza la actividad actual
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                },
+                error -> {
+                    // Ocultar el cuadro de diálogo de progreso en caso de error
+                    progressDialog.dismiss();
+                    // Manejar errores de la solicitud
+                    error.printStackTrace();
+                }) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-                params.put("username", username);
+                params.put("username", username); // Envía el nombre de usuario al servidor
                 return params;
             }
         };
         queue.add(stringRequest);
     }
-    //pausar la actividad
+
     @Override
     protected void onPause() {
         super.onPause();
-        // no permitir que el usuario pueda interactuar con la actividad mientras se realiza la solicitud
+        // Deshabilitar los botones mientras se realiza la solicitud
         btnLogin.setEnabled(false);
         btnRegistrar.setEnabled(false);
     }
 
-    //reanudar la actividad
     @Override
     protected void onResume() {
         super.onResume();
-        // permitir que el usuario pueda interactuar con la actividad
+        // Habilitar los botones cuando la actividad se reanuda
         btnLogin.setEnabled(true);
         btnRegistrar.setEnabled(true);
     }
 
     private void logout() {
-        // Eliminar el valor de sesión en SharedPreferences
+        // Eliminar la sesión en SharedPreferences
         SharedPreferences.Editor editor = getSharedPreferences("MyPrefs", MODE_PRIVATE).edit();
         editor.putBoolean("isLoggedIn", false);
         editor.apply();
@@ -254,4 +267,3 @@ public class MainActivity extends AppCompatActivity {
         finish(); // Finalizar la actividad actual
     }
 }
-

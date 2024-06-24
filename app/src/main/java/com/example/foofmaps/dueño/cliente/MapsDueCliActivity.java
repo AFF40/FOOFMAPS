@@ -74,11 +74,6 @@ public class MapsDueCliActivity extends AppCompatActivity {
                             .hide(settingsDuenoCliFragment)
                             .show(mapsDueCliFragment);
                     break;
-                case R.id.search:
-                    transaction.hide(mapsDueCliFragment)
-                            .hide(settingsDuenoCliFragment)
-                            .show(searchDueCliFragment);
-                    break;
                 case R.id.ajustes:
                     transaction.hide(mapsDueCliFragment)
                             .hide(searchDueCliFragment)

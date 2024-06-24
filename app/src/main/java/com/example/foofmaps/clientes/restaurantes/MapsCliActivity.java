@@ -64,11 +64,7 @@ public class MapsCliActivity extends AppCompatActivity {
                             .hide(settingsFragment)
                             .show(mapsCliFragment);
                     break;
-                case R.id.search:
-                    transaction.hide(mapsCliFragment)
-                            .hide(settingsFragment)
-                            .show(searchFragment);
-                    break;
+
                 case R.id.ajustes:
                     transaction.hide(mapsCliFragment)
                             .hide(searchFragment)

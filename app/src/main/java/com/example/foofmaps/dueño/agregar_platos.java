@@ -57,7 +57,7 @@ public class agregar_platos extends AppCompatActivity implements onPlatoAddedLis
     private TextView precio_plato;
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int CAMERA_REQUEST = 2;
-    private static final String modeloURL = Config.MODELO_URL + "a%c3%b1adir_plato.php";
+    private static final String modeloURL = Config.MODELO_URL + "agregar_plato.php";
 
     @Override
     public void onPlatoAdded() {

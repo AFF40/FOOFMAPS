@@ -56,6 +56,7 @@ public class SettingsFragment extends Fragment {
         // Eliminar el valor de sesión en SharedPreferences
         SharedPreferences.Editor editor = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE).edit();
         editor.putBoolean("isLoggedIn", false);
+        editor.putInt("userRole", -1);
         editor.apply();
 
         // Redirigir a la actividad de inicio de sesión

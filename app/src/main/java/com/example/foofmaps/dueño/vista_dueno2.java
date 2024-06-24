@@ -23,6 +23,7 @@ import com.bumptech.glide.Glide;
 import com.example.foofmaps.Config;
 import com.example.foofmaps.R;
 import com.example.foofmaps.dueño.fragments.MapsDueFragment;
+import com.example.foofmaps.dueño.fragments.SettingsDuenoFragment;
 import com.example.foofmaps.dueño.fragments.dueno_bebidas;
 import com.example.foofmaps.dueño.fragments.dueno_platos;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -61,9 +62,6 @@ public class vista_dueno2 extends AppCompatActivity {
         if (id_rest != -1) {
             id_restS = id_rest;
         }
-
-        Log.d("id_rest_en_vistadueno", String.valueOf(id_rest));
-        Log.d("mantener_sesion_estado", String.valueOf(sharedPreferences.getBoolean("mantenersesion", false)));
 
         mapsDueFragment = new MapsDueFragment();
         settingsDuenoFragment = new SettingsDuenoFragment();

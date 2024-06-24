@@ -54,7 +54,6 @@ public class PlatosViewModel extends ViewModel {
             }
             return platos;
         }
-
         @Override
         protected void onPostExecute(List<Plato> platos) {
             platosLiveData.setValue(platos);
