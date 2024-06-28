@@ -1,6 +1,5 @@
 package com.example.foofmaps.clientes.restaurantes.fragments;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -51,19 +50,29 @@ public class SettingsFragment extends Fragment {
         }
     }
 
-    // Método para cerrar sesión
-    private void cerrarSesion() {
-        //limpiar las preferencias compartidas
-        SharedPreferences preferences = requireActivity().getSharedPreferences("login", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.clear();
-        editor.apply();
 
-        // Redirigir a la actividad de inicio de sesión
+    private void cerrarSesion() {
+        //limpiar las preferencias guardadas en SharedPreferences y redirigir al usuario a la actividad de inicio de sesión|// Obtener el valor de sesión y el rol de SharedPreferences
+        //        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        //        boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
+        //        int userRole = sharedPreferences.getInt("userRole", -1); // Obtiene el rol del usuario desde SharedPreferences
+        //        int id_rest = sharedPreferences.getInt("restaurante_id", -1); // Obtiene el id_rest del usuario desde SharedPreferences
+        //        boolean mantenersesion = sharedPreferences.getBoolean("mantenersesion", false); // Obtiene el valor de mantener sesión
+
+        //limpiar las preferencias guardadas una por una en SharedPreferences y redirigir al usuario a la actividad de inicio de sesión
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyPrefs", requireActivity().MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove("isLoggedIn");
+        editor.remove("userRole");
+        editor.remove("restaurante_id");
+        editor.remove("mantenersesion");
+        editor.apply();
+        //redirigir al usuario a la actividad de inicio de sesión
         Intent intent = new Intent(requireActivity(), MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-        requireActivity().finish(); // Finalizar la actividad actual (fragment)
+        //que no se pueda volver atras
+        requireActivity().finish();
+
     }
 }
 

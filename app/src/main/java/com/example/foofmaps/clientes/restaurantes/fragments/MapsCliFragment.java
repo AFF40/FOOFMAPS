@@ -180,7 +180,7 @@
             String controladorURL = Config.CONTROLADOR_URL + "controlador_Rest.php";
             Log.d("Controlador URL", controladorURL);
             RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, controladorURL, response -> {
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, controladorURL, response -> {
                 try {
                     JSONArray jsonArray = new JSONArray(response);
                     Log.d("JSON Response", jsonArray.toString());
