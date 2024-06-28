@@ -4,12 +4,14 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
@@ -36,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String username; // Variable para almacenar el nombre de usuario
     private ProgressDialog progressDialog; // Cuadro de diálogo para mostrar el progreso
-
+    private boolean doubleBackToExitPressedOnce = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +90,20 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (doubleBackToExitPressedOnce) {
+                    // Si se presiona de nuevo dentro de los 2 segundos, finalizar la actividad
+                    finishAffinity(); // Finaliza la actividad
+                } else {
+                    doubleBackToExitPressedOnce = true;
+                    // Mostrar un mensaje de advertencia
+                    Toast.makeText(MainActivity.this, "Presiona de nuevo para salir", Toast.LENGTH_SHORT).show();
+                    new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
+                }
+            }
+        });
     }
 
     private void redirectAccordingToRole(int userRole) {

@@ -1,9 +1,12 @@
 package com.example.foofmaps.ADMIN;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -14,6 +17,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class Vista_administrador extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
+    private boolean doubleBackToExitPressedOnce = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,5 +64,20 @@ public class Vista_administrador extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container_admin, initialFragment)
                 .commit();
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (doubleBackToExitPressedOnce) {
+                    // Si se presiona de nuevo dentro de los 2 segundos, finalizar la actividad
+                    finishAffinity(); // Finaliza la actividad
+                } else {
+                    doubleBackToExitPressedOnce = true;
+                    // Mostrar un mensaje de advertencia
+                    Toast.makeText(Vista_administrador.this, "Presiona de nuevo para salir", Toast.LENGTH_SHORT).show();
+                    new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
+                }
+            }
+        });
     }
 }

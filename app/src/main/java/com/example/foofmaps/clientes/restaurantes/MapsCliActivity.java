@@ -3,7 +3,10 @@ package com.example.foofmaps.clientes.restaurantes;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -18,7 +21,7 @@ public class MapsCliActivity extends AppCompatActivity {
     private MapsCliFragment mapsCliFragment;
     private SearchFragment searchFragment;
     private SettingsFragment settingsFragment;
-
+    private boolean doubleBackToExitPressedOnce = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,5 +77,20 @@ public class MapsCliActivity extends AppCompatActivity {
             transaction.commit();
             return true;
         });
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (doubleBackToExitPressedOnce) {
+                    // Si se presiona de nuevo dentro de los 2 segundos, finalizar la actividad
+                    finishAffinity(); // Finaliza la actividad
+                } else {
+                    doubleBackToExitPressedOnce = true;
+                    // Mostrar un mensaje de advertencia
+                    Toast.makeText(MapsCliActivity.this, "Presiona de nuevo para salir", Toast.LENGTH_SHORT).show();
+                    new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
+                }
+            }
+        });
+
     }
 }
