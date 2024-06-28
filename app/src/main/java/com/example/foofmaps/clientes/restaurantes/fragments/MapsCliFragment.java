@@ -240,6 +240,7 @@
                                 if (restaurante != null) {
                                     String ip = Config.ip;
                                     String imageUrl = restaurante.getImagen();
+                                    //si la URL de la imagen comienza con http://localhost, reemplazarlo con la IP del servidor
                                     imageUrl = imageUrl.replace("http://localhost", ip);
                                     Log.d("Image URL", imageUrl);
 
