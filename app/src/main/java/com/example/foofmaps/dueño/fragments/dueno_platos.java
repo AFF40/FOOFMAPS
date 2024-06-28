@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -29,6 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class dueno_platos extends Fragment {
+    private boolean toastShown = false; // Variable para rastrear si el Toast ya se ha mostrado
+
     public static dueno_platos newInstance(int restauranteId) {
     dueno_platos fragment = new dueno_platos();
     Bundle args = new Bundle();
@@ -131,6 +134,7 @@ public class dueno_platos extends Fragment {
                 // Procesar el JSON y obtener la lista de platos
                 platos = parsePlatosFromJSON(jsonResponse);
                 Log.d("dueno_plato_platos", platos.toString());
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -139,6 +143,11 @@ public class dueno_platos extends Fragment {
 
         @Override
         protected void onPostExecute(List<Plato> platos) {
+            if (platos.isEmpty() && !toastShown) {
+                // Mostrar un Toast indicando que la lista de bebidas está vacía
+                Toast.makeText(requireContext(), "Lista de platos vacía", Toast.LENGTH_SHORT).show();
+                toastShown = true; // Marcar que el Toast ya se ha mostrado
+            }
             // Configurar el RecyclerView con la lista de platos
             RecyclerView recyclerViewPlatos = getView().findViewById(R.id.viewPlatos);
             PlatoAdapter platoAdapter = new PlatoAdapter(platos,false,0,null);

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class dueno_bebidas extends Fragment {
+    private boolean toastShown = false; // Variable para rastrear si el Toast ya se ha mostrado
 
     public static dueno_bebidas newInstance(int restauranteId) {
         dueno_bebidas fragment = new dueno_bebidas();
@@ -127,6 +129,7 @@ public class dueno_bebidas extends Fragment {
 
                 // Procesar el JSON y obtener la lista de bebidas
                 bebidas = parseBebidasFromJSON(jsonResponse);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -135,9 +138,15 @@ public class dueno_bebidas extends Fragment {
 
         @Override
         protected void onPostExecute(List<Bebida> bebidas) {
+            if (bebidas.isEmpty() && !toastShown) {
+                // Mostrar un Toast indicando que la lista de bebidas está vacía
+                Toast.makeText(requireContext(), "Lista de bebidas vacía", Toast.LENGTH_SHORT).show();
+                toastShown = true; // Marcar que el Toast ya se ha mostrado
+            }
+
             // Configurar el RecyclerView con la lista de bebidas
             RecyclerView recyclerViewBebidas = getView().findViewById(R.id.viewbebidas);
-            BebidaAdapter bebidaAdapter = new BebidaAdapter(bebidas, false,0,null);
+            BebidaAdapter bebidaAdapter = new BebidaAdapter(bebidas, false, 0, null);
             recyclerViewBebidas.setLayoutManager(new LinearLayoutManager(requireContext()));
             recyclerViewBebidas.setAdapter(bebidaAdapter);
         }

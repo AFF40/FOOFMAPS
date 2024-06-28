@@ -65,6 +65,13 @@ public class vista_dueno2 extends AppCompatActivity {
         if (id_rest != -1) {
             id_restS = id_rest;
         }
+        //logs de todos los valores recibidos
+        Log.d("log_vistaDueno2_id_rest", String.valueOf(id_rest));
+        Log.d("log_vistaDueno2_id_restS", String.valueOf(id_restS));
+        Log.d("log_vistaDueno2_id_rest_intent", String.valueOf(getIntent().getIntExtra("restaurante_id", -1)));
+        Log.d("log_vistaDueno2_id_rest_shared", String.valueOf(sharedPreferences.getInt("restaurante_id", -1)));
+
+
 
         mapsDueFragment = new MapsDueFragment();
         settingsDuenoFragment = new SettingsDuenoFragment();

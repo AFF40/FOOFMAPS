@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -21,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -39,18 +39,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 public class agregar_bebidas extends AppCompatActivity implements onBebidaAddedListener {
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 1001;
+    private static final int READ_MEDIA_IMAGES_PERMISSION_REQUEST_CODE = 1002;
     private EditText editTextNomBebida;
     private EditText editTextDescripcion;
     private EditText editTextPrecio;
     private Button btnSelectImage;
     private Button btnSelectCamara;
     private Button btnEnviar;
+    private Bitmap imageBitmap;
     private ImageView imagenBebida;
     private TextView nomBebida;
-    private TextView descripcion_bebida;
+    private TextView descripcion_Bebida;
     private TextView precio_bebida;
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int CAMERA_REQUEST = 2;
@@ -68,10 +71,6 @@ public class agregar_bebidas extends AppCompatActivity implements onBebidaAddedL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_agregar_bebidas);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
-        }
-
         editTextNomBebida = findViewById(R.id.editTextNomBebida);
         nomBebida = findViewById(R.id.nom_bebida);
         editTextNomBebida.addTextChangedListener(new TextWatcher() {
@@ -88,14 +87,14 @@ public class agregar_bebidas extends AppCompatActivity implements onBebidaAddedL
         });
 
         editTextDescripcion = findViewById(R.id.editTextDescripcionBebida);
-        descripcion_bebida = findViewById(R.id.desc_bebida);
+        descripcion_Bebida = findViewById(R.id.desc_bebida);
         editTextDescripcion.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                descripcion_bebida.setText(charSequence.toString());
+                descripcion_Bebida.setText(charSequence.toString());
             }
 
             @Override
@@ -123,27 +122,61 @@ public class agregar_bebidas extends AppCompatActivity implements onBebidaAddedL
         btnEnviar = findViewById(R.id.btnEnviarFormulario);
 
         btnSelectImage.setOnClickListener(view -> {
-            Intent abrir_galeria = new Intent(Intent.ACTION_PICK);
-            abrir_galeria.setType("image/*");
-            startActivityForResult(abrir_galeria, PICK_IMAGE_REQUEST);
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_MEDIA_IMAGES}, READ_MEDIA_IMAGES_PERMISSION_REQUEST_CODE);
+            } else {
+                openGallery();
+            }
         });
 
         btnSelectCamara.setOnClickListener(view -> {
-            Intent abrircamara = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            if (abrircamara.resolveActivity(getPackageManager()) != null) {
-                startActivityForResult(abrircamara, CAMERA_REQUEST);
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
             } else {
-                Toast.makeText(this, "No se encontró una aplicación de cámara en el dispositivo", Toast.LENGTH_SHORT).show();
+                openCamera();
             }
         });
 
-        btnEnviar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                enviarFormulario(view);
-            }
+        btnEnviar.setOnClickListener(view -> {
+            onPause();
+            enviarFormulario(view);
+
         });
     }
+
+    private void openGallery() {
+        Intent abrir_galeria = new Intent(Intent.ACTION_PICK);
+        abrir_galeria.setType("image/*");
+        startActivityForResult(abrir_galeria, PICK_IMAGE_REQUEST);
+    }
+
+    private void openCamera() {
+        Intent abrircamara = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (abrircamara.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(abrircamara, CAMERA_REQUEST);
+        } else {
+            Toast.makeText(this, "No se encontró una aplicación de cámara en el dispositivo", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openCamera();
+            } else {
+                Toast.makeText(this, "Permiso de cámara denegado", Toast.LENGTH_SHORT).show();
+            }
+        } else if (requestCode == READ_MEDIA_IMAGES_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openGallery();
+            } else {
+                Toast.makeText(this, "Permiso de galería denegado", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -152,61 +185,67 @@ public class agregar_bebidas extends AppCompatActivity implements onBebidaAddedL
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
             Uri selectedImageUri = data.getData();
             try {
-                Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                imageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
                 imagenBebida.setImageBitmap(imageBitmap);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            imageBitmap = (Bitmap) extras.get("data");
             imagenBebida.setImageBitmap(imageBitmap);
         }
+
     }
 
     public void enviarFormulario(View view) {
         Intent intent = getIntent();
         int restauranteId = intent.getIntExtra("restaurante_id", -1);
         String nombreRestaurante = intent.getStringExtra("nombre_restaurante");
-        Log.d("restaurante_id_en_agregar", "restaurante_id: " + restauranteId);
-        Log.d("nombre_restaurante_en_agregar", "nombre_restaurante: " + nombreRestaurante);
+        Log.d ("log_anadir_nombre_rest", "Nombre del restaurante: " + nombreRestaurante);
+        Log.d("log_anadir_url", "url: " + modeloURL);
 
         String nombreBebida = editTextNomBebida.getText().toString().trim();
-        String descripcion = editTextDescripcion.getText().toString().trim();
-        String precio = editTextPrecio.getText().toString().trim();
+        String descripcionBebida = editTextDescripcion.getText().toString().trim();
+        String precioBebida = editTextPrecio.getText().toString().trim();
+        //enviar el nombre del restaurante como string
+
         String restauranteIdString = String.valueOf(restauranteId);
 
-        if (nombreBebida.isEmpty() || descripcion.isEmpty() || precio.isEmpty()) {
+        if (nombreBebida.isEmpty() || descripcionBebida.isEmpty() || precioBebida.isEmpty()) {
             Toast.makeText(this, "Por favor, rellena todos los campos del formulario", Toast.LENGTH_SHORT).show();
+            onRestart();
             return;
         }
 
-        if (imagenBebida.getDrawable() == null) {
+        if (imageBitmap == null) {
+            onRestart();
             Toast.makeText(this, "Por favor, selecciona una imagen", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        guardarImagenEnServidor(nombreBebida, descripcion, precio, restauranteIdString, nombreRestaurante);
+        guardarImagenEnServidor(nombreBebida, descripcionBebida, precioBebida, restauranteIdString, nombreRestaurante);
+        onRestart();
     }
 
-    public void guardarImagenEnServidor(String nombreBebida, String descripcion, String precio, String restauranteIdString,String nombreRestaurante) {
-        Bitmap imageBitmap = ((BitmapDrawable) imagenBebida.getDrawable()).getBitmap();
+    public void guardarImagenEnServidor(String nombreBebida, String descripcionBebida, String precioBebida, String restauranteIdString, String nombreRestaurante) {
         String imageBase64 = convertImageToBase64(imageBitmap);
+
         JSONObject bebidaData = new JSONObject();
         try {
             bebidaData.put("nombre", nombreBebida);
-            bebidaData.put("descripcion", descripcion);
-            bebidaData.put("precio", precio);
-            bebidaData.put("restaurante_nombre", nombreRestaurante);
+            bebidaData.put("descripcion", descripcionBebida);
+            bebidaData.put("precio", precioBebida);
             bebidaData.put("restaurante_id", restauranteIdString);
+            bebidaData.put("restaurante_nombre", nombreRestaurante);
             bebidaData.put("imagen", imageBase64);
         } catch (JSONException e) {
             e.printStackTrace();
             return;
         }
 
-        Log.d("log_anadir_bebidadata", "platoData: " + bebidaData);
+        Log.d("log_anadir_bebidadata", "bebidaData: " + bebidaData);
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
@@ -219,41 +258,65 @@ public class agregar_bebidas extends AppCompatActivity implements onBebidaAddedL
                     public void onResponse(JSONObject response) {
                         try {
                             String responseData = response.toString();
-                            Log.d("log_anadir_ResponseData", "Response data: " + responseData);
+                            Log.d("log_anadir_ResponseData", "Response data: " + responseData); // Agregar registro de depuración
                             if (isJSONValid(responseData)) {
-                                handleServerResponse(responseData);
+                                handleServerResponse(responseData); // Llamar a la función para manejar la respuesta del servidor
                             } else {
+                                // La respuesta del servidor no es un JSON válido
                                 Toast.makeText(agregar_bebidas.this, "Error: Respuesta del servidor no válida", Toast.LENGTH_SHORT).show();
+                                onRestart(); // Llamada a onRestart() en caso de error
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
+                            // Manejar el error si la respuesta no es un objeto JSON válido
                             Toast.makeText(agregar_bebidas.this, "Error: Respuesta del servidor no válida", Toast.LENGTH_SHORT).show();
+                            onRestart(); // Llamada a onRestart() en caso de error
                         }
                     }
                 },
+                // Manejar el error de la solicitud
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        String errorMessage = "Error al agregar la bebida: " + error.getMessage();
+
+                        String errorMessage = "Error al agregar el bebida: " + error.getMessage();
                         Toast.makeText(agregar_bebidas.this, errorMessage, Toast.LENGTH_SHORT).show();
                         Log.e("log_anadir_Error", errorMessage, error);
+                        onResume(); // Llamada a onResume() en caso de error
+                        //log del estado de los botones y campos de texto
+                        Log.d("log_anadir_btnEnviar", "Estado del botón Enviar: " + btnEnviar.isEnabled());
+                        Log.d("log_anadir_btnSelectImage", "Estado del botón Seleccionar imagen: " + btnSelectImage.isEnabled());
+                        Log.d("log_anadir_btnSelectCamara", "Estado del botón Seleccionar cámara: " + btnSelectCamara.isEnabled());
+                        Log.d("log_anadir_editTextNomBebida", "Estado del campo de texto Nombre del bebida: " + editTextNomBebida.isEnabled());
+                        Log.d("log_anadir_editTextDescripcion", "Estado del campo de texto Descripción: " + editTextDescripcion.isEnabled());
+                        Log.d("log_anadir_editTextPrecio", "Estado del campo de texto Precio: " + editTextPrecio.isEnabled());
 
+
+                        // Imprimir toda la respuesta del servidor en el Logcat
                         if (error.networkResponse != null) {
+                            onRestart(); // Llamada a onRestart() en caso de error
                             Log.e("log_anadir_Error_serv", "Respuesta del servidor: " + new String(error.networkResponse.data));
                         } else {
                             Log.e("log_anadir_Error_serv", "No se recibió respuesta del servidor");
+                            onRestart(); // Llamada a onRestart() en caso de error
                         }
 
+                        // Verificar si hay un mensaje de error en la respuesta del servidor
                         if (error.networkResponse != null && error.networkResponse.data != null) {
                             try {
                                 JSONObject errorJson = new JSONObject(new String(error.networkResponse.data));
                                 String serverErrorMessage = errorJson.optString("error");
                                 if (!TextUtils.isEmpty(serverErrorMessage)) {
+                                    // Mostrar el mensaje de error del servidor
                                     Toast.makeText(agregar_bebidas.this, serverErrorMessage, Toast.LENGTH_SHORT).show();
+                                    onRestart(); // Llamada a onRestart() en caso de error
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
+                                onRestart(); // Llamada a onRestart() en caso de error
                             }
+                        } else {
+                            onRestart(); // Llamada a onRestart() en caso de error
                         }
                     }
                 }
@@ -262,6 +325,7 @@ public class agregar_bebidas extends AppCompatActivity implements onBebidaAddedL
         requestQueue.add(request);
     }
 
+    // Función para verificar si una cadena es un JSON válido
     private boolean isJSONValid(String json) {
         try {
             new JSONObject(json);
@@ -271,6 +335,7 @@ public class agregar_bebidas extends AppCompatActivity implements onBebidaAddedL
         }
     }
 
+    // Función para manejar la respuesta del servidor
     private void handleServerResponse(String responseData) {
         try {
             JSONObject response = new JSONObject(responseData);
@@ -278,9 +343,12 @@ public class agregar_bebidas extends AppCompatActivity implements onBebidaAddedL
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
             onBebidaAdded();
             finish();
+            onRestart(); // Llamada a onRestart() después de procesar la respuesta
         } catch (JSONException e) {
             e.printStackTrace();
+            // Manejar el error si la respuesta no tiene el formato esperado
             Toast.makeText(this, "Error: Respuesta del servidor no válida", Toast.LENGTH_SHORT).show();
+            onRestart(); // Llamada a onRestart() en caso de error
         }
     }
 
@@ -290,5 +358,29 @@ public class agregar_bebidas extends AppCompatActivity implements onBebidaAddedL
         byte[] imageBytes = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(imageBytes, Base64.DEFAULT);
     }
-}
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //apagar los botones y los campos de texto
+        btnEnviar.setEnabled(false);
+        btnSelectImage.setEnabled(false);
+        btnSelectCamara.setEnabled(false);
+        editTextNomBebida.setEnabled(false);
+        editTextDescripcion.setEnabled(false);
+        editTextPrecio.setEnabled(false);
+    }
+
+    //funcion para quitar la pausa
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        //encender los botones y los campos de texto
+        btnEnviar.setEnabled(true);
+        btnSelectImage.setEnabled(true);
+        btnSelectCamara.setEnabled(true);
+        editTextNomBebida.setEnabled(true);
+        editTextDescripcion.setEnabled(true);
+        editTextPrecio.setEnabled(true);
+    }
+}

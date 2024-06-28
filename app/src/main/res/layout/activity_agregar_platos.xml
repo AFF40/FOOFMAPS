@@ -93,6 +93,7 @@
         <!-- ImageView para la imagen del plato -->
         <ImageView
             android:id="@+id/imagenPlato"
+            android:src="@drawable/no_imagen"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:scaleType="centerCrop" />

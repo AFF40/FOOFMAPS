@@ -138,8 +138,9 @@ public class agregar_platos extends AppCompatActivity implements onPlatoAddedLis
         });
 
         btnEnviar.setOnClickListener(view -> {
-            enviarFormulario(view);
             onPause();
+            enviarFormulario(view);
+
         });
     }
 
@@ -176,6 +177,7 @@ public class agregar_platos extends AppCompatActivity implements onPlatoAddedLis
         }
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -194,6 +196,7 @@ public class agregar_platos extends AppCompatActivity implements onPlatoAddedLis
             imageBitmap = (Bitmap) extras.get("data");
             imagenPlato.setImageBitmap(imageBitmap);
         }
+
     }
 
     public void enviarFormulario(View view) {
@@ -261,11 +264,13 @@ public class agregar_platos extends AppCompatActivity implements onPlatoAddedLis
                             } else {
                                 // La respuesta del servidor no es un JSON válido
                                 Toast.makeText(agregar_platos.this, "Error: Respuesta del servidor no válida", Toast.LENGTH_SHORT).show();
+                                onRestart(); // Llamada a onRestart() en caso de error
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
                             // Manejar el error si la respuesta no es un objeto JSON válido
                             Toast.makeText(agregar_platos.this, "Error: Respuesta del servidor no válida", Toast.LENGTH_SHORT).show();
+                            onRestart(); // Llamada a onRestart() en caso de error
                         }
                     }
                 },
@@ -277,6 +282,15 @@ public class agregar_platos extends AppCompatActivity implements onPlatoAddedLis
                         String errorMessage = "Error al agregar el plato: " + error.getMessage();
                         Toast.makeText(agregar_platos.this, errorMessage, Toast.LENGTH_SHORT).show();
                         Log.e("log_anadir_Error", errorMessage, error);
+                        onResume(); // Llamada a onResume() en caso de error
+                        //log del estado de los botones y campos de texto
+                        Log.d("log_anadir_btnEnviar", "Estado del botón Enviar: " + btnEnviar.isEnabled());
+                        Log.d("log_anadir_btnSelectImage", "Estado del botón Seleccionar imagen: " + btnSelectImage.isEnabled());
+                        Log.d("log_anadir_btnSelectCamara", "Estado del botón Seleccionar cámara: " + btnSelectCamara.isEnabled());
+                        Log.d("log_anadir_editTextNomPlato", "Estado del campo de texto Nombre del plato: " + editTextNomPlato.isEnabled());
+                        Log.d("log_anadir_editTextDescripcion", "Estado del campo de texto Descripción: " + editTextDescripcion.isEnabled());
+                        Log.d("log_anadir_editTextPrecio", "Estado del campo de texto Precio: " + editTextPrecio.isEnabled());
+
 
                         // Imprimir toda la respuesta del servidor en el Logcat
                         if (error.networkResponse != null) {
@@ -299,7 +313,10 @@ public class agregar_platos extends AppCompatActivity implements onPlatoAddedLis
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
+                                onRestart(); // Llamada a onRestart() en caso de error
                             }
+                        } else {
+                            onRestart(); // Llamada a onRestart() en caso de error
                         }
                     }
                 }
