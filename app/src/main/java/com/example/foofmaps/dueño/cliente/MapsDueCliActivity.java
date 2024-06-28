@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -83,18 +84,25 @@ public class MapsDueCliActivity extends AppCompatActivity {
             transaction.commit();
             return true;
         });
-    }
-    @Override
-    public void onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
-            // Si se presiona de nuevo dentro de los 2 segundos, finalizar la actividad
-            super.onBackPressed(); // Llama al método predeterminado
-        } else {
-            doubleBackToExitPressedOnce = true;
-            Toast.makeText(this, "Presione de nuevo para salir", Toast.LENGTH_SHORT).show();
 
-            new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
-        }
+        // Añadir el callback para el manejo de retroceso
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (doubleBackToExitPressedOnce) {
+                    // Si se presiona de nuevo dentro de los 2 segundos, finalizar la actividad
+                    finishAffinity(); // Finaliza la actividad
+                } else {
+                    doubleBackToExitPressedOnce = true;
+                    // Mostrar un mensaje de advertencia
+                    Toast.makeText(MapsDueCliActivity.this, "Presiona de nuevo para salir", Toast.LENGTH_SHORT).show();
+                    new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
+                }
+            }
+        });
+
     }
+
+
 
 }

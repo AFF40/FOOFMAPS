@@ -178,6 +178,7 @@
 
         private void fetchLocationsFromDatabase() {
             String controladorURL = Config.CONTROLADOR_URL + "controlador_Rest.php";
+            Log.d("Controlador URL", controladorURL);
             RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
             StringRequest stringRequest = new StringRequest(Request.Method.GET, controladorURL, response -> {
                 try {
@@ -270,6 +271,7 @@
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    Log.e("JSON Error", e.toString());
                 }
             }, error -> Log.e("Volley Error", error.toString()));
             requestQueue.add(stringRequest);

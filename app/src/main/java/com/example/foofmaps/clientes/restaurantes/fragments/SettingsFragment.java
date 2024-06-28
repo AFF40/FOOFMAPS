@@ -53,10 +53,10 @@ public class SettingsFragment extends Fragment {
 
     // Método para cerrar sesión
     private void cerrarSesion() {
-        // Eliminar el valor de sesión en SharedPreferences
-        SharedPreferences.Editor editor = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE).edit();
-        editor.putBoolean("isLoggedIn", false);
-        editor.putInt("userRole", -1);
+        //limpiar las preferencias compartidas
+        SharedPreferences preferences = requireActivity().getSharedPreferences("login", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
         editor.apply();
 
         // Redirigir a la actividad de inicio de sesión

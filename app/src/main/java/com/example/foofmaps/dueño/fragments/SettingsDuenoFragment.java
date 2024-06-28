@@ -15,7 +15,6 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.example.foofmaps.R;
-import com.example.foofmaps.clientes.restaurantes.MainActivity;
 import com.example.foofmaps.dueño.cliente.MapsDueCliActivity;
 
 public class SettingsDuenoFragment extends Fragment {
@@ -48,22 +47,25 @@ public class SettingsDuenoFragment extends Fragment {
         });
 
         textViewCambiarRol.setOnClickListener(new View.OnClickListener() {
-
-            // cambiar de activity a MapsDueCliActivity
             @Override
             public void onClick(View v) {
-                //enviar el idRest
+                // Obtener el id del restaurante
+                int id_rest = requireActivity().getIntent().getIntExtra("restaurante_id", -1);
+
                 // Crear un nuevo Intent para la actividad MapsDueCliActivity
                 Intent intent = new Intent(requireActivity(), MapsDueCliActivity.class);
                 // Agregar el id del restaurante como un dato extra en el Intent
                 intent.putExtra("restaurante_id", id_rest);
                 Log.d("id_rest_enviando_a_duecli", String.valueOf(id_rest));
-                // Iniciar la actividad
-                startActivity(intent);
-                //finalizar la actividad para que no se pueda volver atras
+
+                // Finalizar la actividad principal
                 requireActivity().finish();
+
+                // Iniciar la actividad MapsDueCliActivity
+                startActivity(intent);
             }
         });
+
 
         Log.d("sharedprefs_settings_mansesion", String.valueOf(requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE).getBoolean("mantenersesion", true)));
         if (requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE).getBoolean("mantenersesion", true)) {
@@ -129,19 +131,15 @@ public class SettingsDuenoFragment extends Fragment {
     }
 
     private void logout() {
-        // eliminando el valor de sesión en SharedPreferences
-        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences
-                ("MyPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("isLoggedIn", false);
-        editor.putInt("userRole", -1);
-        editor.putInt("restaurante_id", -1);
-
+       //limpiar las preferencias compartidas
+        SharedPreferences preferences = requireActivity().getSharedPreferences("login", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
         editor.apply();
 
-        // Redirigir a la actividad de inicio de sesión
-        Intent intent = new Intent(requireActivity(), MainActivity.class);
+        //finalizar la actividad y redirigir a la actividad de inicio de sesión
+        requireActivity().finish();
+        Intent intent = new Intent(requireActivity(), MapsDueCliActivity.class);
         startActivity(intent);
-        requireActivity().finish(); // Finalizar la actividad actual (fragment)
     }
 }

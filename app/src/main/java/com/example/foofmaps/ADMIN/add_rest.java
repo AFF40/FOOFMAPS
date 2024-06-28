@@ -2,10 +2,12 @@ package com.example.foofmaps.ADMIN;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,6 +22,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.android.volley.Request;
@@ -53,6 +58,10 @@ public class add_rest extends Fragment {
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int REQUEST_IMAGE_CAPTURE = 2;
 
+    private ActivityResultLauncher<Intent> pickImageLauncher;
+    private ActivityResultLauncher<Intent> takePictureLauncher;
+    private ActivityResultLauncher<String> requestCameraPermissionLauncher;
+
     public add_rest(int id_usuario) {
         // Constructor
         Log.d("Log_add_rest", "ID Usuario: " + id_usuario);
@@ -73,6 +82,44 @@ public class add_rest extends Fragment {
         imagen_rest = rootView.findViewById(R.id.imagen);
         registrarDueñoButton = rootView.findViewById(R.id.registrarDueñoButton);
         registrarRestauranteButton = rootView.findViewById(R.id.registrarRestauranteButton);
+
+        // Inicializar los lanzadores de resultados de actividad
+        pickImageLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == getActivity().RESULT_OK && result.getData() != null) {
+                        Uri selectedImageUri = result.getData().getData();
+                        try {
+                            imageBitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImageUri);
+                            imagen_rest.setImageBitmap(imageBitmap);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+        );
+
+        takePictureLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == getActivity().RESULT_OK && result.getData() != null) {
+                        Bundle extras = result.getData().getExtras();
+                        imageBitmap = (Bitmap) extras.get("data");
+                        imagen_rest.setImageBitmap(imageBitmap);
+                    }
+                }
+        );
+
+        requestCameraPermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                isGranted -> {
+                    if (isGranted) {
+                        openCamera();
+                    } else {
+                        Toast.makeText(getActivity(), "Permiso de cámara denegado. Por favor, permite el acceso a la cámara en la configuración.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
 
         // Manejar el clic en la imagen para mostrar el diálogo de selección
         imagen_rest.setOnClickListener(new View.OnClickListener() {
@@ -102,18 +149,17 @@ public class add_rest extends Fragment {
                 // Crear una solicitud de cadena (POST)
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.MODELO_URL + "reg_dueno.php",
                         new Response.Listener<String>() {
-
                             @Override
                             public void onResponse(String response) {
                                 // Procesar la respuesta del servidor (éxito)
-                                showToast("Registro exitoso: " + response);
+                                showToast("Registro exitoso");
                             }
                         },
                         new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
                                 // Procesar la respuesta del servidor (error)
-                                showToast("Error en el registro. Por favor, inténtalo de nuevo."+ error );
+                                showToast("Error en el registro. Por favor, inténtalo de nuevo." + error);
                             }
                         }) {
                     @Override
@@ -133,7 +179,6 @@ public class add_rest extends Fragment {
             }
         });
 
-        // Dentro de registrarRestauranteButton.setOnClickListener
         registrarRestauranteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -190,7 +235,7 @@ public class add_rest extends Fragment {
                     }
                 };
 
-// Agregar la solicitud a la cola
+                // Agregar la solicitud a la cola
                 queue.add(stringRequest);
             }
         });
@@ -207,14 +252,16 @@ public class add_rest extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int item) {
                 if (item == 0) {
-// Cargar desde Galería
+                    // Cargar desde Galería
                     Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(intent, PICK_IMAGE_REQUEST);
+                    intent.setType("image/*"); // Asegura que solo se puedan seleccionar imágenes
+                    pickImageLauncher.launch(intent);
                 } else if (item == 1) {
-// Cargar mediante la Cámara
-                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                    // Cargar mediante la Cámara
+                    if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA);
+                    } else {
+                        openCamera();
                     }
                 }
             }
@@ -222,26 +269,10 @@ public class add_rest extends Fragment {
         builder.show();
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == getActivity().RESULT_OK && data != null) {
-// Procesar la imagen seleccionada desde la galería
-            Uri selectedImageUri = data.getData();
-            try {
-                imageBitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImageUri);
-// Asignar la imagen al ImageView
-                imagen_rest.setImageBitmap(imageBitmap);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
-// Procesar la imagen capturada desde la cámara
-            Bundle extras = data.getExtras();
-            imageBitmap = (Bitmap) extras.get("data");
-// Asignar la imagen al ImageView
-            imagen_rest.setImageBitmap(imageBitmap);
+    private void openCamera() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            takePictureLauncher.launch(takePictureIntent);
         }
     }
 
@@ -253,6 +284,7 @@ public class add_rest extends Fragment {
             }
         });
     }
+
     public String bitmapToBase64(Bitmap bitmap) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);

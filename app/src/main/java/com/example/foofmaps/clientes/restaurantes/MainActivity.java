@@ -72,12 +72,8 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 // Cualquier otro caso (por ejemplo, si el usuario no tiene sesión activa), cerrar sesión
                 Toast.makeText(getApplicationContext(), "Se ha cerrado la sesión", Toast.LENGTH_SHORT).show();
-                logout();
-            }
 
-            if (userRole == 3) {
-                // Realizar la consulta para obtener id_rest desde la base de datos si es usuario con rol 3
-                obtenerIdRestDesdeBaseDeDatos();
+                logout();
             }
 
             // Redirigir según el rol del usuario
@@ -256,11 +252,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void logout() {
-        // Eliminar la sesión en SharedPreferences
+        //limpiar todas las preferencias guardadas en el sharedpreferences
         SharedPreferences.Editor editor = getSharedPreferences("MyPrefs", MODE_PRIVATE).edit();
-        editor.putBoolean("isLoggedIn", false);
+        editor.clear();
         editor.apply();
-
         // Redirigir a la actividad de inicio de sesión
         Intent intent = new Intent(MainActivity.this, MainActivity.class);
         startActivity(intent);

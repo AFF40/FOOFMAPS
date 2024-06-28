@@ -86,16 +86,16 @@ public class SettingsDuenoCliFragment extends Fragment {
     }
 
     private void logout() {
-        // eliminando el valor de sesión en SharedPreferences
-        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences
-                ("MyPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("isLoggedIn", false);
+        //limpiar las preferencias compartidas
+        SharedPreferences preferences = requireActivity().getSharedPreferences("login", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
         editor.apply();
 
-        // Redirigir a la actividad de inicio de sesión
+        //finalizar la actividad y redirigir a la actividad de inicio de sesión
+        requireActivity().finish();
         Intent intent = new Intent(requireActivity(), MainActivity.class);
         startActivity(intent);
-        requireActivity().finish(); // Finalizar la actividad actual (fragment)
+
     }
 }
